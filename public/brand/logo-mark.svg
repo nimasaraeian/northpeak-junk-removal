@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="npGlow" x1="32" y1="8" x2="32" y2="66" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBB24A"/>
+      <stop offset="0.55" stop-color="#F0A033"/>
+      <stop offset="1" stop-color="#D0892B" stop-opacity="0.2"/>
+    </linearGradient>
+    <radialGradient id="npFlare" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 60) rotate(90) scale(22 8)">
+      <stop stop-color="#FBB24A" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#F0A033" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="6" y="6" width="20" height="58" rx="1.5" fill="#0C1B2E"/>
+  <rect x="38" y="6" width="20" height="58" rx="1.5" fill="#0C1B2E"/>
+  <rect x="26" y="8" width="12" height="52" fill="url(#npGlow)"/>
+  <ellipse cx="32" cy="60" rx="16" ry="7" fill="url(#npFlare)"/>
+</svg>

@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #0c1b2e;
+  --navy-deep: #08121f;
+  --navy-soft: #16324f;
+  --ink: #122033;
+  --cream: #f6f1e8;
+  --cream-deep: #ece4d6;
+  --paper: #fbf8f2;
+  --stone: #8a8378;
+  --stone-soft: #c8c0b3;
+  --gold: #f0a033;
+  --gold-deep: #d0892b;
+  --gold-glow: #fbb24a;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-soft: var(--navy-soft);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-cream-deep: var(--cream-deep);
+  --color-paper: var(--paper);
+  --color-stone: var(--stone);
+  --color-stone-soft: var(--stone-soft);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-glow: var(--gold-glow);
+  --font-sans: var(--font-plus-jakarta);
+  --font-serif: var(--font-instrument);
+  --shadow-card: 0 18px 50px -28px rgb(12 27 46 / 0.35);
+  --shadow-lift: 0 24px 60px -24px rgb(12 27 46 / 0.28);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgb(208 137 43 / 0.28);
+  color: var(--navy-deep);
+}
+
+.font-serif {
+  font-family: var(--font-instrument), ui-serif, Georgia, serif;
+}
+
+.display {
+  font-family: var(--font-instrument), ui-serif, Georgia, serif;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(138 131 120 / 0.45),
+    transparent
+  );
+}
+
+.portal-glow {
+  background:
+    radial-gradient(circle at 50% 38%, rgb(240 178 90 / 0.42), transparent 34%),
+    radial-gradient(circle at 50% 80%, rgb(208 137 43 / 0.16), transparent 42%),
+    linear-gradient(180deg, #10233a 0%, #08121f 100%);
+}
+
+.noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 80ms;
+}
+
+.reveal-delay-2 {
+  animation-delay: 160ms;
+}
+
+.reveal-delay-3 {
+  animation-delay: 240ms;
+}
+
+@keyframes load-settle {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.load-settle {
+  animation: load-settle 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.load-feather {
+  mask-image: radial-gradient(ellipse 92% 88% at 50% 58%, #000 72%, transparent 97%);
+}
+
+/* Home hero photo — full frame, truck kept in view on mobile */
+.hero-photo {
+  background-color: #0c1b2e;
+  background-image: url("/brand/hero-mobile.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 20%;
+}
+
+@media (min-width: 1024px) {
+  .hero-photo {
+    background-image: url("/brand/hero-desktop.jpg");
+    background-position: 58% center;
+  }
+}
+
+/* Title light — warm beam sweeps through cream letterforms */
+@keyframes hero-title-light {
+  0% {
+    background-position: 140% 50%;
+  }
+  100% {
+    background-position: -40% 50%;
+  }
+}
+
+.hero-title {
+  position: relative;
+  display: inline-block;
+  color: #f6f1e8;
+  text-shadow: 0 12px 32px rgb(8 18 31 / 0.5);
+}
+
+.hero-title::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -6% -8%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    rgb(255 255 255 / 0.12) 45%,
+    rgb(255 230 180 / 0.7) 48.5%,
+    rgb(251 178 74 / 1) 50.5%,
+    rgb(255 255 255 / 0.55) 52.5%,
+    transparent 58%,
+    transparent 100%
+  );
+  background-size: 180% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+  animation: hero-title-light 2.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .reveal-delay-1,
+  .reveal-delay-2,
+  .reveal-delay-3,
+  .load-settle {
+    animation: none;
+  }
+
+  .hero-title::after {
+    animation: none;
+    opacity: 0.45;
+    background-position: 45% 50%;
+  }
+}
