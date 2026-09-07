@@ -50,7 +50,7 @@ export function Hero() {
           alt="NorthPeak crew loading a cab-over truck against the North Shore mountains"
           fill
           priority
-          quality={92}
+          quality={85}
           sizes="100vw"
           className="hidden object-cover object-[58%_center] lg:block"
         />
@@ -59,7 +59,7 @@ export function Hero() {
           alt=""
           fill
           priority
-          quality={92}
+          quality={85}
           sizes="100vw"
           className="object-cover object-[center_20%] lg:hidden"
           aria-hidden
