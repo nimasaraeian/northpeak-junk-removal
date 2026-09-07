@@ -67,44 +67,17 @@ export function TruckVolumePad({
         role="img"
         aria-label="NorthPeak truck. Drag sideways to rotate."
       >
-        {truckFrames.map((src, index) => {
-          const active = index === frame && !(isRear && level.fillSrc);
-          return (
-            <Image
-              key={src}
-              src={src}
-              alt=""
-              fill
-              unoptimized
-              sizes="(min-width: 768px) 55vw, 100vw"
-              priority={index === truckRearFrameIndex}
-              className={cx(
-                "object-contain object-center transition-opacity duration-150",
-                active ? "opacity-100" : "opacity-0",
-              )}
-              draggable={false}
-            />
-          );
-        })}
-        {level.fillSrc
-          ? volumeLevels
-              .filter((item) => item.fillSrc)
-              .map((item) => (
-                <Image
-                  key={item.id}
-                  src={item.fillSrc!}
-                  alt=""
-                  fill
-                  unoptimized
-                  sizes="(min-width: 768px) 55vw, 100vw"
-                  className={cx(
-                    "object-contain object-center transition-opacity duration-300",
-                    isRear && item.id === level.id ? "opacity-100" : "opacity-0",
-                  )}
-                  draggable={false}
-                />
-              ))
-          : null}
+        <Image
+          key={displaySrc}
+          src={displaySrc}
+          alt=""
+          fill
+          unoptimized
+          sizes="(min-width: 768px) 55vw, 100vw"
+          priority
+          className="object-contain object-center transition-opacity duration-200"
+          draggable={false}
+        />
 
         <div
           className="pointer-events-none absolute inset-0 transition-opacity duration-700"

@@ -1,7 +1,7 @@
 export const truckFrames = [
-  "/truck/cream-00b.png",
+  "/truck/cream-00b.jpg",
   "/truck/cream-01.png",
-  "/truck/cream-02b.png",
+  "/truck/cream-02b.jpg",
   "/truck/cream-03b.png",
   "/truck/cream-04.png",
   "/truck/cream-05.png",
@@ -47,7 +47,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 50,
     cubicFeet: 110,
     visitLabel: "Standard visit",
-    fillSrc: "/truck/cream-fill-50.png?v=1",
+    fillSrc: "/truck/cream-fill-50.jpg?v=2",
   },
   {
     id: "garage",
@@ -56,7 +56,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 75,
     cubicFeet: 200,
     visitLabel: "Full crew visit",
-    fillSrc: "/truck/cream-fill-75.png?v=1",
+    fillSrc: "/truck/cream-fill-75.jpg?v=2",
   },
   {
     id: "home",

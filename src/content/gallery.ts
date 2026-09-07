@@ -15,8 +15,8 @@ export const galleryJobs: GalleryJob[] = [
     id: "lynn-valley-garage",
     service: "Garage Cleanout",
     location: "Lynn Valley",
-    beforeSrc: "/gallery/garage-before.png",
-    afterSrc: "/gallery/garage-after.png",
+    beforeSrc: "/gallery/garage-before.jpg",
+    afterSrc: "/gallery/garage-after.jpg",
     beforeAlt:
       "Cluttered Lynn Valley garage packed with stored projects before NorthPeak cleanout",
     afterAlt:
@@ -28,8 +28,8 @@ export const galleryJobs: GalleryJob[] = [
     id: "downtown-office",
     service: "Commercial Cleanout",
     location: "Downtown Vancouver",
-    beforeSrc: "/gallery/office-before.png",
-    afterSrc: "/gallery/office-after.png",
+    beforeSrc: "/gallery/office-before.jpg",
+    afterSrc: "/gallery/office-after.jpg",
     beforeAlt:
       "Cluttered Vancouver office filled with old computers, cables, and boxes before NorthPeak commercial junk removal",
     afterAlt:
