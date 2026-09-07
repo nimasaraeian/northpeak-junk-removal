@@ -27,10 +27,10 @@ export const volumeLevels: VolumeLevel[] = [
   {
     id: "empty",
     label: "Empty",
-    blurb: "Nothing staged yet",
+    blurb: "Hydraulic dump — bed raised",
     fill: 0,
     cubicFeet: 0,
-    visitLabel: "Drag to inspect the bay",
+    visitLabel: "Bed tilted — ready to unload",
     fillSrc: null,
   },
   {
@@ -40,7 +40,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 25,
     cubicFeet: 40,
     visitLabel: "Short visit",
-    fillSrc: "/truck/junk-fill-25.jpg?v=1",
+    fillSrc: "/truck/junk-fill-25.jpg?v=2",
   },
   {
     id: "room",
@@ -49,7 +49,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 50,
     cubicFeet: 110,
     visitLabel: "Standard visit",
-    fillSrc: "/truck/junk-fill-50.jpg?v=1",
+    fillSrc: "/truck/junk-fill-50.jpg?v=2",
   },
   {
     id: "garage",
@@ -58,7 +58,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 75,
     cubicFeet: 200,
     visitLabel: "Full crew visit",
-    fillSrc: "/truck/junk-fill-75.jpg?v=1",
+    fillSrc: "/truck/junk-fill-75.jpg?v=2",
   },
   {
     id: "home",
@@ -67,7 +67,7 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 100,
     cubicFeet: 300,
     visitLabel: "Extended visit",
-    fillSrc: "/truck/junk-fill-100.jpg?v=1",
+    fillSrc: "/truck/junk-fill-100.jpg?v=2",
   },
 ];
 
