@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
+import { JunkTruckVisual } from "@/components/estimate/JunkTruckVisual";
 import {
-  truckFrames,
+  truckFrameCount,
   truckRearFrameIndex,
   volumeLevels,
   summarizeVolume,
@@ -26,20 +26,15 @@ export function TruckVolumePad({
     startFrame: 0,
   });
 
-  const isRear = frame === truckRearFrameIndex;
-  const displaySrc =
-    isRear && level.fillSrc ? level.fillSrc : truckFrames[frame] ?? truckFrames[0];
-
   function scrub(deltaX: number, startFrame: number) {
     const steps = Math.round(deltaX / 28);
     const next =
-      (((startFrame - steps) % truckFrames.length) + truckFrames.length) % truckFrames.length;
+      (((startFrame - steps) % truckFrameCount) + truckFrameCount) % truckFrameCount;
     setFrame(next);
   }
 
   function selectLevel(id: string) {
     onChange(id);
-    // Empty and filled levels both show the open rear bay
     setFrame(truckRearFrameIndex);
   }
 
@@ -49,7 +44,7 @@ export function TruckVolumePad({
       className="overflow-hidden rounded-[1.35rem] border border-navy/8 bg-navy-deep md:grid md:grid-cols-[minmax(0,1.3fr)_minmax(15rem,0.9fr)] md:rounded-[1.6rem]"
     >
       <div
-        className="relative flex aspect-[16/10] touch-none select-none items-center justify-center overflow-hidden bg-[#050b14] p-3 sm:aspect-[16/9] sm:p-4 md:aspect-auto md:min-h-[28rem] md:p-8"
+        className="relative flex aspect-[16/10] touch-none select-none items-center justify-center overflow-hidden bg-[#050b14] p-2 sm:aspect-[16/9] sm:p-3 md:aspect-auto md:min-h-[28rem] md:p-6"
         onPointerDown={(event) => {
           drag.current = { active: true, startX: event.clientX, startFrame: frame };
           event.currentTarget.setPointerCapture(event.pointerId);
@@ -65,19 +60,9 @@ export function TruckVolumePad({
           drag.current.active = false;
         }}
         role="img"
-        aria-label="NorthPeak truck. Drag sideways to rotate."
+        aria-label="NorthPeak cab-over junk truck. Drag sideways to rotate."
       >
-        <Image
-          key={displaySrc}
-          src={displaySrc}
-          alt=""
-          fill
-          unoptimized
-          sizes="(min-width: 768px) 55vw, 100vw"
-          priority
-          className="object-contain object-center transition-opacity duration-200"
-          draggable={false}
-        />
+        <JunkTruckVisual frame={frame} frameCount={truckFrameCount} fill={summary.fill} />
 
         <div
           className="pointer-events-none absolute inset-0 transition-opacity duration-700"
@@ -97,6 +82,12 @@ export function TruckVolumePad({
           </p>
         </div>
 
+        {summary.fill > 0 ? (
+          <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[0.58rem] font-semibold tracking-[0.14em] text-cream/80 uppercase backdrop-blur-sm sm:text-[0.65rem]">
+            Hydraulic lift · ~{summary.cubicFeet} cu ft
+          </p>
+        ) : null}
+
         <div className="absolute inset-x-0 bottom-0 h-1 bg-black/35 md:h-1.5">
           <div
             className="h-full bg-gold-glow transition-[width] duration-500"
@@ -106,7 +97,6 @@ export function TruckVolumePad({
       </div>
 
       <aside className="flex flex-col border-t border-white/8 bg-[#0a1624] text-cream md:border-t-0 md:border-l md:border-white/8">
-        {/* Mobile summary — one tight strip */}
         <div className="flex items-start justify-between gap-3 px-3 py-3 md:hidden">
           <div className="min-w-0">
             <p className="text-[0.62rem] font-semibold tracking-[0.16em] text-gold-glow uppercase">
@@ -129,7 +119,6 @@ export function TruckVolumePad({
           ) : null}
         </div>
 
-        {/* Mobile: compact fill pills — truck stays in view */}
         <div className="grid grid-cols-5 gap-1.5 px-3 pb-3 md:hidden">
           {volumeLevels.map((item) => {
             const selected = item.id === level.id;
@@ -171,7 +160,6 @@ export function TruckVolumePad({
           })}
         </div>
 
-        {/* Desktop sidebar */}
         <div className="hidden border-b border-white/8 px-4 py-4 md:block sm:px-5">
           <p className="eyebrow text-gold-glow">Truck volume</p>
           <p className="mt-2 font-serif text-2xl leading-tight sm:text-[1.85rem]">
@@ -219,7 +207,8 @@ export function TruckVolumePad({
       </aside>
 
       <p className="sr-only">
-        Current view image: {displaySrc}. Rotate by dragging. Select a volume level to fill the bay.
+        Cab-over junk removal truck at view {frame + 1} of {truckFrameCount}. Load at{" "}
+        {summary.fill}% capacity. Drag to rotate. Select a volume level to fill the dump box.
       </p>
     </div>
   );

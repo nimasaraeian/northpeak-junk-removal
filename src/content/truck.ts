@@ -1,15 +1,8 @@
-export const truckFrames = [
-  "/truck/cream-00b.jpg",
-  "/truck/cream-01.png",
-  "/truck/cream-02b.jpg",
-  "/truck/cream-03b.png",
-  "/truck/cream-04.png",
-  "/truck/cream-05.png",
-  "/truck/cream-06.png",
-] as const;
+/** Number of drag-to-rotate steps (cab-over junk truck views). */
+export const truckFrameCount = 7;
 
-/** Frame index that shows the open rear bay (fill overlays apply here). */
-export const truckRearFrameIndex = 3;
+/** Frame index for rear / tailgate-open load inspection. */
+export const truckRearFrameIndex = 5;
 
 export interface VolumeLevel {
   id: string;
@@ -18,7 +11,6 @@ export interface VolumeLevel {
   fill: number;
   cubicFeet: number;
   visitLabel: string;
-  fillSrc: string | null;
 }
 
 export const volumeLevels: VolumeLevel[] = [
@@ -29,7 +21,6 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 0,
     cubicFeet: 0,
     visitLabel: "Drag to inspect the bay",
-    fillSrc: null,
   },
   {
     id: "few",
@@ -38,7 +29,6 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 25,
     cubicFeet: 40,
     visitLabel: "Short visit",
-    fillSrc: "/truck/cream-fill-1.png",
   },
   {
     id: "room",
@@ -47,7 +37,6 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 50,
     cubicFeet: 110,
     visitLabel: "Standard visit",
-    fillSrc: "/truck/cream-fill-50.jpg?v=2",
   },
   {
     id: "garage",
@@ -56,7 +45,6 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 75,
     cubicFeet: 200,
     visitLabel: "Full crew visit",
-    fillSrc: "/truck/cream-fill-75.jpg?v=2",
   },
   {
     id: "home",
@@ -65,7 +53,6 @@ export const volumeLevels: VolumeLevel[] = [
     fill: 100,
     cubicFeet: 300,
     visitLabel: "Extended visit",
-    fillSrc: "/truck/cream-fill-4.png",
   },
 ];
 

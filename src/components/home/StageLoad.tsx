@@ -17,7 +17,7 @@ export function StageLoad() {
       className="bg-cream py-12 sm:py-20 md:py-28"
       eyebrow="The load bay"
       title="Fill the truck"
-      description="Drag to rotate. Tap a fill level — truck and controls stay together."
+      description="Drag to rotate the cab-over truck. Tap a fill level — hydraulic dump box and controls stay together."
     >
       <TruckVolumePad levelId={levelId} onChange={setLevelId} />
       <p className="mt-4 text-sm text-stone">
