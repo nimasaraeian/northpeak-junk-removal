@@ -71,8 +71,8 @@ export function TruckVolumePad({
           src={displaySrc}
           alt=""
           fill
+          unoptimized
           sizes="(min-width: 768px) 55vw, 100vw"
-          quality={80}
           fetchPriority="low"
           className="object-contain object-center transition-opacity duration-200"
           draggable={false}
