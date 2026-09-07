@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
-import { JunkTruckVisual } from "@/components/estimate/JunkTruckVisual";
 import {
-  truckFrameCount,
+  truckFrames,
   truckRearFrameIndex,
   volumeLevels,
   summarizeVolume,
@@ -26,10 +26,14 @@ export function TruckVolumePad({
     startFrame: 0,
   });
 
+  const isRear = frame === truckRearFrameIndex;
+  const displaySrc =
+    isRear && level.fillSrc ? level.fillSrc : truckFrames[frame] ?? truckFrames[0];
+
   function scrub(deltaX: number, startFrame: number) {
     const steps = Math.round(deltaX / 28);
     const next =
-      (((startFrame - steps) % truckFrameCount) + truckFrameCount) % truckFrameCount;
+      (((startFrame - steps) % truckFrames.length) + truckFrames.length) % truckFrames.length;
     setFrame(next);
   }
 
@@ -44,7 +48,7 @@ export function TruckVolumePad({
       className="overflow-hidden rounded-[1.35rem] border border-navy/8 bg-navy-deep md:grid md:grid-cols-[minmax(0,1.3fr)_minmax(15rem,0.9fr)] md:rounded-[1.6rem]"
     >
       <div
-        className="relative flex aspect-[16/10] touch-none select-none items-center justify-center overflow-hidden bg-[#050b14] p-2 sm:aspect-[16/9] sm:p-3 md:aspect-auto md:min-h-[28rem] md:p-6"
+        className="relative flex aspect-[16/10] touch-none select-none items-center justify-center overflow-hidden bg-[#050b14] p-3 sm:aspect-[16/9] sm:p-4 md:aspect-auto md:min-h-[28rem] md:p-8"
         onPointerDown={(event) => {
           drag.current = { active: true, startX: event.clientX, startFrame: frame };
           event.currentTarget.setPointerCapture(event.pointerId);
@@ -60,9 +64,19 @@ export function TruckVolumePad({
           drag.current.active = false;
         }}
         role="img"
-        aria-label="NorthPeak cab-over junk truck. Drag sideways to rotate."
+        aria-label="NorthPeak junk removal truck. Drag sideways to rotate."
       >
-        <JunkTruckVisual frame={frame} frameCount={truckFrameCount} fill={summary.fill} />
+        <Image
+          key={displaySrc}
+          src={displaySrc}
+          alt=""
+          fill
+          unoptimized
+          sizes="(min-width: 768px) 55vw, 100vw"
+          priority
+          className="object-contain object-center transition-opacity duration-200"
+          draggable={false}
+        />
 
         <div
           className="pointer-events-none absolute inset-0 transition-opacity duration-700"
@@ -81,12 +95,6 @@ export function TruckVolumePad({
             {summary.fill}% full
           </p>
         </div>
-
-        {summary.fill > 0 ? (
-          <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[0.58rem] font-semibold tracking-[0.14em] text-cream/80 uppercase backdrop-blur-sm sm:text-[0.65rem]">
-            Hydraulic lift · ~{summary.cubicFeet} cu ft
-          </p>
-        ) : null}
 
         <div className="absolute inset-x-0 bottom-0 h-1 bg-black/35 md:h-1.5">
           <div
@@ -207,8 +215,8 @@ export function TruckVolumePad({
       </aside>
 
       <p className="sr-only">
-        Cab-over junk removal truck at view {frame + 1} of {truckFrameCount}. Load at{" "}
-        {summary.fill}% capacity. Drag to rotate. Select a volume level to fill the dump box.
+        Current view: {displaySrc}. Drag to rotate the cab-over junk truck. Select a fill level to
+        load the dump box.
       </p>
     </div>
   );
