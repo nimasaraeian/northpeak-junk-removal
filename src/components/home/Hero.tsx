@@ -81,7 +81,7 @@ export function Hero() {
           }}
         />
 
-        {/* Mobile — headline sits in open sky, above mountains */}
+        {/* Mobile — headline + CTAs in sky area, above truck */}
         <div className="absolute inset-x-0 top-[5rem] z-[2] sm:top-[5.5rem] lg:hidden">
           <Container>
             <div className="reveal max-w-[17.5rem] sm:max-w-xs">
@@ -93,25 +93,19 @@ export function Hero() {
                 <br />
                 A Better Tomorrow.
               </h1>
-            </div>
-          </Container>
-        </div>
-
-        {/* Mobile — CTAs bottom-left, clear of crew */}
-        <div className="absolute inset-x-0 bottom-[6.75rem] z-[2] sm:bottom-28 lg:hidden">
-          <Container>
-            <div className="flex w-[10.75rem] flex-col gap-2 sm:w-[11.5rem]">
-              <Button href="/estimate" size="lg" className="w-full px-4 text-sm">
-                Get My Estimate →
-              </Button>
-              <Button
-                href="#service-area"
-                variant="secondary"
-                size="lg"
-                className="w-full px-4 text-sm"
-              >
-                Check Service Area
-              </Button>
+              <div className="mt-4 flex w-[10.75rem] flex-col gap-2 sm:mt-5 sm:w-[11.5rem]">
+                <Button href="/estimate" size="lg" className="w-full px-4 text-sm">
+                  Get My Estimate →
+                </Button>
+                <Button
+                  href="#service-area"
+                  variant="secondary"
+                  size="lg"
+                  className="w-full px-4 text-sm"
+                >
+                  Check Service Area
+                </Button>
+              </div>
             </div>
           </Container>
         </div>
