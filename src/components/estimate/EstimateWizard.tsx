@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { featuredServices, getService, services } from "@/content/services";
 import { submitEstimate, type EstimateActionState } from "@/lib/actions/estimate";
 import { Button } from "@/components/ui/Button";
@@ -37,13 +37,20 @@ export function EstimateWizard({
     return (
       <div className="rounded-[1.8rem] border border-navy/8 bg-paper p-8 text-center shadow-[var(--shadow-card)]">
         <p className="eyebrow text-gold-deep">Request received</p>
-        <h2 className="display mt-4 text-4xl text-navy">We have what we need.</h2>
-        <p className="mx-auto mt-4 max-w-lg text-stone">
-          {state.message} {selectedService ? `${selectedService.name} in ${postalCode}.` : null}{" "}
-          {photos.length > 0
-            ? `${photos.length} photo${photos.length === 1 ? "" : "s"} stayed on this device and will upload with the next phase.`
-            : "You can add photos on the next request once storage is connected."}
-        </p>
+        <h2 className="display mt-4 text-4xl text-navy">
+          Thanks{state.customerName ? `, ${state.customerName.split(" ")[0]}` : ""}.
+        </h2>
+        <p className="mx-auto mt-4 max-w-lg text-stone">{state.message}</p>
+        {state.requestId ? (
+          <p className="mt-4 text-sm font-semibold text-navy">
+            Reference: <span className="text-gold-deep">{state.requestId}</span>
+          </p>
+        ) : null}
+        {selectedService ? (
+          <p className="mx-auto mt-3 max-w-lg text-sm text-stone">
+            {selectedService.name} · {postalCode}
+          </p>
+        ) : null}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button href="/">Back home</Button>
           <Button href="/contact" variant="ghost">
@@ -163,14 +170,27 @@ export function EstimateWizard({
       ) : null}
 
       {step === 3 ? (
-        <form action={action} className="grid gap-4">
+        <form
+          encType="multipart/form-data"
+          className="grid gap-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (pending) return;
+
+            const formData = new FormData(event.currentTarget);
+            photos.forEach((photo) => formData.append("photos", photo.file));
+
+            startTransition(() => {
+              action(formData);
+            });
+          }}
+        >
           <h2 className="display text-3xl text-navy">Where should we send the range?</h2>
           <input type="hidden" name="postalCode" value={postalCode} />
           <input type="hidden" name="serviceSlug" value={serviceSlug} />
           <input type="hidden" name="volume" value={volume} />
           <input type="hidden" name="loadManifest" value={JSON.stringify(load.manifest)} />
           <input type="hidden" name="accessNotes" value={accessNotes} />
-          <input type="hidden" name="photoCount" value={String(photos.length)} />
           <Field label="Name" name="name" autoComplete="name" required />
           <Field label="Email" name="email" type="email" autoComplete="email" required />
           <Field label="Phone" name="phone" type="tel" autoComplete="tel" required />
@@ -208,7 +228,7 @@ export function EstimateWizard({
               {pending ? "Sending..." : "Request Estimate"}
             </Button>
           </div>
-          {state.message ? (
+          {state.message && !state.ok ? (
             <p className="text-sm text-gold-deep">{state.message}</p>
           ) : null}
           <p className="text-xs leading-5 text-stone">

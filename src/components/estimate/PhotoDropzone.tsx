@@ -1,16 +1,19 @@
 "use client";
 
-import { useId, useRef } from "react";
+import { useId, useRef, useState } from "react";
+import {
+  ALLOWED_PHOTO_MIMES,
+  MAX_PHOTO_BYTES,
+  MAX_PHOTO_FILES,
+} from "@/lib/estimate/photos";
 
 export interface LocalPhoto {
   id: string;
+  file: File;
   name: string;
   size: number;
   previewUrl: string;
 }
-
-const MAX_FILES = 8;
-const MAX_BYTES = 8 * 1024 * 1024;
 
 export function PhotoDropzone({
   photos,
@@ -21,22 +24,40 @@ export function PhotoDropzone({
 }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   function addFiles(fileList: FileList | null) {
     if (!fileList) return;
 
     const next = [...photos];
+    const rejections: string[] = [];
+
     for (const file of Array.from(fileList)) {
-      if (next.length >= MAX_FILES) break;
-      if (!file.type.startsWith("image/")) continue;
-      if (file.size > MAX_BYTES) continue;
+      if (next.length >= MAX_PHOTO_FILES) {
+        rejections.push(`You can add up to ${MAX_PHOTO_FILES} photos.`);
+        break;
+      }
+
+      if (!ALLOWED_PHOTO_MIMES.has(file.type)) {
+        rejections.push(`"${file.name}" is not supported. Use JPG, PNG, or WebP.`);
+        continue;
+      }
+
+      if (file.size > MAX_PHOTO_BYTES) {
+        rejections.push(`"${file.name}" is larger than 8 MB.`);
+        continue;
+      }
+
       next.push({
         id: `${file.name}-${file.size}-${file.lastModified}`,
+        file,
         name: file.name,
         size: file.size,
         previewUrl: URL.createObjectURL(file),
       });
     }
+
+    setNotice(rejections.length > 0 ? rejections.join(" ") : null);
     onChange(next);
   }
 
@@ -57,21 +78,22 @@ export function PhotoDropzone({
         }}
         className="block cursor-pointer rounded-2xl border border-dashed border-navy/15 bg-cream/70 px-4 py-6 text-sm text-stone transition hover:border-gold/50"
       >
-        <p className="font-semibold text-navy">Photos of the space</p>
+        <p className="font-semibold text-navy">Add photos</p>
         <p className="mt-2">
-          Drop up to {MAX_FILES} images here, or choose files. They stay on this
-          device for now. In the next phase they upload to a private bucket and
-          tighten the estimate range.
+          Photos help us understand the job and provide a more accurate estimate.
+        </p>
+        <p className="mt-2 text-xs leading-5 text-stone">
+          Add up to {MAX_PHOTO_FILES} photos of the items or space you want cleared.
         </p>
         <p className="mt-3 text-xs tracking-wide text-gold-deep uppercase">
-          {photos.length} / {MAX_FILES} selected · JPG or PNG · 8MB max
+          {photos.length} / {MAX_PHOTO_FILES} selected · JPG, PNG, or WebP · 8MB max
         </p>
       </label>
       <input
         id={inputId}
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         multiple
         className="sr-only"
         onChange={(event) => {
@@ -79,6 +101,7 @@ export function PhotoDropzone({
           event.target.value = "";
         }}
       />
+      {notice ? <p className="mt-3 text-sm text-gold-deep">{notice}</p> : null}
       {photos.length > 0 ? (
         <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {photos.map((photo) => (
