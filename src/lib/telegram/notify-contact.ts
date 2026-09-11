@@ -75,3 +75,28 @@ export async function notifyContact({
     configMissing: false,
   };
 }
+
+export interface NotifyContactPhotoInput {
+  requestId: string;
+  photo: File;
+  caption: string;
+  fetchImpl?: TelegramFetch;
+}
+
+export async function notifyContactPhoto({
+  requestId,
+  photo,
+  caption,
+  fetchImpl,
+}: NotifyContactPhotoInput): Promise<boolean> {
+  const configResult = readTelegramConfig();
+
+  if (!configResult.ok) {
+    console.error(`[telegram][${requestId}] configuration missing`);
+    return false;
+  }
+
+  const client = new TelegramClient(configResult.config, fetchImpl);
+  const response = await client.sendPhoto(photo, caption, requestId);
+  return response.ok;
+}

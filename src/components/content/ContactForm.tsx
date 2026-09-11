@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/Button";
 
 const initialState: ContactActionState = { ok: false, message: "" };
 
+async function readJsonResponse<T>(response: Response): Promise<T | null> {
+  try {
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function ContactForm() {
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
   const [state, setState] = useState<ContactActionState>(initialState);
@@ -33,33 +41,85 @@ export function ContactForm() {
 
   return (
     <form
-      encType="multipart/form-data"
       className="grid gap-4"
       onSubmit={async (event) => {
         event.preventDefault();
         if (pending) return;
 
-        const formData = new FormData(event.currentTarget);
-        for (const photo of photos) {
-          formData.append("photos", photo.file);
-        }
+        const form = event.currentTarget;
+        const formData = new FormData(form);
 
         setPending(true);
         setState({ ok: false, message: "" });
 
         try {
-          const response = await fetch("/api/contact", {
+          const leadResponse = await fetch("/api/contact", {
             method: "POST",
-            body: formData,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: String(formData.get("name") ?? ""),
+              email: String(formData.get("email") ?? ""),
+              phone: String(formData.get("phone") ?? ""),
+              message: String(formData.get("message") ?? ""),
+              photoCount: photos.length,
+            }),
           });
 
-          const payload = (await response.json()) as ContactActionState;
+          const leadPayload = await readJsonResponse<ContactActionState>(leadResponse);
 
-          if (!response.ok || !payload.message) {
-            throw new Error("Contact request failed");
+          if (!leadPayload?.message) {
+            throw new Error("Invalid contact response");
           }
 
-          setState(payload);
+          if (!leadResponse.ok || !leadPayload.ok || !leadPayload.requestId) {
+            setState(leadPayload);
+            return;
+          }
+
+          let failedPhotos = 0;
+
+          for (const [index, photo] of photos.entries()) {
+            const photoForm = new FormData();
+            photoForm.append("requestId", leadPayload.requestId);
+            photoForm.append("photo", photo.file);
+            photoForm.append("index", String(index + 1));
+            photoForm.append("total", String(photos.length));
+
+            const photoResponse = await fetch("/api/contact/photos", {
+              method: "POST",
+              body: photoForm,
+            });
+
+            const photoPayload = await readJsonResponse<{ ok: boolean }>(photoResponse);
+            if (!photoResponse.ok || !photoPayload?.ok) {
+              failedPhotos += 1;
+            }
+          }
+
+          if (failedPhotos > 0) {
+            setState({
+              ok: true,
+              requestId: leadPayload.requestId,
+              photosDelivered: false,
+              message:
+                "We received your message. Some photos may not have uploaded successfully, but our team has your contact details and will follow up.",
+            });
+            return;
+          }
+
+          const photoLine =
+            photos.length > 0
+              ? `${photos.length} photo${photos.length === 1 ? "" : "s"} attached.`
+              : "";
+
+          setState({
+            ok: true,
+            requestId: leadPayload.requestId,
+            photosDelivered: photos.length === 0 || failedPhotos === 0,
+            message: ["Message received. We will reply within one business day.", photoLine]
+              .filter(Boolean)
+              .join(" "),
+          });
         } catch {
           setState({
             ok: false,
@@ -109,15 +169,13 @@ export function ContactForm() {
         />
       </label>
 
-      <div>
-        <PhotoDropzone
-          photos={photos}
-          onChange={setPhotos}
-          title="Add photos (optional)"
-          description="Share photos of the space, items, or access details so we can understand your question faster."
-          hint="Up to 8 photos · JPG, PNG, or WebP"
-        />
-      </div>
+      <PhotoDropzone
+        photos={photos}
+        onChange={setPhotos}
+        title="Add photos (optional)"
+        description="Share photos of the space, items, or access details so we can understand your question faster."
+        hint="Up to 8 photos · JPG, PNG, or WebP"
+      />
 
       <Button type="submit" disabled={pending}>
         {pending ? "Sending..." : "Send Message"}

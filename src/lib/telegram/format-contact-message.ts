@@ -58,6 +58,14 @@ export function formatContactTelegramMessage(context: ContactNotificationContext
   return lines.join("\n");
 }
 
-export function formatContactPhotoCaption(requestId: string): string {
-  return `📸 Contact photos · ${escapeTelegramHtml(requestId)}`;
+export function formatContactPhotoCaption(
+  requestId: string,
+  index = 1,
+  total = 1,
+): string {
+  const count =
+    total > 1
+      ? `${index}/${total} · `
+      : "";
+  return `📸 Contact photo ${count}${escapeTelegramHtml(requestId)}`;
 }

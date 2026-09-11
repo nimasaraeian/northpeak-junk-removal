@@ -8,7 +8,7 @@ export const ALLOWED_PHOTO_MIMES = new Set([
   "image/webp",
 ]);
 
-function normalizeUpload(entry: FormDataEntryValue): File | null {
+export function photoFromFormDataEntry(entry: FormDataEntryValue | null): File | null {
   if (!(entry instanceof Blob) || entry.size === 0) return null;
   if (entry instanceof File) return entry;
   const blob: Blob = entry;
@@ -20,8 +20,28 @@ function normalizeUpload(entry: FormDataEntryValue): File | null {
 export function extractPhotoFiles(formData: FormData): File[] {
   return formData
     .getAll("photos")
-    .map(normalizeUpload)
+    .map(photoFromFormDataEntry)
     .filter((file): file is File => file !== null);
+}
+
+export function validatePhotoFile(
+  file: File,
+): { ok: true; file: File } | { ok: false; message: string } {
+  if (!ALLOWED_PHOTO_MIMES.has(file.type)) {
+    return {
+      ok: false,
+      message: `"${file.name}" is not a supported image type. Use JPG, PNG, or WebP.`,
+    };
+  }
+
+  if (file.size > MAX_PHOTO_BYTES) {
+    return {
+      ok: false,
+      message: `"${file.name}" is too large. Try a smaller image or fewer photos at once.`,
+    };
+  }
+
+  return { ok: true, file };
 }
 
 export function validatePhotos(
@@ -35,19 +55,8 @@ export function validatePhotos(
   }
 
   for (const file of files) {
-    if (file.size > MAX_PHOTO_BYTES) {
-      return {
-        ok: false,
-        message: `"${file.name}" is too large. Try a smaller image or fewer photos at once.`,
-      };
-    }
-
-    if (!ALLOWED_PHOTO_MIMES.has(file.type)) {
-      return {
-        ok: false,
-        message: `"${file.name}" is not a supported image type. Use JPG, PNG, or WebP.`,
-      };
-    }
+    const validation = validatePhotoFile(file);
+    if (!validation.ok) return validation;
   }
 
   return { ok: true, files };

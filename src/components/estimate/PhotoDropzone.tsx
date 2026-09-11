@@ -2,9 +2,8 @@
 
 import { useId, useRef, useState } from "react";
 import {
-  ALLOWED_PHOTO_MIMES,
-  MAX_PHOTO_BYTES,
   MAX_PHOTO_FILES,
+  validatePhotoFile,
 } from "@/lib/estimate/photos";
 
 export interface LocalPhoto {
@@ -13,6 +12,7 @@ export interface LocalPhoto {
   name: string;
   size: number;
   previewUrl: string;
+  valid: boolean;
 }
 
 function UploadIcon({ className }: { className?: string }) {
@@ -51,6 +51,33 @@ function UploadIcon({ className }: { className?: string }) {
   );
 }
 
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className={className}>
+      <path
+        d="M5 5l10 10M15 5L5 15"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className={className}>
+      <path
+        d="M5 10.5l3 3 7-7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function PhotoDropzone({
   photos,
   onChange,
@@ -81,22 +108,19 @@ export function PhotoDropzone({
         break;
       }
 
-      if (!ALLOWED_PHOTO_MIMES.has(file.type)) {
-        rejections.push(`"${file.name}" is not supported. Use JPG, PNG, or WebP.`);
-        continue;
-      }
-
-      if (file.size > MAX_PHOTO_BYTES) {
-        rejections.push(`"${file.name}" is too large. Try a smaller image.`);
+      const validation = validatePhotoFile(file);
+      if (!validation.ok) {
+        rejections.push(validation.message);
         continue;
       }
 
       next.push({
         id: `${file.name}-${file.size}-${file.lastModified}`,
-        file,
+        file: validation.file,
         name: file.name,
         size: file.size,
         previewUrl: URL.createObjectURL(file),
+        valid: true,
       });
     }
 
@@ -154,8 +178,7 @@ export function PhotoDropzone({
         </p>
 
         <p className="mt-3 text-xs leading-5 text-stone">
-          {hint ??
-            `Up to ${MAX_PHOTO_FILES} photos · JPG, PNG, or WebP`}
+          {hint ?? `Up to ${MAX_PHOTO_FILES} photos · JPG, PNG, or WebP`}
         </p>
 
         {photos.length > 0 ? (
@@ -183,19 +206,34 @@ export function PhotoDropzone({
       {photos.length > 0 ? (
         <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {photos.map((photo) => (
-            <li key={photo.id} className="relative overflow-hidden rounded-xl bg-navy shadow-sm">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.previewUrl}
-                alt={photo.name}
-                className="aspect-square w-full object-cover"
-              />
+            <li key={photo.id} className="relative overflow-visible">
+              <div className="relative overflow-hidden rounded-xl bg-navy shadow-sm ring-1 ring-navy/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.previewUrl}
+                  alt={photo.name}
+                  className="aspect-square w-full object-cover"
+                />
+
+                {photo.valid ? (
+                  <span
+                    className="absolute bottom-1.5 left-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm"
+                    title="Ready to send"
+                    aria-label="Photo ready to send"
+                  >
+                    <CheckIcon className="h-3.5 w-3.5" />
+                  </span>
+                ) : null}
+              </div>
+
               <button
                 type="button"
                 onClick={() => removePhoto(photo.id)}
-                className="absolute top-1.5 right-1.5 rounded-full bg-navy/85 px-2.5 py-1 text-[0.65rem] font-medium text-cream backdrop-blur-sm transition hover:bg-navy"
+                className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-navy text-cream shadow-md ring-2 ring-white transition hover:bg-gold-deep"
+                aria-label={`Remove ${photo.name}`}
+                title="Remove photo"
               >
-                Remove
+                <CloseIcon className="h-3.5 w-3.5" />
               </button>
             </li>
           ))}
