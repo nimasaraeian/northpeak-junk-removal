@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { NorthPeakAssistant } from "@/components/assistant/NorthPeakAssistant";
+import {
+  PageTransitionContent,
+  PageTransitionProvider,
+} from "@/components/motion/PageTransitionProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -10,6 +14,12 @@ import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  variable: "--font-hero-display",
   subsets: ["latin"],
   display: "swap",
 });
@@ -64,15 +74,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en-CA"
-      className={`${plusJakarta.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-paper text-ink">
         <JsonLd data={organizationSchema()} />
         <JsonLd data={localBusinessSchema()} />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <NorthPeakAssistant />
+        <PageTransitionProvider>
+          <Header />
+          <PageTransitionContent>
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </PageTransitionContent>
+          <NorthPeakAssistant />
+        </PageTransitionProvider>
       </body>
     </html>
   );

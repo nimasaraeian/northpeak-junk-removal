@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { TransitionLink } from "@/components/motion/TransitionLink";
 import { cx } from "@/lib/utils";
 
 const files = {
@@ -37,7 +39,7 @@ export function Logo({
   );
 
   return (
-    <Link
+    <TransitionLink
       href="/"
       aria-label="NorthPeak Junk Removal home"
       className={cx(
@@ -53,6 +55,6 @@ export function Logo({
           Junk Removal
         </span>
       ) : null}
-    </Link>
+    </TransitionLink>
   );
 }

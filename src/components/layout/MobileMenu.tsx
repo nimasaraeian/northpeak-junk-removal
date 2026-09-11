@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/motion/TransitionLink";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -29,14 +29,14 @@ export function MobileMenu() {
         <div className="absolute inset-x-0 top-full border-t border-navy/8 bg-paper">
           <Container className="flex flex-col gap-4 py-6">
             {navigation.map((item) => (
-              <Link
+              <TransitionLink
                 key={item.href}
                 href={item.href}
                 className="text-lg text-navy"
                 onClick={() => setOpen(false)}
               >
                 {item.label}
-              </Link>
+              </TransitionLink>
             ))}
             <Button href="/estimate" className="mt-2 w-full">
               Get Estimate
