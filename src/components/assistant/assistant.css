@@ -29,18 +29,6 @@
   }
 }
 
-@keyframes peak-assistant-bubble {
-  0%,
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  50% {
-    opacity: 0.94;
-    transform: translateX(-2px);
-  }
-}
-
 @keyframes peak-assistant-typing {
   0%,
   80%,
@@ -56,10 +44,6 @@
 
 .peak-assistant-launcher {
   animation: peak-assistant-float 5s ease-in-out infinite;
-}
-
-.peak-assistant-bubble {
-  animation: peak-assistant-bubble 3.8s ease-in-out infinite;
 }
 
 .peak-avatar-glow {
@@ -151,7 +135,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .peak-assistant-launcher,
-  .peak-assistant-bubble,
   .peak-avatar-glow,
   .peak-avatar-eye,
   .peak-sticker-eyelid,

@@ -5,22 +5,14 @@ import { cx } from "@/lib/utils";
 
 export function AssistantLauncher({
   open,
-  showGreeting,
   onToggle,
 }: {
   open: boolean;
-  showGreeting: boolean;
   onToggle: () => void;
 }) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[60] flex justify-end px-4 pb-[env(safe-area-inset-bottom)] sm:bottom-6 sm:px-6">
       <div className="pointer-events-auto relative">
-        {!open && showGreeting ? (
-          <span className="peak-assistant-bubble absolute right-[calc(100%+0.65rem)] bottom-3 hidden max-w-[13rem] rounded-2xl border border-[#888887]/25 bg-white px-3.5 py-2.5 text-xs leading-5 text-[#1A3041] shadow-[0_18px_40px_-20px_rgba(26,48,65,0.45)] sm:block">
-            <span className="font-semibold">Need help figuring out what you need removed?</span>
-          </span>
-        ) : null}
-
         <button
           type="button"
           onClick={onToggle}

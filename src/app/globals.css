@@ -191,59 +191,58 @@ h6 {
   }
 }
 
-/* Home hero photo — full frame, truck kept in view on mobile */
+/* Home hero — navy fallback while image loads */
 .hero-photo {
   background-color: #0c1b2e;
-  background-image: url("/brand/hero-mobile.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center 20%;
 }
 
-@media (min-width: 1024px) {
-  .hero-photo {
-    background-image: url("/brand/hero-desktop.jpg");
-    background-position: 58% center;
-  }
-}
-
-/* Title light — warm beam sweeps through cream letterforms */
-@keyframes hero-title-light {
-  0% {
-    background-position: 140% 50%;
-  }
+/* Hero headline — serif display with warm light sweep through letterforms */
+@keyframes hero-title-shimmer {
+  0%,
   100% {
-    background-position: -40% 50%;
+    background-position: 115% 50%;
+  }
+  50% {
+    background-position: -15% 50%;
   }
 }
 
 .hero-title {
-  position: relative;
-  display: inline-block;
-  color: #f6f1e8;
-  text-shadow: 0 12px 32px rgb(8 18 31 / 0.5);
+  font-family: var(--font-hero-display), "Iowan Old Style", "Palatino Linotype", ui-serif, Georgia,
+    serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
 }
 
-.hero-title::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: -6% -8%;
-  background: linear-gradient(
+.hero-title__line {
+  display: block;
+  background-image: linear-gradient(
     105deg,
-    transparent 0%,
-    transparent 40%,
-    rgb(255 255 255 / 0.12) 45%,
-    rgb(255 230 180 / 0.7) 48.5%,
-    rgb(251 178 74 / 1) 50.5%,
-    rgb(255 255 255 / 0.55) 52.5%,
-    transparent 58%,
-    transparent 100%
+    #ddd4c8 0%,
+    #f0ebe3 16%,
+    #faf7f2 32%,
+    #fffdf8 42%,
+    #ffe7b0 47%,
+    #fbb24a 50%,
+    #ffe7b0 53%,
+    #fffdf8 58%,
+    #faf7f2 68%,
+    #f0ebe3 84%,
+    #ddd4c8 100%
   );
-  background-size: 180% 100%;
-  background-repeat: no-repeat;
-  mix-blend-mode: soft-light;
-  animation: hero-title-light 2.8s linear infinite;
+  background-size: 260% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 24px rgb(8 18 31 / 0.42));
+  animation: hero-title-shimmer 5.5s ease-in-out infinite;
+}
+
+.hero-title__line:nth-child(2) {
+  animation-delay: 0.4s;
 }
 
 @keyframes guide-robot-blink {
@@ -329,10 +328,9 @@ h6 {
     animation: none;
   }
 
-  .hero-title::after {
+  .hero-title__line {
     animation: none;
-    opacity: 0.45;
-    background-position: 45% 50%;
+    background-position: 42% 50%;
   }
 
   .guide-robot-sticker,
@@ -340,7 +338,6 @@ h6 {
   .guide-robot-antenna,
   .guide-robot-bubble,
   .peak-assistant-launcher,
-  .peak-assistant-bubble,
   .peak-avatar-glow,
   .peak-avatar-eye,
   .peak-assistant-typing span {
@@ -379,18 +376,6 @@ h6 {
   }
 }
 
-@keyframes peak-assistant-bubble {
-  0%,
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  50% {
-    opacity: 0.94;
-    transform: translateX(-2px);
-  }
-}
-
 @keyframes peak-assistant-typing {
   0%,
   80%,
@@ -406,10 +391,6 @@ h6 {
 
 .peak-assistant-launcher {
   animation: peak-assistant-float 5s ease-in-out infinite;
-}
-
-.peak-assistant-bubble {
-  animation: peak-assistant-bubble 3.8s ease-in-out infinite;
 }
 
 .peak-avatar-glow {

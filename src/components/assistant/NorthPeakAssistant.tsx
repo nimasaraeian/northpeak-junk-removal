@@ -12,26 +12,11 @@ import type {
   AssistantChatMessage,
 } from "@/lib/assistant/types";
 
-const GREETING_KEY = "northpeak-assistant-greeting-dismissed";
-
-function readGreetingHidden() {
-  if (typeof window === "undefined") return true;
-  return window.sessionStorage.getItem(GREETING_KEY) === "1";
-}
-
 export function NorthPeakAssistant() {
   const [open, setOpen] = useState(false);
-  const [greetingHidden, setGreetingHidden] = useState(readGreetingHidden);
   const [messages, setMessages] = useState<AssistantChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
-
-  const dismissGreeting = useCallback(() => {
-    setGreetingHidden(true);
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem(GREETING_KEY, "1");
-    }
-  }, []);
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -67,7 +52,6 @@ export function NorthPeakAssistant() {
       setMessages(nextMessages);
       setDraft("");
       setPending(true);
-      dismissGreeting();
 
       if (source === "quick_action") {
         trackAssistantEvent("assistant_quick_action");
@@ -119,20 +103,18 @@ export function NorthPeakAssistant() {
         setPending(false);
       }
     },
-    [dismissGreeting, messages, pending],
+    [messages, pending],
   );
 
   return (
     <>
       <AssistantLauncher
         open={open}
-        showGreeting={!greetingHidden}
         onToggle={() => {
           setOpen((value) => {
             const next = !value;
             if (next) {
               trackAssistantEvent("assistant_open");
-              dismissGreeting();
             }
             return next;
           });
