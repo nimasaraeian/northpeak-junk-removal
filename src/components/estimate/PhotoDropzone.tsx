@@ -18,9 +18,15 @@ export interface LocalPhoto {
 export function PhotoDropzone({
   photos,
   onChange,
+  title = "Add photos",
+  description = "Photos help us understand the job and provide a more accurate estimate.",
+  hint,
 }: {
   photos: LocalPhoto[];
   onChange: (photos: LocalPhoto[]) => void;
+  title?: string;
+  description?: string;
+  hint?: string;
 }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,12 +84,11 @@ export function PhotoDropzone({
         }}
         className="block cursor-pointer rounded-2xl border border-dashed border-navy/15 bg-cream/70 px-4 py-6 text-sm text-stone transition hover:border-gold/50"
       >
-        <p className="font-semibold text-navy">Add photos</p>
-        <p className="mt-2">
-          Photos help us understand the job and provide a more accurate estimate.
-        </p>
+        <p className="font-semibold text-navy">{title}</p>
+        <p className="mt-2">{description}</p>
         <p className="mt-2 text-xs leading-5 text-stone">
-          Add up to {MAX_PHOTO_FILES} photos of the items or space you want cleared.
+          {hint ??
+            `Add up to ${MAX_PHOTO_FILES} photos of the items or space you want cleared.`}
         </p>
         <p className="mt-3 text-xs tracking-wide text-gold-deep uppercase">
           {photos.length} / {MAX_PHOTO_FILES} selected · JPG, PNG, or WebP · 8MB max

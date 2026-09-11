@@ -28,17 +28,12 @@ export function AssistantLauncher({
           aria-haspopup="dialog"
           aria-controls={open ? "northpeak-assistant-panel" : undefined}
           className={cx(
-            "peak-assistant-launcher group relative flex h-16 w-16 items-center justify-center rounded-[1.35rem] sm:h-[4.5rem] sm:w-[4.5rem]",
-            "bg-[#EDEBE8] shadow-[0_20px_44px_-18px_rgba(26,48,65,0.55)] ring-2 ring-[#D6762B]/35 transition",
-            "hover:-translate-y-0.5 hover:ring-[#D6762B]/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D6762B]",
-            open && "ring-[#D6762B]/70",
+            "peak-assistant-launcher group relative flex h-[4.25rem] w-[4.25rem] items-center justify-center sm:h-[4.75rem] sm:w-[4.75rem]",
+            "rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#D6762B]",
+            "hover:-translate-y-0.5",
           )}
         >
-          <span
-            className="pointer-events-none absolute inset-0 rounded-[1.35rem] bg-[radial-gradient(circle_at_50%_35%,rgb(214_118_43_/_0.14),transparent_62%)]"
-            aria-hidden
-          />
-          <PeakAvatar className="relative h-11 w-11 sm:h-12 sm:w-12" />
+          <PeakAvatar className="relative h-[4.25rem] w-[4.25rem] sm:h-[4.75rem] sm:w-[4.75rem]" />
           <span className="sr-only">{open ? "Close NorthPeak Assistant" : "Ask NorthPeak"}</span>
           <span className="pointer-events-none absolute -top-9 right-0 hidden rounded-full bg-[#1A3041] px-2.5 py-1 text-[0.65rem] font-semibold text-[#EDEBE8] opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">
             Ask NorthPeak

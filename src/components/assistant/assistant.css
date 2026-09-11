@@ -76,6 +76,62 @@
   animation-delay: 0.08s;
 }
 
+/* Sticker eyelids — aligned to the visor eyes in /brand/peak-sticker.png */
+.peak-sticker-eyelid {
+  position: absolute;
+  border-radius: 42%;
+  background: #132436;
+  box-shadow: 0 0 0 1px rgb(19 36 54 / 0.35);
+  transform: scaleY(0);
+  transform-origin: center;
+  pointer-events: none;
+  animation: peak-sticker-blink 8.5s ease-in-out infinite;
+}
+
+.peak-sticker-eyelid-left {
+  left: 29.5%;
+  top: 39.5%;
+  width: 15%;
+  height: 9.5%;
+}
+
+.peak-sticker-eyelid-right {
+  left: 55.5%;
+  top: 39.5%;
+  width: 15%;
+  height: 9.5%;
+  animation-delay: 0.04s;
+}
+
+@keyframes peak-sticker-blink {
+  0%,
+  88%,
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  89.2% {
+    transform: scaleY(1.08);
+    opacity: 1;
+  }
+
+  90.4% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  91.6% {
+    transform: scaleY(1.08);
+    opacity: 1;
+  }
+
+  92.8% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+}
+
 .peak-assistant-typing span {
   display: inline-block;
   width: 0.35rem;
@@ -98,6 +154,7 @@
   .peak-assistant-bubble,
   .peak-avatar-glow,
   .peak-avatar-eye,
+  .peak-sticker-eyelid,
   .peak-assistant-typing span {
     animation: none;
   }
