@@ -7,10 +7,19 @@ export const ALLOWED_PHOTO_MIMES = new Set([
   "image/webp",
 ]);
 
+function normalizeUpload(entry: FormDataEntryValue): File | null {
+  if (!(entry instanceof Blob) || entry.size === 0) return null;
+  if (entry instanceof File) return entry;
+  const type = entry.type || "image/jpeg";
+  const ext = type.includes("png") ? "png" : type.includes("webp") ? "webp" : "jpg";
+  return new File([entry], `upload.${ext}`, { type });
+}
+
 export function extractPhotoFiles(formData: FormData): File[] {
   return formData
     .getAll("photos")
-    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+    .map(normalizeUpload)
+    .filter((file): file is File => file !== null);
 }
 
 export function validatePhotos(

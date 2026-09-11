@@ -1,15 +1,16 @@
 "use client";
 
-import { startTransition, useActionState, useState } from "react";
+import { useState } from "react";
 import { PhotoDropzone, type LocalPhoto } from "@/components/estimate/PhotoDropzone";
-import { submitContact, type ContactActionState } from "@/lib/actions/contact";
+import type { ContactActionState } from "@/lib/actions/contact";
 import { Button } from "@/components/ui/Button";
 
 const initialState: ContactActionState = { ok: false, message: "" };
 
 export function ContactForm() {
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
-  const [state, action, pending] = useActionState(submitContact, initialState);
+  const [state, setState] = useState<ContactActionState>(initialState);
+  const [pending, setPending] = useState(false);
 
   if (state.ok) {
     return (
@@ -34,7 +35,7 @@ export function ContactForm() {
     <form
       encType="multipart/form-data"
       className="grid gap-4"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
         if (pending) return;
 
@@ -43,9 +44,31 @@ export function ContactForm() {
           formData.append("photos", photo.file);
         }
 
-        startTransition(() => {
-          action(formData);
-        });
+        setPending(true);
+        setState({ ok: false, message: "" });
+
+        try {
+          const response = await fetch("/api/contact", {
+            method: "POST",
+            body: formData,
+          });
+
+          const payload = (await response.json()) as ContactActionState;
+
+          if (!response.ok || !payload.message) {
+            throw new Error("Contact request failed");
+          }
+
+          setState(payload);
+        } catch {
+          setState({
+            ok: false,
+            message:
+              "We couldn't send your message just now. Your information is still here — please try again.",
+          });
+        } finally {
+          setPending(false);
+        }
       }}
     >
       <label className="text-sm font-semibold text-navy">
