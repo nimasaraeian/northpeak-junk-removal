@@ -1,5 +1,6 @@
 export const MAX_PHOTO_FILES = 8;
-export const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+/** Telegram sendPhoto limit — generous for phone camera photos. */
+export const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 
 export const ALLOWED_PHOTO_MIMES = new Set([
   "image/jpeg",
@@ -10,9 +11,10 @@ export const ALLOWED_PHOTO_MIMES = new Set([
 function normalizeUpload(entry: FormDataEntryValue): File | null {
   if (!(entry instanceof Blob) || entry.size === 0) return null;
   if (entry instanceof File) return entry;
-  const type = entry.type || "image/jpeg";
+  const blob: Blob = entry;
+  const type = blob.type || "image/jpeg";
   const ext = type.includes("png") ? "png" : type.includes("webp") ? "webp" : "jpg";
-  return new File([entry], `upload.${ext}`, { type });
+  return new File([blob], `upload.${ext}`, { type });
 }
 
 export function extractPhotoFiles(formData: FormData): File[] {
@@ -36,7 +38,7 @@ export function validatePhotos(
     if (file.size > MAX_PHOTO_BYTES) {
       return {
         ok: false,
-        message: `"${file.name}" is larger than 8 MB. Choose a smaller image.`,
+        message: `"${file.name}" is too large. Try a smaller image or fewer photos at once.`,
       };
     }
 

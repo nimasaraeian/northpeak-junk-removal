@@ -15,6 +15,42 @@ export interface LocalPhoto {
   previewUrl: string;
 }
 
+function UploadIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 48 48"
+      fill="none"
+      className={className}
+    >
+      <rect
+        x="8"
+        y="28"
+        width="32"
+        height="12"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M24 8v20M24 8l-7 7M24 8l7 7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 34h20"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray="3 4"
+        opacity="0.55"
+      />
+    </svg>
+  );
+}
+
 export function PhotoDropzone({
   photos,
   onChange,
@@ -31,6 +67,7 @@ export function PhotoDropzone({
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   function addFiles(fileList: FileList | null) {
     if (!fileList) return;
@@ -50,7 +87,7 @@ export function PhotoDropzone({
       }
 
       if (file.size > MAX_PHOTO_BYTES) {
-        rejections.push(`"${file.name}" is larger than 8 MB.`);
+        rejections.push(`"${file.name}" is too large. Try a smaller image.`);
         continue;
       }
 
@@ -77,23 +114,57 @@ export function PhotoDropzone({
     <div>
       <label
         htmlFor={inputId}
-        onDragOver={(event) => event.preventDefault()}
+        onDragEnter={(event) => {
+          event.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={(event) => {
+          event.preventDefault();
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setIsDragging(false);
+          }
+        }}
         onDrop={(event) => {
           event.preventDefault();
+          setIsDragging(false);
           addFiles(event.dataTransfer.files);
         }}
-        className="block cursor-pointer rounded-2xl border border-dashed border-navy/15 bg-cream/70 px-4 py-6 text-sm text-stone transition hover:border-gold/50"
+        className={[
+          "group block cursor-pointer rounded-2xl border-2 border-dashed px-5 py-8 text-center transition",
+          isDragging
+            ? "border-gold bg-gold/10 shadow-[inset_0_0_0_1px_rgba(201,162,39,0.25)]"
+            : "border-navy/15 bg-cream/70 hover:border-gold/45 hover:bg-cream",
+        ].join(" ")}
       >
-        <p className="font-semibold text-navy">{title}</p>
-        <p className="mt-2">{description}</p>
-        <p className="mt-2 text-xs leading-5 text-stone">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-gold-deep shadow-sm ring-1 ring-navy/5 transition group-hover:scale-[1.02]">
+          <UploadIcon className="h-9 w-9" />
+        </div>
+
+        <p className="mt-4 text-base font-semibold text-navy">{title}</p>
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-stone">
+          {description}
+        </p>
+
+        <p className="mt-4 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-navy ring-1 ring-navy/10">
+          {isDragging ? "Drop photos here" : "Drag & drop photos here, or click to browse"}
+        </p>
+
+        <p className="mt-3 text-xs leading-5 text-stone">
           {hint ??
-            `Add up to ${MAX_PHOTO_FILES} photos of the items or space you want cleared.`}
+            `Up to ${MAX_PHOTO_FILES} photos · JPG, PNG, or WebP`}
         </p>
-        <p className="mt-3 text-xs tracking-wide text-gold-deep uppercase">
-          {photos.length} / {MAX_PHOTO_FILES} selected · JPG, PNG, or WebP · 8MB max
-        </p>
+
+        {photos.length > 0 ? (
+          <p className="mt-2 text-xs font-medium text-gold-deep">
+            {photos.length} photo{photos.length === 1 ? "" : "s"} selected
+          </p>
+        ) : null}
       </label>
+
       <input
         id={inputId}
         ref={inputRef}
@@ -106,11 +177,13 @@ export function PhotoDropzone({
           event.target.value = "";
         }}
       />
+
       {notice ? <p className="mt-3 text-sm text-gold-deep">{notice}</p> : null}
+
       {photos.length > 0 ? (
         <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {photos.map((photo) => (
-            <li key={photo.id} className="relative overflow-hidden rounded-xl bg-navy">
+            <li key={photo.id} className="relative overflow-hidden rounded-xl bg-navy shadow-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photo.previewUrl}
@@ -120,7 +193,7 @@ export function PhotoDropzone({
               <button
                 type="button"
                 onClick={() => removePhoto(photo.id)}
-                className="absolute top-1 right-1 rounded-full bg-navy/80 px-2 py-0.5 text-[0.65rem] text-cream"
+                className="absolute top-1.5 right-1.5 rounded-full bg-navy/85 px-2.5 py-1 text-[0.65rem] font-medium text-cream backdrop-blur-sm transition hover:bg-navy"
               >
                 Remove
               </button>

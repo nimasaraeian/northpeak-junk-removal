@@ -110,17 +110,13 @@ export function ContactForm() {
       </label>
 
       <div>
-        <p className="text-sm font-semibold text-navy">Photos (optional)</p>
-        <p className="mt-1 text-sm text-stone">You can upload photos to help us understand your question.</p>
-        <div className="mt-3">
-          <PhotoDropzone
-            photos={photos}
-            onChange={setPhotos}
-            title="Upload photos"
-            description="You can upload photos of the space, items, or access details related to your message."
-            hint="Up to 8 photos · JPG, PNG, or WebP · 8 MB max each"
-          />
-        </div>
+        <PhotoDropzone
+          photos={photos}
+          onChange={setPhotos}
+          title="Add photos (optional)"
+          description="Share photos of the space, items, or access details so we can understand your question faster."
+          hint="Up to 8 photos · JPG, PNG, or WebP"
+        />
       </div>
 
       <Button type="submit" disabled={pending}>

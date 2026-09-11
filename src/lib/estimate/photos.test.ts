@@ -34,7 +34,7 @@ test("validatePhotos rejects oversized images", () => {
     makeFile("large.jpg", "image/jpeg", MAX_PHOTO_BYTES + 1),
   ]);
   assert.equal(result.ok, false);
-  if (!result.ok) assert.match(result.message, /8 MB/);
+  if (!result.ok) assert.match(result.message, /too large/i);
 });
 
 test("validatePhotos rejects unsupported MIME types", () => {
@@ -54,5 +54,5 @@ test("extractPhotoFiles reads photos field from FormData", () => {
 
 test("constants match product limits", () => {
   assert.equal(MAX_PHOTO_FILES, 8);
-  assert.equal(MAX_PHOTO_BYTES, 8 * 1024 * 1024);
+  assert.equal(MAX_PHOTO_BYTES, 10 * 1024 * 1024);
 });
