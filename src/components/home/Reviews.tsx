@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 export function Reviews() {
   return (
     <Section
+      id="reviews"
       eyebrow="Client notes"
       title="What neighbours say"
       description="Early proof from the North Shore and Vancouver. Reviews will later sync from the CRM."

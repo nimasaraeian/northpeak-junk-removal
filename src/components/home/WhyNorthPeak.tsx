@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 export function WhyNorthPeak() {
   return (
     <Section
+      id="why-northpeak"
       eyebrow="Why NorthPeak"
       title="A service brand, not a haul."
       description="The work is removal. The standard is how the property feels when we leave."

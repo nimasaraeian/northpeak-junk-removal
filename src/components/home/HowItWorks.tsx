@@ -33,6 +33,7 @@ function StepIcon({ step }: { step: string }) {
 export function HowItWorks() {
   return (
     <Section
+      id="how-it-works"
       className="bg-paper pt-14 sm:pt-20"
       eyebrow="The process"
       title="How It Works"

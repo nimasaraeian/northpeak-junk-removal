@@ -85,7 +85,7 @@ export function Hero() {
         <div className="absolute inset-x-0 top-[5rem] z-[2] sm:top-[5.5rem] lg:hidden">
           <Container>
             <div className="reveal max-w-[17.5rem] sm:max-w-xs">
-              <p className="text-[0.6rem] font-semibold tracking-[0.18em] text-cream/75 uppercase sm:text-[0.68rem]">
+              <p className="eyebrow text-cream/75 sm:text-[0.68rem]">
                 Junk Removal | North Vancouver &amp; Beyond
               </p>
               <h1 className="hero-title display mt-2 text-[2rem] leading-[0.95] sm:mt-2.5 sm:text-[2.35rem]">
@@ -114,7 +114,7 @@ export function Hero() {
         <div className="absolute inset-x-0 top-1/2 z-[2] hidden -translate-y-1/2 lg:block">
           <Container>
             <div className="reveal max-w-xl">
-              <p className="text-[0.7rem] font-semibold tracking-[0.2em] text-cream/80 uppercase">
+              <p className="eyebrow text-cream/80">
                 Junk Removal | North Vancouver &amp; Beyond
               </p>
 
@@ -144,7 +144,7 @@ export function Hero() {
                     <span className="text-gold-glow">
                       <ValueIcon id={item.id} />
                     </span>
-                    <span className="text-[0.66rem] font-semibold tracking-[0.12em] uppercase">
+                    <span className="eyebrow text-[0.66rem] tracking-[0.14em]">
                       {item.label}
                     </span>
                   </li>

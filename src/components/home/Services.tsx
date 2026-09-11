@@ -14,7 +14,7 @@ const serviceImages: Record<string, string> = {
 
 export function Services() {
   return (
-    <section className="bg-navy-deep py-16 text-cream sm:py-24">
+    <section id="services" className="bg-navy-deep py-16 text-cream sm:py-24">
       <Container>
         <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div>
