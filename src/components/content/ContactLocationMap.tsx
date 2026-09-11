@@ -24,11 +24,11 @@ export function ContactLocationMap() {
           <p className="mt-1 text-sm text-stone-soft">{site.areaServed}</p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-3">
-          <Button href={googleMapsDirectionsUrl()} variant="primary" size="md">
+          <Button externalHref={googleMapsDirectionsUrl()} variant="primary" size="md">
             Get directions
           </Button>
           <Button
-            href={googleMapsPlaceUrl()}
+            externalHref={googleMapsPlaceUrl()}
             variant="secondary"
             size="md"
             className="border-cream/20 text-cream hover:border-cream/40"

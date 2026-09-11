@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { useCallback, useEffect, useId, useState } from "react";
 import { GuideRobotFace } from "@/components/guide/GuideRobotFace";
 import { siteGuideItems } from "@/content/site-guide";
@@ -108,7 +109,7 @@ export function SiteGuideWidget() {
               {siteGuideItems.map((item) => (
                 <li key={item.id} className="mb-2 last:mb-0">
                   <Link
-                    href={item.href}
+                    href={item.href as Route}
                     onClick={close}
                     className={cx(
                       "group flex items-start gap-3 rounded-2xl border p-4 transition",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { Logo } from "@/components/brand/Logo";
 import { ContactChannels } from "@/components/content/ContactChannels";
 import { Button } from "@/components/ui/Button";
@@ -21,7 +22,7 @@ function FooterLink({
   href,
   children,
 }: {
-  href: string;
+  href: Route;
   children: React.ReactNode;
 }) {
   return (
@@ -113,7 +114,7 @@ export function Footer() {
           <FooterColumn title="Services">
             {featuredServices.map((service) => (
               <li key={service.slug}>
-                <FooterLink href={`/services/${service.slug}`}>
+                <FooterLink href={`/services/${service.slug}` as Route}>
                   {service.shortName}
                 </FooterLink>
               </li>
@@ -126,7 +127,7 @@ export function Footer() {
           <FooterColumn title="Locations">
             {locations.map((location) => (
               <li key={location.slug}>
-                <FooterLink href={`/locations/${location.slug}`}>
+                <FooterLink href={`/locations/${location.slug}` as Route}>
                   {location.name}
                 </FooterLink>
               </li>

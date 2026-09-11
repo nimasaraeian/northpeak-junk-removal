@@ -3,7 +3,6 @@ import { EstimateWizard } from "@/components/estimate/EstimateWizard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
 import { getService } from "@/content/services";
-import { resolveLoadTier } from "@/lib/load-estimator";
 import { breadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
@@ -20,11 +19,6 @@ export default async function EstimatePage({
   const query = await searchParams;
   const service = typeof query.service === "string" ? getService(query.service) : undefined;
   const postal = typeof query.postal === "string" ? query.postal : "";
-  const loadTier = resolveLoadTier(
-    typeof query.load === "string" ? query.load : null,
-    typeof query.volume === "string" ? query.volume : null,
-  );
-
   return (
     <>
       <JsonLd
@@ -43,7 +37,6 @@ export default async function EstimatePage({
           <EstimateWizard
             initialPostalCode={postal}
             initialService={service?.slug ?? ""}
-            initialLoadTier={loadTier}
           />
         </Container>
       </section>
