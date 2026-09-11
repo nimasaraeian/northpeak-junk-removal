@@ -1,8 +1,5 @@
-"use client";
-
 import Image from "next/image";
-import type { Route } from "next";
-import { TransitionLink } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import { featuredServices } from "@/content/services";
 import { Container } from "@/components/ui/Container";
 import { cx } from "@/lib/utils";
@@ -27,21 +24,21 @@ export function Services() {
               <span className="mt-3 block h-0.5 w-16 bg-gold" aria-hidden />
             </h2>
           </div>
-          <TransitionLink
+          <Link
             href="/services"
             className="text-sm font-semibold text-gold-glow hover:text-gold"
           >
             View All Services →
-          </TransitionLink>
+          </Link>
         </div>
 
         <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 xl:grid-cols-5">
           {featuredServices.map((service) => {
             const src = serviceImages[service.slug] ?? "/services/furniture.jpg";
             return (
-              <TransitionLink
+              <Link
                 key={service.slug}
-                href={`/services/${service.slug}` as Route}
+                href={`/services/${service.slug}`}
                 className={cx(
                   "group flex w-[78%] shrink-0 snap-center flex-col overflow-hidden rounded-2xl bg-paper text-navy shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] sm:w-auto",
                 )}
@@ -63,7 +60,7 @@ export function Services() {
                     {service.summary}
                   </p>
                 </div>
-              </TransitionLink>
+              </Link>
             );
           })}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import type { Route } from "next";
-import { TransitionLink } from "@/components/motion/TransitionLink";
 import type { ReactNode } from "react";
 import { site } from "@/content/site";
 import {
@@ -160,9 +160,9 @@ function QuickAccessCard({
   if (!href) return shell;
 
   return (
-    <TransitionLink href={href} className="block h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold">
+    <Link href={href} className="block h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold">
       {shell}
-    </TransitionLink>
+    </Link>
   );
 }
 

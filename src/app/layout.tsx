@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { NorthPeakAssistant } from "@/components/assistant/NorthPeakAssistant";
-import {
-  PageTransitionContent,
-  PageTransitionProvider,
-} from "@/components/motion/PageTransitionProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -79,14 +75,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-paper text-ink">
         <JsonLd data={organizationSchema()} />
         <JsonLd data={localBusinessSchema()} />
-        <PageTransitionProvider>
-          <Header />
-          <PageTransitionContent>
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </PageTransitionContent>
-          <NorthPeakAssistant />
-        </PageTransitionProvider>
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <NorthPeakAssistant />
       </body>
     </html>
   );

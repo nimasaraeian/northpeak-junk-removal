@@ -1,6 +1,4 @@
-"use client";
-
-import { TransitionLink } from "@/components/motion/TransitionLink";
+import Link from "next/link";
 import { processSteps } from "@/content/site";
 import { Section } from "@/components/ui/Section";
 
@@ -41,9 +39,9 @@ export function HowItWorks() {
       title="How It Works"
       description="Three steps. Clear range. No theatre before anyone arrives."
       action={
-        <TransitionLink href="/how-it-works" className="text-sm font-semibold text-navy">
+        <Link href="/how-it-works" className="text-sm font-semibold text-navy">
           See the full process →
-        </TransitionLink>
+        </Link>
       }
     >
       <ol className="grid gap-8 md:grid-cols-3 md:gap-4 lg:gap-6">

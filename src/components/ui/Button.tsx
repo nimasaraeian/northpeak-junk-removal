@@ -1,7 +1,5 @@
-"use client";
-
+import Link from "next/link";
 import type { ComponentProps } from "react";
-import { TransitionLink } from "@/components/motion/TransitionLink";
 import { cx } from "@/lib/utils";
 
 const variants = {
@@ -20,7 +18,7 @@ const sizes = {
 };
 
 type ButtonProps = {
-  href?: ComponentProps<typeof TransitionLink>["href"];
+  href?: ComponentProps<typeof Link>["href"];
   externalHref?: string;
   children: React.ReactNode;
   variant?: keyof typeof variants;
@@ -66,9 +64,9 @@ export function Button({
 
   if (href) {
     return (
-      <TransitionLink href={href} className={classes} onClick={onClick}>
+      <Link href={href} className={classes} onClick={onClick}>
         {children}
-      </TransitionLink>
+      </Link>
     );
   }
 

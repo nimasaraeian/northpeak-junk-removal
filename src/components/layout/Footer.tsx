@@ -1,7 +1,5 @@
-"use client";
-
+import Link from "next/link";
 import type { Route } from "next";
-import { TransitionLink } from "@/components/motion/TransitionLink";
 import { Logo } from "@/components/brand/Logo";
 import { ContactChannels } from "@/components/content/ContactChannels";
 import { Button } from "@/components/ui/Button";
@@ -28,12 +26,12 @@ function FooterLink({
   children: React.ReactNode;
 }) {
   return (
-    <TransitionLink
+    <Link
       href={href}
       className="inline-flex text-sm text-cream/72 transition hover:translate-x-0.5 hover:text-gold-glow"
     >
       {children}
-    </TransitionLink>
+    </Link>
   );
 }
 
