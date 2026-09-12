@@ -1,8 +1,11 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { PostalCodeChecker } from "@/components/estimate/PostalCodeChecker";
+import { HeroQuickAccess } from "@/components/home/HeroQuickAccess";
 import { heroValues } from "@/content/site";
+
+const HERO_HEIGHT = "h-[calc(100svh-5.5rem)] min-h-[28rem] sm:min-h-[32rem] lg:h-[calc(100svh-6rem)] lg:min-h-[36rem]";
 
 function ValueIcon({ id }: { id: string }) {
   const common = "h-5 w-5 stroke-[1.5] sm:h-6 sm:w-6";
@@ -41,123 +44,129 @@ function ValueIcon({ id }: { id: string }) {
   }
 }
 
+function HeroOverlay({ children }: { children: ReactNode }) {
+  return (
+    <div className="absolute inset-0 z-[2] flex items-start pt-6 sm:items-center sm:pt-0">
+      <Container>{children}</Container>
+    </div>
+  );
+}
+
+function HeroCopy() {
+  return (
+    <div className="reveal max-w-[17.5rem] sm:max-w-xs lg:max-w-xl">
+      <p className="eyebrow text-cream/80 sm:text-[0.68rem] lg:text-cream/85">
+        Junk Removal | North Vancouver &amp; Beyond
+      </p>
+
+      <h1 className="hero-title mt-2 text-[2.15rem] sm:mt-2.5 sm:text-[2.45rem] lg:mt-5 lg:text-[4.75rem]">
+        <span className="hero-title__line">More Space.</span>
+        <span className="hero-title__line">A Better Tomorrow.</span>
+      </h1>
+
+      <p className="mt-4 hidden max-w-md text-base leading-8 text-cream/82 lg:block lg:mt-5">
+        Professional junk removal for homes and businesses across Greater Vancouver —
+        careful crews, clear estimates, and a cleaner space when we leave.
+      </p>
+
+      <div className="mt-4 flex w-[10.75rem] flex-col gap-2 sm:mt-5 sm:w-[11.5rem] lg:mt-8 lg:w-auto lg:flex-row lg:items-center lg:gap-3">
+        <Button href="/estimate" size="lg" className="w-full px-4 text-sm lg:w-auto lg:px-7">
+          Get My Estimate →
+        </Button>
+        <Button
+          href="#quick-access"
+          variant="secondary"
+          size="lg"
+          className="w-full px-4 text-sm lg:w-auto lg:px-7"
+        >
+          Contact Us
+        </Button>
+      </div>
+
+      <ul className="mt-6 hidden flex-wrap gap-x-5 gap-y-3 lg:mt-9 lg:flex">
+        {heroValues.map((item) => (
+          <li key={item.id} className="flex items-center gap-2 text-cream/85">
+            <span className="text-gold-glow">
+              <ValueIcon id={item.id} />
+            </span>
+            <span className="eyebrow text-[0.66rem] tracking-[0.14em]">{item.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function HeroFrame({
+  desktop = false,
+  children,
+}: {
+  desktop?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`relative w-full overflow-hidden ${HERO_HEIGHT} ${desktop ? "hidden lg:block" : "lg:hidden"}`}>
+      {children}
+    </div>
+  );
+}
+
 export function Hero() {
   return (
     <section className="bg-navy-deep">
-      <div className="hero-photo relative isolate min-h-[100svh] overflow-hidden text-cream lg:min-h-[90vh]">
-        <Image
-          src="/brand/hero-desktop.jpg"
-          alt="NorthPeak crew loading a cab-over truck against the North Shore mountains"
-          fill
-          priority
-          quality={85}
-          sizes="100vw"
-          className="hidden object-cover object-[58%_center] lg:block"
-        />
-        <Image
-          src="/brand/hero-mobile.jpg"
-          alt=""
-          fill
-          priority
-          quality={85}
-          sizes="100vw"
-          className="object-cover object-[center_20%] lg:hidden"
-          aria-hidden
-        />
+      <div className="hero-photo relative isolate w-full text-cream">
+        <HeroFrame desktop>
+          <Image
+            src="/brand/hero-desktop.jpg"
+            alt="NorthPeak crew loading a cab-over truck against the North Shore mountains"
+            fill
+            priority
+            quality={95}
+            sizes="100vw"
+            className="object-cover object-[72%_86%]"
+          />
 
-        {/* Mobile — sky read for headline, lighter base so crew stays visible */}
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] lg:hidden"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(8,18,31,0.55) 0%, rgba(8,18,31,0.28) 28%, transparent 48%), linear-gradient(0deg, rgba(8,18,31,0.35) 0%, transparent 32%)",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] hidden lg:block"
-          style={{
-            background:
-              "linear-gradient(105deg, rgba(8,18,31,0.88) 0%, rgba(8,18,31,0.65) 30%, rgba(8,18,31,0.22) 52%, transparent 72%)",
-          }}
-        />
+          <div
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{
+              background:
+                "linear-gradient(105deg, rgba(8,18,31,0.72) 0%, rgba(8,18,31,0.4) 22%, rgba(8,18,31,0.08) 40%, transparent 58%)",
+            }}
+          />
 
-        {/* Mobile — headline + CTAs in sky area, above truck */}
-        <div className="absolute inset-x-0 top-[5rem] z-[2] sm:top-[5.5rem] lg:hidden">
-          <Container>
-            <div className="reveal max-w-[17.5rem] sm:max-w-xs">
-              <p className="text-[0.6rem] font-semibold tracking-[0.18em] text-cream/75 uppercase sm:text-[0.68rem]">
-                Junk Removal | North Vancouver &amp; Beyond
-              </p>
-              <h1 className="hero-title display mt-2 text-[2rem] leading-[0.95] sm:mt-2.5 sm:text-[2.35rem]">
-                More Space.
-                <br />
-                A Better Tomorrow.
-              </h1>
-              <div className="mt-4 flex w-[10.75rem] flex-col gap-2 sm:mt-5 sm:w-[11.5rem]">
-                <Button href="/estimate" size="lg" className="w-full px-4 text-sm">
-                  Get My Estimate →
-                </Button>
-                <Button
-                  href="#service-area"
-                  variant="secondary"
-                  size="lg"
-                  className="w-full px-4 text-sm"
-                >
-                  Check Service Area
-                </Button>
-              </div>
-            </div>
-          </Container>
-        </div>
+          <HeroOverlay>
+            <HeroCopy />
+          </HeroOverlay>
+        </HeroFrame>
 
-        {/* Desktop — single left overlay */}
-        <div className="absolute inset-x-0 top-1/2 z-[2] hidden -translate-y-1/2 lg:block">
-          <Container>
-            <div className="reveal max-w-xl">
-              <p className="text-[0.7rem] font-semibold tracking-[0.2em] text-cream/80 uppercase">
-                Junk Removal | North Vancouver &amp; Beyond
-              </p>
+        <HeroFrame>
+          <Image
+            src="/brand/hero-mobile.jpg"
+            alt="NorthPeak junk removal truck and crew in North Vancouver"
+            fill
+            priority
+            quality={95}
+            sizes="100vw"
+            className="object-cover object-[center_72%]"
+          />
 
-              <h1 className="hero-title display mt-5 text-[4.5rem] leading-[0.96]">
-                More Space.
-                <br />
-                A Better Tomorrow.
-              </h1>
+          <div
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(8,18,31,0.62) 0%, rgba(8,18,31,0.22) 34%, transparent 58%), linear-gradient(0deg, rgba(8,18,31,0.28) 0%, transparent 36%)",
+            }}
+          />
 
-              <p className="mt-5 max-w-md text-base leading-8 text-cream/82">
-                Professional junk removal for homes and businesses across Greater Vancouver —
-                careful crews, clear estimates, and a cleaner space when we leave.
-              </p>
-
-              <div className="mt-8 flex items-center gap-3">
-                <Button href="/estimate" size="lg">
-                  Get My Estimate →
-                </Button>
-                <Button href="#service-area" variant="secondary" size="lg">
-                  Check Service Area
-                </Button>
-              </div>
-
-              <ul className="mt-9 flex flex-wrap gap-5">
-                {heroValues.map((item) => (
-                  <li key={item.id} className="flex items-center gap-2 text-cream/85">
-                    <span className="text-gold-glow">
-                      <ValueIcon id={item.id} />
-                    </span>
-                    <span className="text-[0.66rem] font-semibold tracking-[0.12em] uppercase">
-                      {item.label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Container>
-        </div>
+          <HeroOverlay>
+            <HeroCopy />
+          </HeroOverlay>
+        </HeroFrame>
       </div>
 
-      <div id="service-area" className="relative z-10 -mt-6 px-4 pb-2 sm:-mt-8 sm:px-6 md:px-8 lg:-mt-10">
+      <div id="quick-access" className="relative z-10 bg-navy-deep px-4 pb-8 pt-6 sm:px-6 md:px-8 lg:pb-10 lg:pt-8">
         <Container>
-          <PostalCodeChecker variant="banner" />
+          <HeroQuickAccess />
         </Container>
       </div>
     </section>

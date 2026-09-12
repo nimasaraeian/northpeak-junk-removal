@@ -132,17 +132,34 @@ export function PostalCodeChecker({
     <div
       className={cx(
         variant === "card" &&
-          "rounded-[1.6rem] border border-navy/8 bg-paper p-5 shadow-[var(--shadow-card)] sm:p-7",
+          "rounded-[1.6rem] border border-navy/8 bg-paper p-6 shadow-[var(--shadow-card)] sm:p-7",
+        variant === "plain" && "space-y-5",
       )}
     >
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end">
-        <div className="flex-1">
+      <div className={variant === "card" ? "space-y-6" : "flex flex-col gap-5 lg:flex-row lg:items-end"}>
+        <div className={variant === "card" ? undefined : "min-w-0 flex-1"}>
           <p className="eyebrow text-gold-deep">Do we service your area?</p>
-          <p className="mt-2 text-sm leading-6 text-stone">
+          {variant === "card" ? (
+            <h3 className="mt-2 font-serif text-xl leading-snug text-navy sm:text-2xl">
+              Confirm your coverage
+            </h3>
+          ) : null}
+          <p
+            className={cx(
+              "text-sm leading-6 text-stone",
+              variant === "card" ? "mt-2 max-w-md" : "mt-2",
+            )}
+          >
             Enter a Canadian postal code to confirm North Shore or Greater Vancouver coverage.
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+        <form
+          onSubmit={handleSubmit}
+          className={cx(
+            "flex w-full flex-col gap-3 sm:flex-row sm:items-stretch",
+            variant === "card" ? "sm:gap-3" : "lg:w-auto",
+          )}
+        >
           <label className="sr-only" htmlFor={inputId}>
             Postal code
           </label>
@@ -157,9 +174,12 @@ export function PostalCodeChecker({
               setValue(normalizePostalCode(event.target.value));
               if (touched) setTouched(true);
             }}
-            className="h-14 w-full rounded-full border border-navy/12 bg-white px-5 text-sm tracking-[0.16em] text-navy uppercase outline-none placeholder:tracking-normal placeholder:normal-case placeholder:text-stone focus:border-gold sm:w-64"
+            className={cx(
+              "h-12 w-full min-w-0 rounded-full border border-navy/12 bg-white px-5 text-sm tracking-[0.16em] text-navy uppercase outline-none placeholder:tracking-normal placeholder:normal-case placeholder:text-stone focus:border-gold sm:h-14",
+              variant === "card" ? "sm:flex-1" : "sm:w-64",
+            )}
           />
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" className="w-full shrink-0 sm:w-auto">
             Check Availability
           </Button>
         </form>

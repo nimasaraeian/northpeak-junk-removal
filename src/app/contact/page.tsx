@@ -1,9 +1,12 @@
+import { ContactChannels } from "@/components/content/ContactChannels";
 import { ContactForm } from "@/components/content/ContactForm";
+import { ContactLocationMap } from "@/components/content/ContactLocationMap";
 import { PageHeader } from "@/components/content/PageHeader";
 import { PostalCodeChecker } from "@/components/estimate/PostalCodeChecker";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
 import { site } from "@/content/site";
+import { formatSiteAddress } from "@/lib/maps";
 import { breadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 import { formatPhoneHref } from "@/lib/utils";
@@ -34,13 +37,15 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div className="rounded-[1.6rem] bg-navy p-6 text-cream">
               <p className="eyebrow text-gold-glow">Direct</p>
-              <a href={formatPhoneHref(site.phone)} className="mt-4 block text-2xl">
+              <a href={formatPhoneHref(site.phone)} className="mt-4 block text-2xl hover:text-gold-glow">
                 {site.phone}
               </a>
-              <a href={`mailto:${site.email}`} className="mt-2 block text-cream/80">
+              <ContactChannels className="mt-5" />
+              <a href={`mailto:${site.email}`} className="mt-5 block text-cream/80">
                 {site.email}
               </a>
-              <p className="mt-6 text-sm text-stone-soft">{site.areaServed}</p>
+              <p className="mt-6 text-sm leading-6 text-cream/85">{formatSiteAddress()}</p>
+              <p className="mt-3 text-sm text-stone-soft">{site.areaServed}</p>
               <p className="mt-2 text-sm text-stone-soft">{site.hours}</p>
             </div>
             <PostalCodeChecker />
@@ -54,6 +59,11 @@ export default function ContactPage() {
               <ContactForm />
             </div>
           </div>
+        </Container>
+      </section>
+      <section className="border-t border-navy/8 bg-cream pb-16 pt-12 sm:pb-20 sm:pt-16">
+        <Container>
+          <ContactLocationMap />
         </Container>
       </section>
     </>

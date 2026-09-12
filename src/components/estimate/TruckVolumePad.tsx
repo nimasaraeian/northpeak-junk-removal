@@ -88,10 +88,10 @@ export function TruckVolumePad({
         />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
-          <p className="rounded-full bg-black/50 px-2.5 py-1 text-[0.6rem] font-semibold tracking-[0.14em] text-cream/90 uppercase backdrop-blur-sm sm:px-3 sm:py-1.5 sm:text-[0.68rem] sm:tracking-[0.16em]">
+          <p className="eyebrow rounded-full bg-black/50 px-2.5 py-1 text-cream/90 backdrop-blur-sm sm:px-3 sm:py-1.5">
             Drag to rotate
           </p>
-          <p className="rounded-full bg-black/50 px-2.5 py-1 text-[0.6rem] font-semibold tracking-[0.14em] text-gold-glow uppercase backdrop-blur-sm sm:px-3 sm:py-1.5 sm:text-[0.68rem] sm:tracking-[0.16em]">
+          <p className="eyebrow rounded-full bg-black/50 px-2.5 py-1 text-gold-glow backdrop-blur-sm sm:px-3 sm:py-1.5">
             {summary.fill}% full
           </p>
         </div>

@@ -19,7 +19,6 @@ export default async function EstimatePage({
   const query = await searchParams;
   const service = typeof query.service === "string" ? getService(query.service) : undefined;
   const postal = typeof query.postal === "string" ? query.postal : "";
-
   return (
     <>
       <JsonLd
@@ -29,9 +28,9 @@ export default async function EstimatePage({
         ])}
       />
       <PageHeader
-        eyebrow="The load bay"
-        title="Fill the truck"
-        description="Drag to rotate the NorthPeak bay. Choose a fill level, then confirm your area and send the range."
+        eyebrow="Load Bay Studio"
+        title="Tell us about your project"
+        description="Confirm the scale that feels right, add photos, and we'll follow up with a clear estimate range."
       />
       <section className="py-8 sm:py-16 md:py-20">
         <Container width="wide" className="px-4 sm:px-8">

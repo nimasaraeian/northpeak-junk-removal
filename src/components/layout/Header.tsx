@@ -25,7 +25,7 @@ export function Header() {
           <Button href="/estimate">
             Get Estimate →
           </Button>
-          <p className="flex max-w-[9.5rem] items-start gap-1.5 text-[0.65rem] leading-4 tracking-wide text-stone uppercase">
+          <p className="eyebrow flex max-w-[9.5rem] items-start gap-1.5 leading-4 text-stone">
             <svg viewBox="0 0 16 16" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" fill="currentColor" aria-hidden>
               <path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.2 4.5 8.5 4.5 8.5s4.5-5.3 4.5-8.5A4.5 4.5 0 0 0 8 1.5Zm0 6.2a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
             </svg>

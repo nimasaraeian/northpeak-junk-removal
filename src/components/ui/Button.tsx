@@ -19,6 +19,7 @@ const sizes = {
 
 type ButtonProps = {
   href?: ComponentProps<typeof Link>["href"];
+  externalHref?: string;
   children: React.ReactNode;
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
@@ -30,6 +31,7 @@ type ButtonProps = {
 
 export function Button({
   href,
+  externalHref,
   children,
   variant = "primary",
   size = "md",
@@ -39,16 +41,30 @@ export function Button({
   onClick,
 }: ButtonProps) {
   const classes = cx(
-    "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-wide transition duration-300",
+    "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[0.06em] transition duration-300",
     "disabled:cursor-not-allowed disabled:opacity-60",
     variants[variant],
     sizes[size],
     className,
   );
 
+  if (externalHref) {
+    return (
+      <a
+        href={externalHref}
+        className={classes}
+        onClick={onClick}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    );
+  }
+
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} onClick={onClick}>
         {children}
       </Link>
     );

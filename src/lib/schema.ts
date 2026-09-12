@@ -26,7 +26,7 @@ export function organizationSchema() {
     email: site.email,
     telephone: site.phone,
     slogan: site.tagline,
-    logo: `${site.url}/brand/logo-light.png`,
+    logo: `${site.url}/brand/favicon-512.png`,
     areaServed: site.areaServed,
   };
 }
@@ -37,7 +37,7 @@ export function localBusinessSchema() {
     "@type": "LocalBusiness",
     "@id": localBusinessId(),
     name: site.name,
-    image: `${site.url}/brand/logo-light.png`,
+    image: `${site.url}/brand/favicon-512.png`,
     url: site.url,
     telephone: site.phone,
     email: site.email,
@@ -48,8 +48,10 @@ export function localBusinessSchema() {
     openingHours: "Mo-Su 08:00-18:00",
     address: {
       "@type": "PostalAddress",
+      streetAddress: site.address.streetAddress,
       addressLocality: site.address.addressLocality,
       addressRegion: site.address.addressRegion,
+      postalCode: site.address.postalCode,
       addressCountry: site.address.addressCountry,
     },
     geo: {

@@ -5,21 +5,21 @@ export const site = {
   tagline: "More Space. A Better Tomorrow.",
   description:
     "Premium junk removal and property recovery for homes and businesses across North Vancouver and Greater Vancouver.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://northpeakjunkremoval.ca",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://northpeakjunk.com",
   locale: "en_CA",
-  phone: process.env.NEXT_PUBLIC_PHONE ?? "(604) 000-0000",
+  phone: process.env.NEXT_PUBLIC_PHONE ?? "+1 (778) 900-5060",
   email: process.env.NEXT_PUBLIC_EMAIL ?? "hello@northpeakjunkremoval.ca",
   areaServed: "North Vancouver and Greater Vancouver, British Columbia",
   address: {
-    streetAddress: "",
+    streetAddress: "564 West Keith Rd",
     addressLocality: "North Vancouver",
     addressRegion: "BC",
-    postalCode: "",
+    postalCode: "V7M 1M4",
     addressCountry: "CA",
   },
   geo: {
-    latitude: 49.316,
-    longitude: -123.07,
+    latitude: 49.3203847,
+    longitude: -123.0877412,
   },
   hours: "By appointment, seven days a week",
   social: {
