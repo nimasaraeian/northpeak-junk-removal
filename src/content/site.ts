@@ -5,7 +5,7 @@ export const site = {
   tagline: "More Space. A Better Tomorrow.",
   description:
     "Premium junk removal and property recovery for homes and businesses across North Vancouver and Greater Vancouver.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://northpeakjunkremoval.ca",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://northpeakjunk.com",
   locale: "en_CA",
   phone: process.env.NEXT_PUBLIC_PHONE ?? "+1 (778) 900-5060",
   email: process.env.NEXT_PUBLIC_EMAIL ?? "hello@northpeakjunkremoval.ca",
