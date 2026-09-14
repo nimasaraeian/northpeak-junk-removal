@@ -1,7 +1,7 @@
 import { locations } from "@/content/locations";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
-import type { Service } from "@/types";
+import type { LocationPage, Service } from "@/types";
 
 export function serializeJsonLd(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
@@ -76,6 +76,23 @@ export function localBusinessSchema() {
       })),
     },
     parentOrganization: { "@id": organizationId() },
+  };
+}
+
+export function locationServiceSchema(location: LocationPage) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: `Junk Removal ${location.name}`,
+    serviceType: "Junk Removal",
+    description: location.seoDescription,
+    url: `${site.url}/locations/${location.slug}`,
+    provider: { "@id": localBusinessId() },
+    areaServed: {
+      "@type": "City",
+      name: location.name,
+    },
+    brand: { "@id": organizationId() },
   };
 }
 

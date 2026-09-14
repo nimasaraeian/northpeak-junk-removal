@@ -169,6 +169,48 @@ test("submitEstimateCore rejects invalid postal code", async () => {
   assert.equal(result.ok, false);
 });
 
+test("submitEstimateCore accepts extended service area postal codes", async () => {
+  const { fetchImpl } = createTelegramFetch();
+  const result = await submitEstimateCore(baseFormData({ postalCode: "V3X 1A1" }), {
+    fetchImpl,
+    createRequestId: () => "NP-EXT01",
+  });
+  assert.equal(result.ok, true);
+});
+
+test("submitEstimateCore accepts confirmation service area postal codes", async () => {
+  const { fetchImpl } = createTelegramFetch();
+  const result = await submitEstimateCore(baseFormData({ postalCode: "V2S 1A1" }), {
+    fetchImpl,
+    createRequestId: () => "NP-CONF1",
+  });
+  assert.equal(result.ok, true);
+});
+
+test("submitEstimateCore accepts outside service area postal codes", async () => {
+  const { fetchImpl } = createTelegramFetch();
+  const result = await submitEstimateCore(baseFormData({ postalCode: "V1A 1A1" }), {
+    fetchImpl,
+    createRequestId: () => "NP-OUT01",
+  });
+  assert.equal(result.ok, true);
+});
+
+test("submitEstimateCore includes coverage tier in Telegram payload", async () => {
+  let capturedText = "";
+  const fetchImpl: TelegramFetch = async (input, init) => {
+    const url = String(input);
+    if (url.endsWith("/sendMessage") && init?.body instanceof URLSearchParams) {
+      capturedText = init.body.get("text") ?? "";
+    }
+    return new Response(JSON.stringify({ ok: true, result: {} }), { status: 200 });
+  };
+
+  await submitEstimateCore(baseFormData({ postalCode: "V3X 1A1" }), { fetchImpl });
+  assert.match(capturedText, /EXTENDED — Extended Service Area/);
+  assert.match(capturedText, /Surrey/);
+});
+
 test("submitEstimateCore rejects invalid phone", async () => {
   const result = await submitEstimateCore(baseFormData({ phone: "123" }));
   assert.equal(result.ok, false);

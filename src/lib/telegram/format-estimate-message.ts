@@ -1,6 +1,6 @@
 import { getService } from "@/content/services";
 import { escapeTelegramHtml } from "@/lib/telegram/escape-html";
-import type { EstimateDraft } from "@/types";
+import type { EstimateDraft, ServiceAreaTier } from "@/types";
 
 export interface EstimateNotificationContext {
   draft: EstimateDraft;
@@ -8,6 +8,8 @@ export interface EstimateNotificationContext {
   submittedAt: Date;
   areaCity?: string;
   areaFsa: string;
+  areaTier: ServiceAreaTier;
+  areaTierLabel: string;
   photoCount: number;
   loadManifest: unknown;
 }
@@ -53,14 +55,21 @@ function summarizeLoadManifest(manifest: unknown): string | null {
 }
 
 export function formatEstimateTelegramMessage(context: EstimateNotificationContext): string {
-  const { draft, requestId, submittedAt, areaCity, areaFsa, photoCount, loadManifest } =
-    context;
+  const {
+    draft,
+    requestId,
+    submittedAt,
+    areaCity,
+    areaFsa,
+    areaTier,
+    areaTierLabel,
+    photoCount,
+    loadManifest,
+  } = context;
 
   const serviceName =
     getService(draft.serviceSlug)?.name ?? (draft.serviceSlug || "Unknown service");
-  const locationLine = areaCity
-    ? `${draft.postalCode}\n${areaCity}`
-    : `${draft.postalCode}\n${areaFsa}`;
+  const serviceAreaLine = areaCity ?? areaFsa;
 
   const lines = [
     "🔔 <b>NEW NORTHPEAK ESTIMATE REQUEST</b>",
@@ -80,8 +89,14 @@ export function formatEstimateTelegramMessage(context: EstimateNotificationConte
     "💬 <b>Preferred contact</b>",
     escapeTelegramHtml(preferredContactLabels[draft.preferredContact]),
     "",
-    "📍 <b>Location</b>",
-    escapeTelegramHtml(locationLine),
+    "📍 <b>Service Area</b>",
+    escapeTelegramHtml(serviceAreaLine),
+    "",
+    "🗺 <b>Coverage</b>",
+    escapeTelegramHtml(`${areaTier.toUpperCase()} — ${areaTierLabel}`),
+    "",
+    "📮 <b>Postal Code</b>",
+    escapeTelegramHtml(draft.postalCode),
     "",
     "🧹 <b>Service</b>",
     escapeTelegramHtml(serviceName),

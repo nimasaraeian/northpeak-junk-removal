@@ -8,7 +8,7 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://northpeakjunk.com",
   locale: "en_CA",
   phone: process.env.NEXT_PUBLIC_PHONE ?? "+1 (778) 900-5060",
-  email: process.env.NEXT_PUBLIC_EMAIL ?? "hello@northpeakjunkremoval.ca",
+  email: process.env.NEXT_PUBLIC_EMAIL ?? "info@northpeakjunk.com",
   areaServed: "North Vancouver and Greater Vancouver, British Columbia",
   address: {
     streetAddress: "564 West Keith Rd",

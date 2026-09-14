@@ -1,4 +1,7 @@
-import { serviceAreaLookup } from "@/content/service-areas";
+import {
+  serviceAreaLookup,
+  serviceAreaTierConfig,
+} from "@/content/service-areas";
 import type { ServiceAreaTier } from "@/types";
 
 const CANADIAN_POSTAL =
@@ -23,6 +26,7 @@ export interface ServiceAreaResult {
   fsa: string;
   city?: string;
   tier: ServiceAreaTier;
+  tierLabel: string;
   headline: string;
   message: string;
 }
@@ -39,36 +43,26 @@ export function checkServiceArea(value: string): ServiceAreaResult | { error: st
   const fsa = getFsa(postalCode);
   const match = serviceAreaLookup.get(fsa);
 
-  if (match?.tier === "core") {
+  if (match) {
+    const config = serviceAreaTierConfig[match.tier];
     return {
       postalCode,
       fsa,
       city: match.city,
-      tier: "core",
-      headline: `Yes — we regularly serve ${match.city}.`,
-      message:
-        "You are in our core service area. Request an estimate and we will confirm timing the same day.",
+      tier: match.tier,
+      tierLabel: config.label,
+      headline: config.headline(match.city),
+      message: config.message,
     };
   }
 
-  if (match?.tier === "extended") {
-    return {
-      postalCode,
-      fsa,
-      city: match.city,
-      tier: "extended",
-      headline: `Yes — ${match.city} is in our extended coverage.`,
-      message:
-        "We book Greater Vancouver jobs by route. Share a few details and we will confirm the next available window.",
-    };
-  }
-
+  const config = serviceAreaTierConfig.outside;
   return {
     postalCode,
     fsa,
-    tier: "unavailable",
-    headline: "This postal code is outside our current coverage.",
-    message:
-      "We are focused on the North Shore, Burnaby, and Greater Vancouver. Leave your details and we will tell you if a nearby route opens up.",
+    tier: "outside",
+    tierLabel: config.label,
+    headline: config.headline(),
+    message: config.message,
   };
 }

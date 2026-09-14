@@ -60,14 +60,6 @@ export async function submitEstimateCore(
     return { ok: false, message: area.error };
   }
 
-  if (area.tier === "unavailable") {
-    return {
-      ok: false,
-      message:
-        "That postal code is outside current coverage. Use the contact form if you would like to be notified later.",
-    };
-  }
-
   if (!getService(draft.serviceSlug)) {
     return { ok: false, message: "Choose a service so we can scope the visit." };
   }
@@ -105,6 +97,8 @@ export async function submitEstimateCore(
       submittedAt,
       areaCity: area.city,
       areaFsa: area.fsa,
+      areaTier: area.tier,
+      areaTierLabel: area.tierLabel,
       photoCount: photoValidation.files.length,
       loadManifest,
     },

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { getLocation, locations } from "@/content/locations";
 import { services } from "@/content/services";
-import { breadcrumbSchema } from "@/lib/schema";
+import { breadcrumbSchema, locationServiceSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -31,6 +31,10 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
   const location = getLocation(slug);
   if (!location) notFound();
 
+  const relatedLocations = location.relatedLocationSlugs
+    .map((relatedSlug) => getLocation(relatedSlug))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
   return (
     <>
       <JsonLd
@@ -40,6 +44,7 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
           { name: location.name, path: `/locations/${location.slug}` },
         ])}
       />
+      <JsonLd data={locationServiceSchema(location)} />
       <PageHeader
         eyebrow={location.region}
         title={location.headline}
@@ -49,6 +54,19 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
         <Container className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
             <p className="text-lg leading-8 text-navy/80">{location.description}</p>
+
+            <h2 className="mt-12 font-serif text-3xl text-navy">Common jobs here</h2>
+            <ul className="mt-5 space-y-3">
+              {location.useCases.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-2xl border border-navy/8 bg-cream/50 px-4 py-3 text-sm leading-7 text-navy"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+
             <h2 className="mt-12 font-serif text-3xl text-navy">Neighbourhoods we know</h2>
             <ul className="mt-5 flex flex-wrap gap-2">
               {location.neighborhoods.map((item) => (
@@ -60,9 +78,11 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
                 </li>
               ))}
             </ul>
-            <h2 className="mt-12 font-serif text-3xl text-navy">
-              Services in {location.name}
-            </h2>
+
+            <h2 className="mt-12 font-serif text-3xl text-navy">Services we provide</h2>
+            <p className="mt-3 text-sm leading-7 text-stone">
+              Browse NorthPeak service lines available for {location.name} properties.
+            </p>
             <div className="mt-5 grid gap-3">
               {services.map((service) => (
                 <Link
@@ -70,19 +90,36 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
                   href={`/services/${service.slug}`}
                   className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
                 >
-                  <p className="font-semibold text-navy">
-                    {service.name} in {location.name}
-                  </p>
+                  <p className="font-semibold text-navy">{service.name}</p>
                   <p className="mt-1 text-sm text-stone">{service.summary}</p>
                 </Link>
               ))}
             </div>
+
+            {relatedLocations.length > 0 ? (
+              <>
+                <h2 className="mt-12 font-serif text-3xl text-navy">Nearby service areas</h2>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {relatedLocations.map((related) => (
+                    <Link
+                      key={related.slug}
+                      href={`/locations/${related.slug}`}
+                      className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
+                    >
+                      <p className="font-semibold text-navy">{related.name}</p>
+                      <p className="mt-1 text-sm text-stone">{related.summary}</p>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            ) : null}
           </div>
+
           <aside className="space-y-5">
             <div className="rounded-[1.6rem] border border-navy/8 bg-white p-6 shadow-[var(--shadow-card)]">
               <h2 className="text-2xl text-navy">Check your postal code</h2>
               <p className="mt-2 text-sm text-stone">
-                Confirm coverage before you request an estimate.
+                Confirm service availability for {location.name} before you request an estimate.
               </p>
               <div className="mt-5">
                 <PostalCodeChecker variant="plain" />
@@ -94,7 +131,10 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
           </aside>
         </Container>
       </section>
-      <CtaBanner title={`Book ${location.name} with NorthPeak`} />
+      <CtaBanner
+        title={`Book ${location.name} with NorthPeak`}
+        body="Share photos, confirm your postal code, and receive a clear estimate range — no obligation."
+      />
     </>
   );
 }

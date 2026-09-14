@@ -3,7 +3,18 @@
 import { useId, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { checkServiceArea, normalizePostalCode } from "@/lib/postal";
+import type { ServiceAreaTier } from "@/types";
 import { cx } from "@/lib/utils";
+
+function resultPanelClass(tier: ServiceAreaTier | "error") {
+  if (tier === "error") return "bg-navy/5 text-navy";
+  if (tier === "core" || tier === "extended") return "bg-navy text-cream";
+  return "bg-cream-deep text-navy";
+}
+
+function resultMessageClass(tier: ServiceAreaTier) {
+  return tier === "core" || tier === "extended" ? "text-cream/80" : "text-stone";
+}
 
 export function PostalCodeChecker({
   variant = "card",
@@ -24,9 +35,40 @@ export function PostalCodeChecker({
     event.preventDefault();
     setTouched(true);
     const next = checkServiceArea(value);
-    if (!("error" in next) && next.tier !== "unavailable") {
+    if (!("error" in next)) {
       onAvailable?.(next.postalCode);
     }
+  }
+
+  function renderResult(panelClassName?: string) {
+    if (!result) return null;
+
+    const tier = "error" in result ? "error" : result.tier;
+
+    return (
+      <div className={cx(panelClassName, resultPanelClass(tier))}>
+        {"error" in result ? (
+          <p>{result.error}</p>
+        ) : (
+          <>
+            <p className="text-[0.68rem] font-semibold tracking-[0.14em] uppercase opacity-80">
+              {result.tierLabel}
+            </p>
+            <p className="mt-1 font-semibold">{result.headline}</p>
+            <p className={resultMessageClass(result.tier)}>{result.message}</p>
+            {!onAvailable ? (
+              <div className="mt-3">
+                <Button
+                  href={`/estimate?postal=${encodeURIComponent(result.postalCode)}` as "/estimate"}
+                >
+                  Get My Estimate
+                </Button>
+              </div>
+            ) : null}
+          </>
+        )}
+      </div>
+    );
   }
 
   if (variant === "banner") {
@@ -36,7 +78,7 @@ export function PostalCodeChecker({
           <div className="p-5 sm:p-7">
             <p className="font-serif text-2xl text-navy sm:text-[1.75rem]">Do we service your area?</p>
             <p className="mt-2 text-sm leading-6 text-stone">
-              Enter your postal code to confirm North Shore or Greater Vancouver coverage.
+              Enter your postal code to check service availability across Metro Vancouver.
             </p>
             <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[0.72rem] font-semibold tracking-wide text-navy/70 uppercase">
               <li className="flex items-center gap-1.5">
@@ -46,7 +88,7 @@ export function PostalCodeChecker({
                 <span className="text-gold">✓</span> No obligation
               </li>
               <li className="flex items-center gap-1.5">
-                <span className="text-gold">✓</span> Greater Vancouver
+                <span className="text-gold">✓</span> Metro Vancouver
               </li>
             </ul>
           </div>
@@ -92,38 +134,7 @@ export function PostalCodeChecker({
           </div>
         </div>
 
-        {result ? (
-          <div
-            className={cx(
-              "border-t border-navy/8 px-5 py-4 text-sm leading-6 sm:px-7",
-              "error" in result
-                ? "bg-navy/5 text-navy"
-                : result.tier === "unavailable"
-                  ? "bg-cream-deep text-navy"
-                  : "bg-navy text-cream",
-            )}
-          >
-            {"error" in result ? (
-              <p>{result.error}</p>
-            ) : (
-              <>
-                <p className="font-semibold">{result.headline}</p>
-                <p className={result.tier === "unavailable" ? "text-stone" : "text-cream/80"}>
-                  {result.message}
-                </p>
-                {!onAvailable && result.tier !== "unavailable" ? (
-                  <div className="mt-3">
-                    <Button
-                      href={`/estimate?postal=${encodeURIComponent(result.postalCode)}` as "/estimate"}
-                    >
-                      Get My Estimate
-                    </Button>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </div>
-        ) : null}
+        {renderResult("border-t border-navy/8 px-5 py-4 text-sm leading-6 sm:px-7")}
       </div>
     );
   }
@@ -150,7 +161,7 @@ export function PostalCodeChecker({
               variant === "card" ? "mt-2 max-w-md" : "mt-2",
             )}
           >
-            Enter a Canadian postal code to confirm North Shore or Greater Vancouver coverage.
+            Enter a Canadian postal code to check service availability across Metro Vancouver.
           </p>
         </div>
         <form
@@ -184,36 +195,7 @@ export function PostalCodeChecker({
           </Button>
         </form>
       </div>
-      {result ? (
-        <div
-          className={cx(
-            "mt-5 rounded-2xl px-4 py-3 text-sm leading-6",
-            "error" in result
-              ? "bg-navy/5 text-navy"
-              : result.tier === "unavailable"
-                ? "bg-cream-deep text-navy"
-                : "bg-navy text-cream",
-          )}
-        >
-          {"error" in result ? (
-            <p>{result.error}</p>
-          ) : (
-            <>
-              <p className="font-semibold">{result.headline}</p>
-              <p className={result.tier === "unavailable" ? "text-stone" : "text-cream/80"}>
-                {result.message}
-              </p>
-              {!onAvailable && result.tier !== "unavailable" ? (
-                <div className="mt-4">
-                  <Button href={`/estimate?postal=${encodeURIComponent(result.postalCode)}` as "/estimate"}>
-                    Get My Estimate
-                  </Button>
-                </div>
-              ) : null}
-            </>
-          )}
-        </div>
-      ) : null}
+      {renderResult("mt-5 rounded-2xl px-4 py-3 text-sm leading-6")}
     </div>
   );
 }

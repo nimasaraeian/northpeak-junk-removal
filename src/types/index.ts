@@ -1,4 +1,4 @@
-export type ServiceAreaTier = "core" | "extended" | "unavailable";
+export type ServiceAreaTier = "core" | "extended" | "confirmation" | "outside";
 
 export type ServiceCategory =
   | "residential"
@@ -29,7 +29,11 @@ export interface LocationPage {
   headline: string;
   summary: string;
   description: string;
+  /** Local job types and property situations common in this area. */
+  useCases: string[];
   neighborhoods: string[];
+  /** Slugs of nearby location pages for internal linking. */
+  relatedLocationSlugs: string[];
   seoTitle: string;
   seoDescription: string;
 }
