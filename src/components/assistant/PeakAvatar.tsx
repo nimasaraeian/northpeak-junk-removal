@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cx } from "@/lib/utils";
 
 export function PeakAvatar({
@@ -9,13 +10,17 @@ export function PeakAvatar({
 }) {
   return (
     <span className={cx("relative inline-block aspect-square select-none bg-transparent", className)}>
-      {/* Native img keeps PNG alpha; Next/Image can flatten transparency to black. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/brand/peak-sticker.png?v=2"
+      {/* The source PNG is 554KB; the launcher renders it at 56px. WebP and
+          AVIF both carry the alpha channel, so the sticker keeps its cutout. */}
+      <Image
+        src="/brand/peak-sticker.png"
         alt=""
+        width={919}
+        height={712}
+        quality={70}
+        sizes="96px"
+        loading="lazy"
         className="h-full w-full object-contain"
-        decoding="async"
         draggable={false}
       />
       {animated ? (

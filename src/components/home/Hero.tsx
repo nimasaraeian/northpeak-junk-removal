@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -97,17 +97,60 @@ function HeroCopy() {
   );
 }
 
-function HeroFrame({
-  desktop = false,
-  children,
-}: {
-  desktop?: boolean;
-  children: ReactNode;
-}) {
+function HeroFrame({ children }: { children: ReactNode }) {
   return (
-    <div className={`relative w-full overflow-hidden ${HERO_HEIGHT} ${desktop ? "hidden lg:block" : "lg:hidden"}`}>
-      {children}
-    </div>
+    <div className={`relative w-full overflow-hidden ${HERO_HEIGHT}`}>{children}</div>
+  );
+}
+
+/**
+ * The hero is the LCP element, and it is art-directed: a landscape crop on
+ * desktop, a portrait one on mobile.
+ *
+ * Rendering both as `<Image fill>` and hiding one with CSS meant the browser
+ * preloaded both — `hidden` does not reach the preload scanner, and a `fill`
+ * image's srcset starts at the smallest deviceSize (640px), so there was no
+ * way to shrink the unused one. A `<picture>` with `media` on each `<source>`
+ * lets the preload scanner pick exactly one before any CSS is parsed.
+ *
+ * getImageProps gives the optimizer's srcset for each crop; the `<img>` is
+ * positioned the way `fill` positions its own image.
+ */
+const DESKTOP_SIZES = "100vw";
+/**
+ * Deliberately under 100vw. The frame is full-bleed, but a phone asking for
+ * 100vw at DPR 3 lands on the 1200px candidate (59KB) when the 828px one
+ * (33KB) is indistinguishable at this size behind the scrim. 70vw puts a
+ * 390px/DPR-3 screen on 828 and a 768px/DPR-2 tablet on 1080.
+ */
+const MOBILE_SIZES = "70vw";
+
+function HeroPicture() {
+  const common = { alt: "", fill: true as const, quality: 70 };
+
+  const { props: desktop } = getImageProps({
+    ...common,
+    src: "/brand/hero-desktop.jpg",
+    sizes: DESKTOP_SIZES,
+  });
+  const { props: mobile } = getImageProps({
+    ...common,
+    src: "/brand/hero-mobile.jpg",
+    sizes: MOBILE_SIZES,
+  });
+
+  return (
+    <picture>
+      <source media="(min-width: 1024px)" srcSet={desktop.srcSet} sizes={DESKTOP_SIZES} />
+      <source srcSet={mobile.srcSet} sizes={MOBILE_SIZES} />
+      <img
+        src={mobile.src}
+        alt="NorthPeak junk removal truck and crew in North Vancouver"
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-[center_72%] lg:object-[72%_86%]"
+      />
+    </picture>
   );
 }
 
@@ -115,48 +158,19 @@ export function Hero() {
   return (
     <section className="bg-navy-deep">
       <div className="hero-photo relative isolate w-full text-cream">
-        <HeroFrame desktop>
-          <Image
-            src="/brand/hero-desktop.jpg"
-            alt="NorthPeak crew loading a cab-over truck against the North Shore mountains"
-            fill
-            priority
-            quality={95}
-            sizes="100vw"
-            className="object-cover object-[72%_86%]"
-          />
-
-          <div
-            className="pointer-events-none absolute inset-0 z-[1]"
-            style={{
-              background:
-                "linear-gradient(105deg, rgba(8,18,31,0.72) 0%, rgba(8,18,31,0.4) 22%, rgba(8,18,31,0.08) 40%, transparent 58%)",
-            }}
-          />
-
-          <HeroOverlay>
-            <HeroCopy />
-          </HeroOverlay>
-        </HeroFrame>
-
         <HeroFrame>
-          <Image
-            src="/brand/hero-mobile.jpg"
-            alt="NorthPeak junk removal truck and crew in North Vancouver"
-            fill
-            priority
-            quality={95}
-            sizes="100vw"
-            className="object-cover object-[center_72%]"
-          />
+          <HeroPicture />
 
-          <div
-            className="pointer-events-none absolute inset-0 z-[1]"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(8,18,31,0.62) 0%, rgba(8,18,31,0.22) 34%, transparent 58%), linear-gradient(0deg, rgba(8,18,31,0.28) 0%, transparent 36%)",
-            }}
-          />
+          {/* The scrim differs per crop: a left-to-right wash behind the desktop
+              copy, a top-down one on mobile. */}
+          <div className="pointer-events-none absolute inset-0 z-[1] hidden lg:block" style={{
+            background:
+              "linear-gradient(105deg, rgba(8,18,31,0.72) 0%, rgba(8,18,31,0.4) 22%, rgba(8,18,31,0.08) 40%, transparent 58%)",
+          }} />
+          <div className="pointer-events-none absolute inset-0 z-[1] lg:hidden" style={{
+            background:
+              "linear-gradient(180deg, rgba(8,18,31,0.62) 0%, rgba(8,18,31,0.22) 34%, transparent 58%), linear-gradient(0deg, rgba(8,18,31,0.28) 0%, transparent 36%)",
+          }} />
 
           <HeroOverlay>
             <HeroCopy />

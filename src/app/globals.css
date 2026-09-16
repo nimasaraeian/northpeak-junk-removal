@@ -8,15 +8,23 @@
   --cream: #f6f1e8;
   --cream-deep: #ece4d6;
   --paper: #fbf8f2;
-  --stone: #8a8378;
+  /* Body and secondary text. Darkened from #8a8378, which sat at 3.5:1 on
+     paper and failed WCAG AA for the small text it is used on. Checked
+     against the darkest light surface it lands on (#edebe8), not just paper. */
+  --stone: #6d675f;
+  /* Only ever used on navy, where it is already well past AA. */
   --stone-soft: #c8c0b3;
   --gold: #f0a033;
-  --gold-deep: #d0892b;
+  /* Text-weight gold. Darkened from #d0892b (2.7:1 on paper). */
+  --gold-deep: #96631f;
   --gold-glow: #fbb24a;
   --np-navy: #1a3041;
   --np-cream: #edebe8;
   --np-stone: #888887;
   --np-orange: #d6762b;
+  /* The same orange, darkened for text and icons on light panels, checked
+     against the darkest of them (#edebe8). */
+  --np-orange-ink: #9c561f;
   color-scheme: light;
 }
 
@@ -33,6 +41,7 @@
   --color-gold: var(--gold);
   --color-gold-deep: var(--gold-deep);
   --color-gold-glow: var(--gold-glow);
+  --color-np-orange-ink: var(--np-orange-ink);
   --font-sans: var(--font-plus-jakarta);
   --font-heading: var(--font-plus-jakarta);
   --shadow-card: 0 18px 50px -28px rgb(12 27 46 / 0.35);

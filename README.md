@@ -85,6 +85,28 @@ Structured data is rendered as JSON-LD:
 
 Set `NEXT_PUBLIC_SITE_URL` before production so canonicals and the sitemap use the live domain.
 
+## Photo uploads
+
+Both forms compress photos in the browser before uploading. `src/lib/compress-image.ts`
+resizes every image to 1600px on its longest edge and re-encodes it as JPEG at quality
+0.8, so a 12MB phone photo leaves the device as a few hundred KB. Limits and settings
+live in `src/lib/estimate/photos.ts`: 8 photos, 10MB per source file, 4.5MB combined
+after compression.
+
+The two forms post differently, and compression matters for different reasons:
+
+- `/contact` sends the lead as JSON to `/api/contact`, then uploads each photo
+  separately to `/api/contact/photos`. Route handlers are not bound by the Server
+  Action body limit, but each request still has to clear the platform's own body cap,
+  and smaller photos mean fewer failed uploads on mobile connections.
+- `/estimate` posts every photo in one Server Action request, so the combined size has
+  to stay under `experimental.serverActions.bodySizeLimit`, set to `6mb` in
+  `next.config.ts`. The headroom over the 4.5MB image budget covers multipart
+  boundaries, part headers, and the text fields.
+
+If photos still fail to upload, the contact form says how many did not make it and
+offers a prefilled WhatsApp link built from `site.phone`.
+
 ## Conversion
 
 Primary CTA: **Get Estimate** → `/estimate`

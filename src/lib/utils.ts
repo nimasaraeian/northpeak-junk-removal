@@ -11,9 +11,10 @@ export function formatPhoneHref(phone: string) {
   return digits ? `tel:+${digits.replace(/^\+?/, "")}` : "tel:";
 }
 
-export function whatsAppHref(phone: string) {
+export function whatsAppHref(phone: string, message?: string) {
   const digits = phoneDigits(phone);
-  return digits ? `https://wa.me/${digits}` : "https://wa.me/";
+  const query = message ? `?text=${encodeURIComponent(message)}` : "";
+  return digits ? `https://wa.me/${digits}${query}` : "https://wa.me/";
 }
 
 export function telegramHref(phone: string) {
