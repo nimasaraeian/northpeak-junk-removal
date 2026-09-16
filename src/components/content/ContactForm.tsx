@@ -4,8 +4,15 @@ import { useState } from "react";
 import { PhotoDropzone, type LocalPhoto } from "@/components/estimate/PhotoDropzone";
 import type { ContactActionState } from "@/lib/actions/contact";
 import { Button } from "@/components/ui/Button";
+import { site } from "@/content/site";
+import { whatsAppHref } from "@/lib/utils";
 
 const initialState: ContactActionState = { ok: false, message: "" };
+
+const photoFallbackHref = whatsAppHref(
+  site.phone,
+  "Hi NorthPeak — my photos did not upload through the contact form. Here they are.",
+);
 
 async function readJsonResponse<T>(response: Response): Promise<T | null> {
   try {
@@ -19,6 +26,7 @@ export function ContactForm() {
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
   const [state, setState] = useState<ContactActionState>(initialState);
   const [pending, setPending] = useState(false);
+  const [offerPhotoFallback, setOfferPhotoFallback] = useState(false);
 
   if (state.ok) {
     return (
@@ -29,6 +37,7 @@ export function ContactForm() {
             Reference: <span className="font-semibold text-navy">{state.requestId}</span>
           </p>
         ) : null}
+        {offerPhotoFallback ? <PhotoFallback /> : null}
         <p className="mt-2 text-sm text-stone">
           If you need a priced range, the estimate workflow is faster than another message.
         </p>
@@ -51,6 +60,7 @@ export function ContactForm() {
 
         setPending(true);
         setState({ ok: false, message: "" });
+        setOfferPhotoFallback(false);
 
         try {
           const leadResponse = await fetch("/api/contact", {
@@ -97,12 +107,14 @@ export function ContactForm() {
           }
 
           if (failedPhotos > 0) {
+            setOfferPhotoFallback(true);
             setState({
               ok: true,
               requestId: leadPayload.requestId,
               photosDelivered: false,
-              message:
-                "We received your message. Some photos may not have uploaded successfully, but our team has your contact details and will follow up.",
+              message: `We received your message, but ${failedPhotos} of ${photos.length} photo${
+                photos.length === 1 ? "" : "s"
+              } did not upload. Our team has your contact details and will follow up.`,
             });
             return;
           }
@@ -121,6 +133,7 @@ export function ContactForm() {
               .join(" "),
           });
         } catch {
+          setOfferPhotoFallback(photos.length > 0);
           setState({
             ok: false,
             message:
@@ -180,7 +193,29 @@ export function ContactForm() {
       <Button type="submit" disabled={pending}>
         {pending ? "Sending..." : "Send Message"}
       </Button>
-      {state.message ? <p className="text-sm text-gold-deep">{state.message}</p> : null}
+      {state.message ? (
+        <div>
+          <p className="text-sm text-gold-deep">{state.message}</p>
+          {offerPhotoFallback ? <PhotoFallback /> : null}
+        </div>
+      ) : null}
     </form>
+  );
+}
+
+function PhotoFallback() {
+  return (
+    <p className="mt-2 text-sm text-stone">
+      You can also{" "}
+      <a
+        href={photoFallbackHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-navy underline decoration-gold underline-offset-4"
+      >
+        send the photos to us on WhatsApp
+      </a>{" "}
+      and we will match them to your message.
+    </p>
   );
 }

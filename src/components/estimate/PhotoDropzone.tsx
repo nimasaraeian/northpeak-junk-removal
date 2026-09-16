@@ -1,16 +1,25 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { compressImage } from "@/lib/compress-image";
 import {
+  MAX_IMAGE_EDGE,
   MAX_PHOTO_FILES,
+  MAX_TOTAL_UPLOAD_BYTES,
+  formatBytes,
+  totalBytes,
   validatePhotoFile,
 } from "@/lib/estimate/photos";
 
 export interface LocalPhoto {
   id: string;
+  /** Compressed file — this is what gets uploaded. */
   file: File;
   name: string;
+  /** Size after compression. */
   size: number;
+  /** Size of the file the visitor picked, for the before/after line. */
+  originalSize: number;
   previewUrl: string;
   valid: boolean;
 }
@@ -95,9 +104,13 @@ export function PhotoDropzone({
   const inputRef = useRef<HTMLInputElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  function addFiles(fileList: FileList | null) {
-    if (!fileList) return;
+  async function addFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+
+    setBusy(true);
+    setNotice(null);
 
     const next = [...photos];
     const rejections: string[] = [];
@@ -114,16 +127,37 @@ export function PhotoDropzone({
         continue;
       }
 
+      // Resize and re-encode here so a 12MB phone photo never reaches the
+      // network at full size. A failure is not fatal: fall back to the
+      // original, which validatePhotoFile has already cleared.
+      let upload = validation.file;
+      try {
+        upload = (await compressImage(validation.file)).file;
+      } catch {
+        rejections.push(
+          `"${file.name}" could not be resized, so it will upload at full size.`,
+        );
+      }
+
+      if (totalBytes(next) + upload.size > MAX_TOTAL_UPLOAD_BYTES) {
+        rejections.push(
+          `"${file.name}" would push this message past ${formatBytes(MAX_TOTAL_UPLOAD_BYTES)} of photos.`,
+        );
+        continue;
+      }
+
       next.push({
         id: `${file.name}-${file.size}-${file.lastModified}`,
-        file: validation.file,
+        file: upload,
         name: file.name,
-        size: file.size,
-        previewUrl: URL.createObjectURL(file),
+        size: upload.size,
+        originalSize: file.size,
+        previewUrl: URL.createObjectURL(upload),
         valid: true,
       });
     }
 
+    setBusy(false);
     setNotice(rejections.length > 0 ? rejections.join(" ") : null);
     onChange(next);
   }
@@ -133,6 +167,11 @@ export function PhotoDropzone({
     if (match) URL.revokeObjectURL(match.previewUrl);
     onChange(photos.filter((photo) => photo.id !== id));
   }
+
+  const saved = photos.reduce(
+    (sum, photo) => sum + Math.max(0, photo.originalSize - photo.size),
+    0,
+  );
 
   return (
     <div>
@@ -155,7 +194,7 @@ export function PhotoDropzone({
         onDrop={(event) => {
           event.preventDefault();
           setIsDragging(false);
-          addFiles(event.dataTransfer.files);
+          void addFiles(event.dataTransfer.files);
         }}
         className={[
           "group block cursor-pointer rounded-2xl border-2 border-dashed px-5 py-8 text-center transition",
@@ -174,7 +213,11 @@ export function PhotoDropzone({
         </p>
 
         <p className="mt-4 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-navy ring-1 ring-navy/10">
-          {isDragging ? "Drop photos here" : "Drag & drop photos here, or click to browse"}
+          {busy
+            ? "Resizing photos..."
+            : isDragging
+              ? "Drop photos here"
+              : "Drag & drop photos here, or click to browse"}
         </p>
 
         <p className="mt-3 text-xs leading-5 text-stone">
@@ -183,7 +226,14 @@ export function PhotoDropzone({
 
         {photos.length > 0 ? (
           <p className="mt-2 text-xs font-medium text-gold-deep">
-            {photos.length} photo{photos.length === 1 ? "" : "s"} selected
+            {photos.length} photo{photos.length === 1 ? "" : "s"} selected ·{" "}
+            {formatBytes(totalBytes(photos))} to upload
+          </p>
+        ) : null}
+
+        {saved > 0 ? (
+          <p className="mt-1 text-xs text-stone">
+            Resized to {MAX_IMAGE_EDGE}px — {formatBytes(saved)} less to send.
           </p>
         ) : null}
       </label>
@@ -196,7 +246,7 @@ export function PhotoDropzone({
         multiple
         className="sr-only"
         onChange={(event) => {
-          addFiles(event.target.files);
+          void addFiles(event.target.files);
           event.target.value = "";
         }}
       />
