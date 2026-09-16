@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
-import { NorthPeakAssistant } from "@/components/assistant/NorthPeakAssistant";
+import { AssistantMount } from "@/components/assistant/AssistantMount";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -78,7 +78,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        <NorthPeakAssistant />
+        <AssistantMount />
       </body>
     </html>
   );

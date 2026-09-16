@@ -26,7 +26,7 @@ export function ProjectStoryPanel({
             <svg
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="mt-0.5 h-4 w-4 shrink-0 text-[#D6762B]"
+              className="mt-0.5 h-4 w-4 shrink-0 text-np-orange-ink"
               aria-hidden
             >
               <path

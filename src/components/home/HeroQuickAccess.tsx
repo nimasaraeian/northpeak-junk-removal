@@ -135,14 +135,14 @@ function QuickAccessCard({
         {icon}
       </div>
 
-      <h3
+      <h2
         className={cx(
           "mt-4 font-serif text-xl leading-snug sm:text-[1.35rem]",
           accent === "navy" ? "text-cream" : "text-navy",
         )}
       >
         {title}
-      </h3>
+      </h2>
 
       <p
         className={cx(

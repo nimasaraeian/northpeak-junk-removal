@@ -20,18 +20,22 @@ export function LoadBayCanvas({ tier }: { tier: LoadTier }) {
         role="img"
         aria-label={`NorthPeak truck — ${tier.label}`}
       >
+        {/* All four frames stay mounted so switching tiers cross-fades rather
+            than flashing. The section sits well below the fold, so they load
+            lazily and through the optimizer — `unoptimized` was shipping the
+            raw JPEGs, and `priority` was preloading one of them. */}
         {bayVisuals.map((src) => (
           <Image
             key={src}
             alt=""
             src={src}
             fill
-            unoptimized
+            quality={70}
+            loading="lazy"
             sizes="(min-width: 768px) 520px, 100vw"
             className="object-contain object-center transition-opacity duration-700 ease-out"
             style={{ opacity: src === tier.visualSrc ? 1 : 0 }}
             draggable={false}
-            priority={src === tier.visualSrc}
           />
         ))}
 
@@ -51,7 +55,7 @@ export function LoadBayCanvas({ tier }: { tier: LoadTier }) {
           {bed.lengthFt}′ × {bed.widthFt}′ × {bed.wallHeightFt}′
         </span>
         <span className="mx-2 text-stone-soft">·</span>
-        <span className="font-medium text-[#D6762B]">{loadNote}</span>
+        <span className="font-medium text-np-orange-ink">{loadNote}</span>
         <span className="mx-2 text-stone-soft">·</span>
         <span>{tier.volumeRange}</span>
       </p>

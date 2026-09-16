@@ -151,9 +151,9 @@ export function PostalCodeChecker({
         <div className={variant === "card" ? undefined : "min-w-0 flex-1"}>
           <p className="eyebrow text-gold-deep">Do we service your area?</p>
           {variant === "card" ? (
-            <h3 className="mt-2 font-serif text-xl leading-snug text-navy sm:text-2xl">
+            <h2 className="mt-2 font-serif text-xl leading-snug text-navy sm:text-2xl">
               Confirm your coverage
-            </h3>
+            </h2>
           ) : null}
           <p
             className={cx(
