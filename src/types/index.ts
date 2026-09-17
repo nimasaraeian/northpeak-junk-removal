@@ -46,6 +46,20 @@ export interface Testimonial {
   service: string;
 }
 
+/**
+ * A block of post body content.
+ *
+ * Text fields accept a deliberately small subset of markdown — `[label](/path)`
+ * links and `**bold**` — parsed by `parseInline` in `@/lib/blog/rich-text`.
+ * Anything richer belongs in a CMS, which is where this content is headed.
+ */
+export type BlogBlock =
+  | { type: "heading"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[]; ordered?: boolean }
+  | { type: "table"; columns: string[]; rows: string[][]; caption?: string }
+  | { type: "cta"; label: string; href: string };
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -57,7 +71,9 @@ export interface BlogPost {
   seoDescription: string;
   relatedServiceSlugs: string[];
   relatedLocationSlugs: string[];
-  body: string[];
+  body: BlogBlock[];
+  /** Rendered as an accordion and emitted as FAQPage JSON-LD when present. */
+  faqs?: FaqItem[];
 }
 
 export interface FaqItem {
