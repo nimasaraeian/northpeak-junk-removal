@@ -109,10 +109,14 @@ test("the mattress post carries the required metadata", () => {
 test("the quick answer is the first body content after the h1", () => {
   const post = getPost(SLUG)!;
   const [first] = post.body;
-  assert.equal(first.type, "paragraph");
+  assert.equal(first.type, "callout");
   assert.ok(
-    first.type === "paragraph" && first.text.startsWith("**Quick answer:**"),
-    "first block must be the quick answer paragraph",
+    first.type === "callout" && first.label === "Quick answer",
+    "first block must be the quick answer callout",
+  );
+  assert.ok(
+    first.type === "callout" && first.text.startsWith("In Vancouver and the North Shore"),
+    "quick answer must keep its opening sentence",
   );
 });
 
@@ -121,6 +125,7 @@ test("the post links to the service, location, and estimate routes", () => {
   const hrefs = new Set(
     post.body.flatMap((block) => {
       if (block.type === "paragraph" || block.type === "heading") return extractLinks(block.text);
+      if (block.type === "callout") return extractLinks(block.text);
       if (block.type === "list") return block.items.flatMap(extractLinks);
       if (block.type === "cta") return [block.href];
       return [];

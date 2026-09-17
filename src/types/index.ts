@@ -47,6 +47,19 @@ export interface Testimonial {
 }
 
 /**
+ * A Journal illustration.
+ *
+ * Intrinsic `width`/`height` are required so every image reserves its space
+ * before it loads and contributes no layout shift.
+ */
+export interface BlogImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+/**
  * A block of post body content.
  *
  * Text fields accept a deliberately small subset of markdown — `[label](/path)`
@@ -59,6 +72,7 @@ export type BlogBlock =
   | { type: "callout"; label: string; text: string }
   | { type: "list"; items: string[]; ordered?: boolean }
   | { type: "table"; columns: string[]; rows: string[][]; caption?: string }
+  | { type: "figure"; image: BlogImage; caption?: string }
   | { type: "cta"; label: string; href: string };
 
 export interface BlogPost {
@@ -73,6 +87,8 @@ export interface BlogPost {
   relatedServiceSlugs: string[];
   relatedLocationSlugs: string[];
   body: BlogBlock[];
+  /** Runs full-bleed under the page header, and doubles as the share image. */
+  heroImage?: BlogImage;
   /** Rendered as an accordion and emitted as FAQPage JSON-LD when present. */
   faqs?: FaqItem[];
 }

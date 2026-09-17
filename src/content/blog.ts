@@ -124,7 +124,7 @@ export const blogPosts: BlogPost[] = [
     relatedServiceSlugs: ["furniture-removal"],
     relatedLocationSlugs: ["north-vancouver"],
     body: [
-      { type: "paragraph", text: "**Quick answer:** In Vancouver and the North Shore you have three legal options: drop the mattress at a Metro Vancouver transfer station or the Vancouver Landfill for a small recycling fee (daily limits apply), take it to a private mattress recycler, or book a pickup service that hauls it for you. Dumping a mattress in an alley, on the curb, or beside a building\u2019s bin is illegal dumping and can draw fines." },
+      { type: "callout", label: "Quick answer", text: "In Vancouver and the North Shore you have three legal options: drop the mattress at a Metro Vancouver transfer station or the Vancouver Landfill for a small recycling fee (daily limits apply), take it to a private mattress recycler, or book a pickup service that hauls it for you. Dumping a mattress in an alley, on the curb, or beside a building\u2019s bin is illegal dumping and can draw fines." },
 
       { type: "heading", text: "Why you can\u2019t just throw a mattress in the garbage" },
       { type: "paragraph", text: "Mattresses are banned from regular garbage collection across Metro Vancouver. They jam compaction equipment and take 80\u2013100 years to break down in a landfill, so the region requires them to be recycled \u2014 the steel, foam, wood and fabric are separated and reused. That\u2019s why every legal option ends at a recycling facility: either you take it there yourself, or a service delivers it for you." },
