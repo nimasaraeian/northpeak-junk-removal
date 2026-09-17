@@ -56,6 +56,7 @@ export interface Testimonial {
 export type BlogBlock =
   | { type: "heading"; text: string }
   | { type: "paragraph"; text: string }
+  | { type: "callout"; label: string; text: string }
   | { type: "list"; items: string[]; ordered?: boolean }
   | { type: "table"; columns: string[]; rows: string[][]; caption?: string }
   | { type: "cta"; label: string; href: string };

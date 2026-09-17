@@ -31,6 +31,8 @@ function everyInternalHref() {
     for (const block of post.body) {
       if (block.type === "heading" || block.type === "paragraph") {
         hrefs.push(...extractLinks(block.text));
+      } else if (block.type === "callout") {
+        hrefs.push(...extractLinks(block.text));
       } else if (block.type === "list") {
         for (const item of block.items) hrefs.push(...extractLinks(item));
       } else if (block.type === "table") {

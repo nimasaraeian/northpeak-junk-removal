@@ -28,6 +28,19 @@ export function BlogBody({ blocks }: { blocks: BlogBlock[] }) {
               </p>
             );
 
+          case "callout":
+            return (
+              <aside
+                key={index}
+                className="rounded-2xl border border-gold/30 bg-cream px-6 py-5 shadow-[var(--shadow-card)] sm:px-7 sm:py-6"
+              >
+                <p className="eyebrow text-gold-deep">{block.label}</p>
+                <p className="mt-3 text-lg leading-8 text-navy">
+                  <RichText text={block.text} />
+                </p>
+              </aside>
+            );
+
           case "list": {
             const ListTag = block.ordered ? "ol" : "ul";
             return (
