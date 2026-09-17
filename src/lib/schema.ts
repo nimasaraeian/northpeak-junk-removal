@@ -1,7 +1,7 @@
 import { locations } from "@/content/locations";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
-import type { LocationPage, Service } from "@/types";
+import type { BlogPost, LocationPage, Service } from "@/types";
 
 export function serializeJsonLd(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
@@ -107,6 +107,27 @@ export function serviceSchema(service: Service) {
     provider: { "@id": localBusinessId() },
     areaServed: site.areaServed,
     brand: { "@id": organizationId() },
+  };
+}
+
+export function articleSchema(post: BlogPost) {
+  const url = `${site.url}/blog/${post.slug}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.seoDescription,
+    datePublished: post.date,
+    author: {
+      "@type": "Organization",
+      "@id": organizationId(),
+      name: site.name,
+      url: site.url,
+    },
+    publisher: { "@id": organizationId() },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    url,
   };
 }
 
