@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img" aria-label="Two routes out of a condo: the elevator, and a stairwell too tight for a box spring">
+  <defs>
+    <style>
+      .t { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .lbl { font-size: 27px; font-weight: 700; fill: #0c1b2e; }
+      .sub { font-size: 19px; fill: #6d675f; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="420" fill="#f6f1e8"/>
+
+  <!-- ── Elevator ── -->
+  <g>
+    <rect x="36" y="44" width="456" height="332" rx="24" fill="#fbf8f2" stroke="#0c1b2e" stroke-opacity="0.1" stroke-width="2"/>
+    <!-- shaft -->
+    <rect x="180" y="78" width="168" height="184" fill="#0c1b2e" opacity="0.05"/>
+    <rect x="180" y="78" width="168" height="184" fill="none" stroke="#0c1b2e" stroke-opacity="0.18" stroke-width="2"/>
+    <!-- cable -->
+    <rect x="262" y="78" width="4" height="74" fill="#0c1b2e" opacity="0.3"/>
+    <!-- car -->
+    <rect x="196" y="152" width="136" height="100" rx="6" fill="#0c1b2e"/>
+    <!-- wrapped mattress standing inside -->
+    <rect x="246" y="166" width="36" height="72" rx="14" fill="#f6f1e8"/>
+    <rect x="246" y="182" width="36" height="6" fill="#f0a033"/>
+    <rect x="246" y="214" width="36" height="6" fill="#f0a033"/>
+    <!-- travelling up -->
+    <path d="M264 96 L282 122 L270 122 L270 140 L258 140 L258 122 L246 122 Z" fill="#f0a033"/>
+    <text class="t lbl" x="264" y="306" text-anchor="middle">Elevator</text>
+    <text class="t sub" x="264" y="340" text-anchor="middle">Book the window, pads on</text>
+  </g>
+
+  <!-- ── Stairwell ── -->
+  <g>
+    <rect x="508" y="44" width="456" height="332" rx="24" fill="#fbf8f2" stroke="#0c1b2e" stroke-opacity="0.1" stroke-width="2"/>
+    <g transform="translate(736 164) scale(0.72) translate(-722 -206)">
+    <!-- Stairwell turn, seen from above: the corridor doubles back -->
+    <rect x="626" y="96" width="14" height="184" fill="#0c1b2e"/>
+    <rect x="626" y="266" width="236" height="14" fill="#0c1b2e"/>
+    <rect x="706" y="96" width="156" height="104" rx="4" fill="#0c1b2e" opacity="0.85"/>
+    <!-- tread hatching inside the corner block -->
+    <path d="M706 126 H862 M706 156 H862 M706 186 H862" stroke="#f6f1e8" stroke-opacity="0.22" stroke-width="3"/>
+    <!-- box spring, too long to swing around the corner -->
+    <g transform="translate(672 232) rotate(-45)">
+      <rect x="-118" y="-13" width="236" height="26" rx="4" fill="#ece4d6" stroke="#0c1b2e" stroke-width="3"/>
+      <rect x="-118" y="-13" width="10" height="26" fill="#f0a033"/>
+      <rect x="108" y="-13" width="10" height="26" fill="#f0a033"/>
+      <path d="M-60 -13 V13 M0 -13 V13 M60 -13 V13" stroke="#0c1b2e" stroke-opacity="0.3" stroke-width="3"/>
+    </g>
+    <!-- blocked rotation -->
+    <path d="M742 236 A 72 72 0 0 1 700 296" fill="none" stroke="#f0a033" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 9"/>
+    <path d="M710 282 L698 300 L716 306 Z" fill="#f0a033"/>
+    </g>
+    <text class="t lbl" x="736" y="306" text-anchor="middle">Stairwell</text>
+    <text class="t sub" x="736" y="340" text-anchor="middle">A queen box spring may not turn</text>
+  </g>
+</svg>

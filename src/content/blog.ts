@@ -14,8 +14,14 @@ export const blogPosts: BlogPost[] = [
       "Every legal way to dispose of a mattress in Vancouver & the North Shore: free city options, recycling depots, and pickup \u2014 with real costs and rules.",
     relatedServiceSlugs: ["furniture-removal"],
     relatedLocationSlugs: ["north-vancouver"],
+    heroImage: {
+      src: "/journal/mattress-hero.svg",
+      alt: "A mattress in front of the North Shore ridge line, beside a gold recycling symbol.",
+      width: 1200,
+      height: 630,
+    },
     body: [
-      { type: "paragraph", text: "**Quick answer:** In Vancouver and the North Shore you have three legal options: drop the mattress at a Metro Vancouver transfer station or the Vancouver Landfill for a small recycling fee (daily limits apply), take it to a private mattress recycler, or book a pickup service that hauls it for you. Dumping a mattress in an alley, on the curb, or beside a building\u2019s bin is illegal dumping and can draw fines." },
+      { type: "callout", label: "Quick answer", text: "In Vancouver and the North Shore you have three legal options: drop the mattress at a Metro Vancouver transfer station or the Vancouver Landfill for a small recycling fee (daily limits apply), take it to a private mattress recycler, or book a pickup service that hauls it for you. Dumping a mattress in an alley, on the curb, or beside a building\u2019s bin is illegal dumping and can draw fines." },
 
       { type: "heading", text: "Why you can\u2019t just throw a mattress in the garbage" },
       { type: "paragraph", text: "Mattresses are banned from regular garbage collection across Metro Vancouver. They jam compaction equipment and take 80\u2013100 years to break down in a landfill, so the region requires them to be recycled \u2014 the steel, foam, wood and fabric are separated and reused. That\u2019s why every legal option ends at a recycling facility: either you take it there yourself, or a service delivers it for you." },
@@ -49,6 +55,17 @@ export const blogPosts: BlogPost[] = [
       { type: "paragraph", text: "With NorthPeak, [mattress and furniture removal](/services/furniture-removal) works like this: send us a few photos, get a clear price range usually within hours, and our crew removes it on a day that suits you. The price covers labour, hauling, recycling fees and floor protection on the way out \u2014 no surprise charges at the door. We serve [North Vancouver](/locations/north-vancouver), West Vancouver and Greater Vancouver seven days a week." },
       { type: "cta", label: "Get a price range for your mattress \u2192", href: "/estimate" },
 
+      {
+        type: "figure",
+        image: {
+          src: "/journal/mattress-options.svg",
+          alt: "Three routes side by side: depot drop-off by car, a private recycling plant, and a booked pickup truck.",
+          width: 1000,
+          height: 420,
+        },
+        caption: "Every legal route ends at a recycling facility \u2014 the three options differ only in who drives it there.",
+      },
+
       { type: "heading", text: "What about the box spring, frame and headboard?" },
       { type: "paragraph", text: "Plan for the whole bed, not just the mattress \u2014 disposal rules differ by part:" },
       {
@@ -61,6 +78,17 @@ export const blogPosts: BlogPost[] = [
         ],
       },
 
+      {
+        type: "figure",
+        image: {
+          src: "/journal/mattress-bed-parts.svg",
+          alt: "A bed broken into four parts \u2014 mattress, box spring, metal frame and headboard \u2014 each labelled with its disposal route.",
+          width: 1000,
+          height: 420,
+        },
+        caption: "Four parts, four disposal routes, and on a DIY trip four separate fees.",
+      },
+
       { type: "heading", text: "Getting a mattress out of a condo or apartment" },
       { type: "paragraph", text: "Half the North Shore lives in strata buildings, and the building adds its own rules before the disposal question even starts:" },
       {
@@ -71,6 +99,17 @@ export const blogPosts: BlogPost[] = [
           "Measure the route: a queen box spring often can\u2019t turn the corner in older North Vancouver apartment stairwells. That\u2019s not a strength problem; it\u2019s geometry, and it\u2019s the single most common reason condo residents give up on DIY.",
           "A removal crew handles the elevator booking window, wraps the mattress before it crosses common areas (a courtesy stratas appreciate, and mandatory if bed bugs are involved), and carries it out without wall scuffs you\u2019d otherwise be liable for.",
         ],
+      },
+
+      {
+        type: "figure",
+        image: {
+          src: "/journal/mattress-condo-access.svg",
+          alt: "Two ways out of a condo: an elevator carrying a wrapped mattress, and a stairwell turn a queen box spring cannot clear.",
+          width: 1000,
+          height: 420,
+        },
+        caption: "The stairwell problem is geometry, not strength \u2014 measure the turn before you carry anything into it.",
       },
 
       { type: "heading", text: "How fast does each option work?" },
