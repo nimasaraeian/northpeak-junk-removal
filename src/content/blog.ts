@@ -2,6 +2,115 @@ import type { BlogPost } from "@/types";
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "garage-cleanout-north-vancouver-cost",
+    title: "Garage Cleanout in North Vancouver: Cost & Process (2026)",
+    excerpt:
+      "What a garage cleanout costs on the North Shore, how a photo-quoted visit runs start to finish, what to pull out before booking, and the point where hiring a crew beats hauling it yourself.",
+    date: "2026-09-17",
+    readingTime: "5 min",
+    category: "How-To",
+    seoTitle: "Garage Cleanout in North Vancouver: Cost & Process (2026)",
+    seoDescription:
+      "What a garage cleanout costs in North Vancouver, how the process works, what\u2019s worth donating, and when DIY beats hiring a crew \u2014 real 2026 ranges.",
+    relatedServiceSlugs: ["garage-cleanout"],
+    relatedLocationSlugs: ["north-vancouver"],
+    body: [
+      { type: "callout", label: "Quick answer", text: "In Metro Vancouver, a typical garage cleanout runs from a minimum-load charge of roughly $100\u2013150 for a few items up to $600\u20131,000+ for a packed double garage, priced by how much truck space the load fills. Most single-car garages land somewhere in the middle as a quarter-to-half load. Send photos of the space and you\u2019ll get a firm range before anyone shows up." },
+
+      { type: "heading", text: "What does a garage cleanout cost in North Vancouver?" },
+      { type: "paragraph", text: "Almost every junk removal company in Greater Vancouver prices by volume \u2014 the share of the truck your load fills \u2014 with heavy materials like concrete, soil or drywall priced by weight because disposal facilities charge by the tonne. As a 2026 market guide:" },
+      {
+        type: "list",
+        items: [
+          "A few items (minimum or quarter load): roughly $100\u2013300",
+          "A serious garage corner or half load: roughly $300\u2013500",
+          "A packed single garage to full truckload: roughly $600\u20131,000+",
+          "Heavy renovation debris mixed in: quoted by weight on top",
+        ],
+      },
+      { type: "paragraph", text: "The honest answer is that no two garages are alike, which is why NorthPeak quotes from photos: send a few pictures of the garage, get a clear price range usually within hours, and the number you approve is the number you pay \u2014 labour, hauling, recycling and disposal fees included." },
+
+      { type: "heading", text: "What actually happens during a cleanout" },
+      {
+        type: "list",
+        ordered: true,
+        items: [
+          "You send photos of the garage through the [estimate form](/estimate) \u2014 no visit needed.",
+          "You get a price range and pick a time; crews work seven days a week by appointment.",
+          "The crew arrives, confirms the price before touching anything, and does all the lifting and sorting.",
+          "Reusable items are set aside for donation, recyclables (metal, wood, cardboard, electronics) are separated, and only the remainder goes to disposal.",
+          "The floor is swept and you get your parking spot back \u2014 most single-garage jobs take a couple of hours.",
+        ],
+      },
+      { type: "paragraph", text: "You don\u2019t need to pre-sort or bag anything, though pulling aside the things you\u2019re keeping before the crew arrives keeps the job faster and cheaper." },
+
+      { type: "heading", text: "What\u2019s worth keeping, donating or selling first" },
+      { type: "paragraph", text: "A cleanout costs less when less goes in the truck. Before booking:" },
+      {
+        type: "list",
+        items: [
+          "**Sell or give away:** working power tools, bikes, sports gear and camping equipment move fast on local buy-nothing and marketplace groups \u2014 North Shore demand for outdoor gear is real.",
+          "**Donate:** furniture in good condition, working small appliances and books are accepted by local thrift stores; call ahead for large items.",
+          "**Free metal recycling:** scrap metal (old frames, shelving, BBQs) is often accepted free at recyclers \u2014 or just leave it in the load; it gets separated anyway.",
+          "**Not worth the effort:** broken furniture, stained mattresses, old paint cans and mystery boxes from the last move. That\u2019s exactly what a cleanout crew is for.",
+        ],
+      },
+
+      { type: "heading", text: "Items that need special handling" },
+      {
+        type: "list",
+        items: [
+          "**Paint, solvents, propane tanks and chemicals:** household hazardous waste can\u2019t go in a regular junk load. Paint goes free to Product Care recycling depots; propane tanks have dedicated drop-offs. A crew can haul most other things, but flag hazardous items when you send photos.",
+          "**Tires:** accepted at return-to-retailer programs across BC, usually free.",
+          "**Electronics:** TVs, computers and small electronics are recycled free at Return-It depots \u2014 or leave them in the load for sorting.",
+          "**Car batteries and motor oil:** auto parts retailers take them back at no charge.",
+        ],
+      },
+
+      { type: "heading", text: "Should you DIY or hire a crew?" },
+      { type: "paragraph", text: "DIY makes sense when you own a truck or trailer, the load is light, and you have a free Saturday: your only costs are fuel and tipping fees at the North Shore Recycling & Waste Centre, which charges by weight with a minimum fee per visit." },
+      { type: "paragraph", text: "Hiring wins when any of these are true: the load includes heavy furniture or appliances, you\u2019d need multiple trips, stairs or a tight lane are involved, or the goal is \u201cgone this week\u201d rather than \u201ca project this month.\u201d One crew visit replaces roughly three self-haul trips for a typical single garage \u2014 and the tipping fees you\u2019d pay are already inside the quoted price." },
+
+      { type: "heading", text: "When\u2019s the best time to book?" },
+      { type: "paragraph", text: "Spring and early fall are peak decluttering seasons on the North Shore, and weekend slots fill first. If your cleanout is tied to a move, a listing date or a renovation start, book once your date is firm \u2014 [garage cleanout crews](/services/garage-cleanout) in [North Vancouver](/locations/north-vancouver) can usually schedule within a few days, but same-week weekend slots are the first to go." },
+      { type: "cta", label: "Get a price range for your garage \u2192", href: "/estimate" },
+
+      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd, North Vancouver. Reuse and recycle first, landfill last." },
+    ],
+    faqs: [
+      {
+        question: "How much does it cost to clean out a single-car garage in North Vancouver?",
+        answer:
+          "Most single-car garages price as a quarter-to-half truckload, which lands roughly between $300 and $500 in the 2026 Metro Vancouver market, depending on how densely packed the space is and whether heavy materials are mixed in. Photo-based quotes turn that range into a firm number before booking.",
+      },
+      {
+        question: "Do I need to be home during the cleanout?",
+        answer:
+          "Not necessarily. If the garage is accessible and the crew has your approval on the quoted price, many cleanouts run while owners are at work \u2014 payment and updates happen by phone. For a first visit, being reachable by phone for any surprises is enough.",
+      },
+      {
+        question: "What happens to the stuff you haul away?",
+        answer:
+          "Loads are sorted after pickup: reusable items go to donation, metal, wood, cardboard and electronics go to recycling streams, and only the remainder goes to disposal. Reuse and recycle first, landfill last, is the standard the industry works to in Metro Vancouver \u2014 and the one NorthPeak commits to.",
+      },
+      {
+        question: "Can you take paint, propane or chemicals from my garage?",
+        answer:
+          "Household hazardous waste needs dedicated depots: paint goes free to Product Care locations, propane tanks and chemicals to designated drop-offs. A junk removal crew can handle everything else in the garage and point you to the right depot for the rest \u2014 mention hazardous items when you send photos.",
+      },
+      {
+        question: "How long does a garage cleanout take?",
+        answer:
+          "A typical single-car garage takes a crew about one to three hours, including sorting and sweeping. Double garages or dense hoards can take half a day. Sending clear photos up front means the crew arrives with the right truck size and enough hands to finish in one visit.",
+      },
+      {
+        question: "Is it cheaper to rent a bin instead?",
+        answer:
+          "Bin rental in Metro Vancouver typically costs a few hundred dollars before disposal fees, and you do all the loading yourself over several days. For a single garage, a crew visit usually costs a similar amount, includes the labour, and is done in hours \u2014 bins win mainly for slow, multi-week renovation projects.",
+      },
+    ],
+  },
+  {
     slug: "how-to-get-rid-of-mattress-vancouver",
     title: "How to Get Rid of a Mattress in Vancouver (2026 Guide)",
     excerpt:
