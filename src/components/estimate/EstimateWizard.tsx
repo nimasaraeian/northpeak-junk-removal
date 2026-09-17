@@ -1,8 +1,9 @@
 "use client";
 
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { featuredServices, getService, services } from "@/content/services";
 import { submitEstimate, type EstimateActionState } from "@/lib/actions/estimate";
+import { trackGenerateLead } from "@/lib/analytics/track";
 import { Button } from "@/components/ui/Button";
 import { TruckVolumePad } from "@/components/estimate/TruckVolumePad";
 import { PhotoDropzone, type LocalPhoto } from "@/components/estimate/PhotoDropzone";
@@ -28,10 +29,21 @@ export function EstimateWizard({
   const [accessNotes, setAccessNotes] = useState("");
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
   const [state, action, pending] = useActionState(submitEstimate, initialState);
+  const leadTracked = useRef(false);
   const selectedService = getService(serviceSlug);
   const load = summarizeVolume(volumeLevelId);
   const volume =
     load.cubicFeet > 0 ? load.volumeLabel : "Not filled yet — confirm from photos";
+
+  // The Server Action has accepted the request — that, and nothing earlier, is
+  // the lead. The ref keeps it to a single event: this effect would otherwise
+  // run again on every re-render of the success panel, and twice over in
+  // development under StrictMode.
+  useEffect(() => {
+    if (!state.ok || leadTracked.current) return;
+    leadTracked.current = true;
+    trackGenerateLead("estimate");
+  }, [state.ok]);
 
   if (state.ok) {
     return (
