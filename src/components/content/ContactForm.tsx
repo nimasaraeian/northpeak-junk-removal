@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PhotoDropzone, type LocalPhoto } from "@/components/estimate/PhotoDropzone";
 import type { ContactActionState } from "@/lib/actions/contact";
+import { trackGenerateLead } from "@/lib/analytics/track";
 import { Button } from "@/components/ui/Button";
 import { site } from "@/content/site";
 import { whatsAppHref } from "@/lib/utils";
@@ -85,6 +86,12 @@ export function ContactForm() {
             setState(leadPayload);
             return;
           }
+
+          // The lead is recorded at this point. Photo uploads that follow can
+          // still fail without changing that, so the event fires here and only
+          // here — once per accepted submission, with none of the details the
+          // visitor just typed.
+          trackGenerateLead("contact");
 
           let failedPhotos = 0;
 

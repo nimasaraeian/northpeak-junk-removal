@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { ContactClickTracker } from "@/components/analytics/ContactClickTracker";
 import { AssistantMount } from "@/components/assistant/AssistantMount";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -66,6 +68,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Unset in local development and on preview deploys, which keeps those visits
+// out of the property instead of polluting production reports.
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -79,7 +85,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <Footer />
         <AssistantMount />
+        <ContactClickTracker />
       </body>
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
