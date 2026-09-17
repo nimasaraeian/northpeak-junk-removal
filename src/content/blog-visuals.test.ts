@@ -3,7 +3,6 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { blogPosts, getPost } from "@/content/blog";
-import { site } from "@/content/site";
 import {
   heroShareImage,
   OG_IMAGE_HEIGHT,
@@ -11,6 +10,15 @@ import {
 } from "@/lib/blog/share-image";
 import { pageMetadata } from "@/lib/seo";
 import type { BlogImage } from "@/types";
+
+/**
+ * The Journal ships no illustrations today, so most of these assert over an
+ * empty set and pass vacuously. They are kept deliberately: the moment a post
+ * gains a hero or a figure, every rule below starts applying to it — the file
+ * has to exist, its declared box has to match its intrinsic size, its alt text
+ * has to say something, it has to stay small, and a hero has to have its OG
+ * raster generated. That is cheaper to keep than to remember.
+ */
 
 const SLUG = "how-to-get-rid-of-mattress-vancouver";
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -45,10 +53,7 @@ function everyBlogImage(): Array<{ label: string; image: BlogImage }> {
 }
 
 test("every Journal illustration exists in public/", () => {
-  const images = everyBlogImage();
-  assert.ok(images.length > 0, "expected the Journal to carry illustrations");
-
-  for (const { label, image } of images) {
+  for (const { label, image } of everyBlogImage()) {
     assert.ok(existsSync(assetPath(image.src)), `missing asset for ${label}: ${image.src}`);
   }
 });
@@ -79,16 +84,15 @@ test("illustrations stay small enough not to hurt LCP", () => {
 });
 
 test("every hero has a generated OG raster twin of the right size", () => {
-  const heroes = blogPosts.filter((post) => post.heroImage);
-  assert.ok(heroes.length > 0);
-
-  for (const post of heroes) {
+  for (const post of blogPosts.filter((item) => item.heroImage)) {
     const share = heroShareImage(post.heroImage!);
-    const file = assetPath(share.url);
 
     // Fails when a hero is added or renamed without re-running
     // scripts/generate-journal-og.mjs.
-    assert.ok(existsSync(file), `missing OG image for ${post.slug}: run scripts/generate-journal-og.mjs`);
+    assert.ok(
+      existsSync(assetPath(share.url)),
+      `missing OG image for ${post.slug}: run scripts/generate-journal-og.mjs`,
+    );
     assert.ok(share.url.endsWith(".png"), "share cards need a raster, not an SVG");
     assert.equal(share.width, OG_IMAGE_WIDTH);
     assert.equal(share.height, OG_IMAGE_HEIGHT);
@@ -96,46 +100,35 @@ test("every hero has a generated OG raster twin of the right size", () => {
   }
 });
 
-test("the mattress post carries its hero and three figures", () => {
-  const post = getPost(SLUG)!;
-  assert.equal(post.heroImage?.src, "/journal/mattress-hero.svg");
-
-  const figures = post.body.filter((block) => block.type === "figure");
-  assert.equal(figures.length, 3);
-  for (const figure of figures) {
-    assert.ok(figure.type === "figure" && figure.caption, "each figure needs a caption");
-  }
-});
-
-test("the post's share metadata points at the absolute OG raster", () => {
-  const post = getPost(SLUG)!;
-  const metadata = pageMetadata({
-    title: post.seoTitle,
-    description: post.seoDescription,
-    path: `/blog/${post.slug}`,
-    image: heroShareImage(post.heroImage!),
+test("heroShareImage points a hero SVG at its raster twin", () => {
+  // Pure derivation, so it holds whether or not any hero currently exists.
+  const share = heroShareImage({
+    src: "/journal/example-hero.svg",
+    alt: "An illustration with alt text long enough to be useful.",
+    width: 1200,
+    height: 630,
   });
 
-  const expected = `${site.url}/journal/mattress-hero-og.png`;
-  const og = metadata.openGraph?.images;
-  const twitter = metadata.twitter?.images;
+  assert.equal(share.url, "/journal/example-hero-og.png");
+  assert.equal(share.width, OG_IMAGE_WIDTH);
+  assert.equal(share.height, OG_IMAGE_HEIGHT);
+});
 
-  assert.ok(Array.isArray(og) && og.length === 1);
-  assert.equal((og[0] as { url: string }).url, expected);
-  assert.ok(Array.isArray(twitter) && twitter.length === 1);
-  assert.equal((twitter[0] as { url: string }).url, expected);
+test("the mattress post renders clean, with no hero and no figures", () => {
+  const post = getPost(SLUG)!;
+  assert.equal(post.heroImage, undefined);
+  assert.equal(post.body.some((block) => block.type === "figure"), false);
 });
 
 test("posts without a hero emit no share image", () => {
-  const plain = blogPosts.find((post) => !post.heroImage);
-  assert.ok(plain, "expected at least one post without a hero");
+  for (const post of blogPosts.filter((item) => !item.heroImage)) {
+    const metadata = pageMetadata({
+      title: post.seoTitle,
+      description: post.seoDescription,
+      path: `/blog/${post.slug}`,
+    });
 
-  const metadata = pageMetadata({
-    title: plain.seoTitle,
-    description: plain.seoDescription,
-    path: `/blog/${plain.slug}`,
-  });
-
-  assert.equal(metadata.openGraph?.images, undefined);
-  assert.equal(metadata.twitter?.images, undefined);
+    assert.equal(metadata.openGraph?.images, undefined);
+    assert.equal(metadata.twitter?.images, undefined);
+  }
 });

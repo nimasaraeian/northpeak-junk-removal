@@ -11,7 +11,7 @@
  */
 import sharp from "sharp";
 import path from "path";
-import { readdirSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const journalDir = path.join(root, "public/journal");
@@ -20,10 +20,15 @@ const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
 const OG_SUFFIX = "-og.png";
 
-const heroes = readdirSync(journalDir).filter((file) => file.endsWith("-hero.svg"));
+// The Journal currently ships no illustrations, so public/journal may not
+// exist at all. Adding the first hero back is enough to make this script
+// useful again — it should not need editing to get there.
+const heroes = existsSync(journalDir)
+  ? readdirSync(journalDir).filter((file) => file.endsWith("-hero.svg"))
+  : [];
 
 if (heroes.length === 0) {
-  console.warn("No *-hero.svg files found in public/journal.");
+  console.log("No *-hero.svg files in public/journal — nothing to rasterise.");
 }
 
 for (const hero of heroes) {
