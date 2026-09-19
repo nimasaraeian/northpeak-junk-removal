@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/content/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { getRelatedServices, getService, services } from "@/content/services";
 import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
@@ -81,7 +81,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             </div>
             <p className="mt-8 eyebrow text-stone">Available in</p>
             <ul className="mt-3 space-y-2 text-sm">
-              {locations.map((location) => (
+              {indexedLocations.map((location) => (
                 <li key={location.slug}>
                   <Link href={`/locations/${location.slug}`} className="text-navy hover:underline">
                     {service.name} in {location.name}

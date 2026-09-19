@@ -4,7 +4,7 @@ import { Logo } from "@/components/brand/Logo";
 import { ContactChannels } from "@/components/content/ContactChannels";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { featuredServices, services } from "@/content/services";
 import { site } from "@/content/site";
 import { formatSiteAddress } from "@/lib/maps";
@@ -125,7 +125,7 @@ export function Footer() {
           </FooterColumn>
 
           <FooterColumn title="Locations">
-            {locations.map((location) => (
+            {indexedLocations.map((location) => (
               <li key={location.slug}>
                 <FooterLink href={`/locations/${location.slug}` as Route}>
                   {location.name}

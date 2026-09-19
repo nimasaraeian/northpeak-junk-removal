@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/locations/[slug]"
     title: location.seoTitle,
     description: location.seoDescription,
     path: `/locations/${location.slug}`,
+    noindex: location.deEmphasized,
   });
 }
 
@@ -31,9 +32,12 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
   const location = getLocation(slug);
   if (!location) notFound();
 
+  // De-emphasized cities are reachable by URL but are not linked from
+  // anywhere on the site, including each other's "nearby" blocks.
   const relatedLocations = location.relatedLocationSlugs
     .map((relatedSlug) => getLocation(relatedSlug))
-    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .filter((item) => !item.deEmphasized);
 
   return (
     <>

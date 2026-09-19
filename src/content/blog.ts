@@ -308,7 +308,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-07-22",
     readingTime: "6 min",
     category: "Commercial",
-    seoTitle: "Commercial Junk Removal Vancouver",
+    seoTitle: "Commercial Junk Removal in Vancouver: Building Access",
     seoDescription:
       "Commercial junk removal in Vancouver for offices, retail, and end-of-lease cleanouts, including elevator bookings and after-hours options.",
     relatedServiceSlugs: ["commercial-cleanout", "furniture-removal"],
@@ -327,7 +327,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-07-10",
     readingTime: "5 min",
     category: "How-To",
-    seoTitle: "Construction Cleanup Vancouver",
+    seoTitle: "Construction Cleanup After a Vancouver Renovation",
     seoDescription:
       "Construction debris removal in Vancouver after renovations: mixed loads, fixtures, and how to keep remaining trades moving.",
     relatedServiceSlugs: ["construction-cleanup", "junk-removal"],

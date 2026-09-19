@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
 import { blogPosts } from "@/content/blog";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+
+  // Hubs should not sit below the pages they link to.
+  const hubRoutes = new Set(["/services", "/locations", "/blog"]);
 
   const staticRoutes = [
     "",
@@ -20,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${site.url}${path}`,
     lastModified: now,
     changeFrequency: path === "/blog" ? "weekly" : "monthly",
-    priority: path === "" ? 1 : 0.7,
+    priority: path === "" ? 1 : hubRoutes.has(path) ? 0.9 : 0.7,
   })) satisfies MetadataRoute.Sitemap;
 
   return [
@@ -31,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
-    ...locations.map((location) => ({
+    ...indexedLocations.map((location) => ({
       url: `${site.url}/locations/${location.slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,

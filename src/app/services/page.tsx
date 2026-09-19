@@ -3,9 +3,9 @@ import { CtaBanner } from "@/components/content/CtaBanner";
 import { PageHeader } from "@/components/content/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { services } from "@/content/services";
-import { breadcrumbSchema } from "@/lib/schema";
+import { breadcrumbSchema, serviceListSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -18,6 +18,7 @@ export const metadata = pageMetadata({
 export default function ServicesPage() {
   return (
     <>
+      <JsonLd data={serviceListSchema()} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -51,7 +52,7 @@ export default function ServicesPage() {
         <Container>
           <p className="eyebrow text-stone">Also serving</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            {locations.map((location) => (
+            {indexedLocations.map((location) => (
               <Link
                 key={location.slug}
                 href={`/locations/${location.slug}`}

@@ -119,6 +119,7 @@ export const locations: LocationPage[] = [
     slug: "richmond",
     name: "Richmond",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Clearouts for Richmond homes and businesses.",
     summary:
       "Core coverage for houses, townhouses, and commercial suites from Steveston to City Centre.",
@@ -147,6 +148,7 @@ export const locations: LocationPage[] = [
     slug: "new-westminster",
     name: "New Westminster",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Fraser River city cleanouts and removals.",
     summary:
       "Core coverage for apartments, heritage homes, and commercial spaces along the Fraser.",
@@ -174,6 +176,7 @@ export const locations: LocationPage[] = [
     slug: "coquitlam",
     name: "Coquitlam",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Tri-Cities removal from Burke Mountain to Maillardville.",
     summary:
       "Extended coverage for hillside homes, townhouses, and commercial spaces across Coquitlam.",
@@ -253,6 +256,7 @@ export const locations: LocationPage[] = [
     slug: "surrey",
     name: "Surrey",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "From Guildford malls to South Surrey lanes.",
     summary:
       "Extended coverage across one of Metro Vancouver's largest municipalities.",
@@ -308,6 +312,7 @@ export const locations: LocationPage[] = [
     slug: "langley",
     name: "Langley",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "City lots to Township acreages.",
     summary:
       "Extended coverage for Langley City, Willoughby, Walnut Grove, and Aldergrove.",
@@ -359,6 +364,15 @@ export const locations: LocationPage[] = [
       "Junk removal in Maple Ridge for garages, shops, and home cleanouts. Extended coverage from Haney to Albion.",
   },
 ];
+
+/**
+ * Location pages we still point search engines at. The de-emphasized remote
+ * cities stay reachable by URL but are dropped from the sitemap and from
+ * site-wide link lists, so link them from here rather than from `locations`.
+ */
+export const indexedLocations = locations.filter(
+  (location) => !location.deEmphasized,
+);
 
 export function getLocation(slug: string) {
   return locations.find((location) => location.slug === slug);
