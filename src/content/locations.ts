@@ -26,7 +26,7 @@ export const locations: LocationPage[] = [
       "Pemberton Heights",
     ],
     relatedLocationSlugs: ["west-vancouver", "burnaby", "vancouver"],
-    seoTitle: "Junk Removal North Vancouver",
+    seoTitle: "Junk Removal in North Vancouver, BC — Local Crew",
     seoDescription:
       "Local junk removal in North Vancouver from a North Shore crew. Condo cleanouts, garage resets, and household loads from Lonsdale to Deep Cove.",
   },
@@ -119,6 +119,7 @@ export const locations: LocationPage[] = [
     slug: "richmond",
     name: "Richmond",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Clearouts for Richmond homes and businesses.",
     summary:
       "Core coverage for houses, townhouses, and commercial suites from Steveston to City Centre.",
@@ -147,6 +148,7 @@ export const locations: LocationPage[] = [
     slug: "new-westminster",
     name: "New Westminster",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Fraser River city cleanouts and removals.",
     summary:
       "Core coverage for apartments, heritage homes, and commercial spaces along the Fraser.",
@@ -174,6 +176,7 @@ export const locations: LocationPage[] = [
     slug: "coquitlam",
     name: "Coquitlam",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Tri-Cities removal from Burke Mountain to Maillardville.",
     summary:
       "Extended coverage for hillside homes, townhouses, and commercial spaces across Coquitlam.",
@@ -201,6 +204,7 @@ export const locations: LocationPage[] = [
     slug: "port-coquitlam",
     name: "Port Coquitlam",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Residential cleanouts in Port Coquitlam.",
     summary:
       "Extended coverage for Citadel, Mary Hill, and central Port Coquitlam neighbourhoods.",
@@ -227,6 +231,7 @@ export const locations: LocationPage[] = [
     slug: "port-moody",
     name: "Port Moody",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Inlet-side homes and hillside access.",
     summary:
       "Extended coverage for sloped properties, townhouses, and small businesses near the Burrard Inlet.",
@@ -253,6 +258,7 @@ export const locations: LocationPage[] = [
     slug: "surrey",
     name: "Surrey",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "From Guildford malls to South Surrey lanes.",
     summary:
       "Extended coverage across one of Metro Vancouver's largest municipalities.",
@@ -281,6 +287,7 @@ export const locations: LocationPage[] = [
     slug: "delta",
     name: "Delta",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "North Delta, Ladner, and Tsawwassen cleanouts.",
     summary:
       "Extended coverage for river communities, ferry-corridor homes, and North Delta neighbourhoods.",
@@ -308,6 +315,7 @@ export const locations: LocationPage[] = [
     slug: "langley",
     name: "Langley",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "City lots to Township acreages.",
     summary:
       "Extended coverage for Langley City, Willoughby, Walnut Grove, and Aldergrove.",
@@ -335,6 +343,7 @@ export const locations: LocationPage[] = [
     slug: "maple-ridge",
     name: "Maple Ridge",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Garage, shop, and rural-edge cleanouts.",
     summary:
       "Extended coverage for Haney, Albion, and Maple Ridge properties along the urban edge.",
@@ -359,6 +368,15 @@ export const locations: LocationPage[] = [
       "Junk removal in Maple Ridge for garages, shops, and home cleanouts. Extended coverage from Haney to Albion.",
   },
 ];
+
+/**
+ * Location pages we still point search engines at. The de-emphasized remote
+ * cities stay reachable by URL but are dropped from the sitemap and from
+ * site-wide link lists, so link them from here rather than from `locations`.
+ */
+export const indexedLocations = locations.filter(
+  (location) => !location.deEmphasized,
+);
 
 export function getLocation(slug: string) {
   return locations.find((location) => location.slug === slug);

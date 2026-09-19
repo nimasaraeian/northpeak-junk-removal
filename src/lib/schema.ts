@@ -110,6 +110,37 @@ export function serviceSchema(service: Service) {
   };
 }
 
+/**
+ * The services hub is a list page, not a service. Saying so explicitly gives
+ * it a purpose of its own rather than leaving it to read as a stack of
+ * summaries already published on the pages it links to.
+ */
+export function serviceListSchema() {
+  const url = `${site.url}/services`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": url,
+    url,
+    name: "Junk Removal Services",
+    description: site.description,
+    isPartOf: { "@id": organizationId() },
+    about: { "@id": localBusinessId() },
+    mainEntity: {
+      "@type": "ItemList",
+      name: "NorthPeak service lines",
+      numberOfItems: services.length,
+      itemListElement: services.map((service, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: service.name,
+        url: `${site.url}/services/${service.slug}`,
+      })),
+    },
+  };
+}
+
 export function articleSchema(post: BlogPost) {
   const url = `${site.url}/blog/${post.slug}`;
 

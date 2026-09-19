@@ -26,6 +26,12 @@ export interface LocationPage {
   slug: string;
   name: string;
   region: string;
+  /**
+   * Remote cities we still serve on request but no longer compete for in
+   * search. The page stays reachable by URL and is served `noindex, follow`;
+   * it is kept out of the sitemap and out of every site-wide link list.
+   */
+  deEmphasized?: boolean;
   headline: string;
   summary: string;
   description: string;

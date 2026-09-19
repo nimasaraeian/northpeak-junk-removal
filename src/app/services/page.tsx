@@ -3,9 +3,9 @@ import { CtaBanner } from "@/components/content/CtaBanner";
 import { PageHeader } from "@/components/content/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { services } from "@/content/services";
-import { breadcrumbSchema } from "@/lib/schema";
+import { breadcrumbSchema, serviceListSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -18,6 +18,7 @@ export const metadata = pageMetadata({
 export default function ServicesPage() {
   return (
     <>
+      <JsonLd data={serviceListSchema()} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -27,7 +28,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow="Service hub"
         title="Removal, done to a higher standard."
-        description="Every service is scoped the same way: access, volume, disposal path, and a property left ready for its next use."
+        description="NorthPeak handles junk removal across the North Shore and Greater Vancouver — from a single sofa to a full estate. Every job starts the same way: send us a few photos, get a clear price range usually within hours, and pay exactly what was approved. Below is what we take on, and how each service works."
       />
       <section className="py-16 sm:py-20">
         <Container className="grid gap-5">
@@ -51,7 +52,7 @@ export default function ServicesPage() {
         <Container>
           <p className="eyebrow text-stone">Also serving</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            {locations.map((location) => (
+            {indexedLocations.map((location) => (
               <Link
                 key={location.slug}
                 href={`/locations/${location.slug}`}

@@ -9,7 +9,7 @@ import {
   getCoreServiceCities,
   getExtendedServiceCities,
 } from "@/content/service-areas";
-import { locations } from "@/content/locations";
+import { indexedLocations } from "@/content/locations";
 import { breadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
@@ -92,7 +92,7 @@ export default function LocationsPage() {
               context and a postal-code check before you request an estimate.
             </p>
             <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {locations.map((location) => (
+              {indexedLocations.map((location) => (
                 <Link
                   key={location.slug}
                   href={`/locations/${location.slug}`}

@@ -4,8 +4,8 @@ import { Logo } from "@/components/brand/Logo";
 import { ContactChannels } from "@/components/content/ContactChannels";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { locations } from "@/content/locations";
-import { featuredServices, services } from "@/content/services";
+import { indexedLocations } from "@/content/locations";
+import { featuredServices } from "@/content/services";
 import { site } from "@/content/site";
 import { formatSiteAddress } from "@/lib/maps";
 import { formatPhoneHref } from "@/lib/utils";
@@ -125,7 +125,7 @@ export function Footer() {
           </FooterColumn>
 
           <FooterColumn title="Locations">
-            {locations.map((location) => (
+            {indexedLocations.map((location) => (
               <li key={location.slug}>
                 <FooterLink href={`/locations/${location.slug}` as Route}>
                   {location.name}
@@ -154,7 +154,7 @@ export function Footer() {
             A cleaner Vancouver. A better tomorrow.
           </p>
           <p className="text-xs tracking-wide text-cream/40">
-            {services.length} service lines · North Vancouver, BC
+            Junk removal &amp; property recovery · North Vancouver, BC
           </p>
         </div>
       </Container>
