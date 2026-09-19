@@ -4,6 +4,7 @@ import {
   validatePhotos,
 } from "@/lib/estimate/photos";
 import { generateRequestId } from "@/lib/estimate/request-id";
+import { dispatchLeadWebhook, type LeadWebhookOptions } from "@/lib/leads/webhook";
 import { formatContactPhotoCaption } from "@/lib/telegram/format-contact-message";
 import { notifyContact, notifyContactPhoto } from "@/lib/telegram/notify-contact";
 import type { TelegramFetch } from "@/lib/telegram/client";
@@ -29,6 +30,7 @@ export interface SubmitContactOptions {
   fetchImpl?: TelegramFetch;
   now?: () => Date;
   createRequestId?: () => string;
+  leadWebhook?: LeadWebhookOptions;
 }
 
 export function parseContactFields(input: FormData | ContactFields): ContactFields {
@@ -101,6 +103,14 @@ export async function submitContactLead(
         "We couldn't send your message just now. Your information is still here — please try again.",
     };
   }
+
+  // Both entry points — the server action and the JSON route — land here, so
+  // this is the one place a contact lead is known to be delivered. The form
+  // collects no service, city or load size, which the payload sends as empty.
+  dispatchLeadWebhook(
+    { name, phone, email, source: "contact", submittedAt },
+    options.leadWebhook,
+  );
 
   return {
     ok: true,
