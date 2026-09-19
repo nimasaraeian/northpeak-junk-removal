@@ -2,6 +2,111 @@ import type { BlogPost } from "@/types";
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "junk-removal-cost-north-vancouver",
+    title: "How Much Does Junk Removal Cost in North Vancouver? (2026)",
+    excerpt:
+      "What junk removal actually costs on the North Shore in 2026 \u2014 single items through full truckloads, what moves the number up or down, and the honest ways to pay less.",
+    date: "2026-09-19",
+    readingTime: "6 min",
+    category: "Local Guide",
+    seoTitle: "How Much Does Junk Removal Cost in North Vancouver? (2026)",
+    seoDescription:
+      "Real 2026 price ranges for junk removal in North Vancouver: single items, quarter to full truckloads, what changes the price, and how to pay less.",
+    relatedServiceSlugs: ["junk-removal"],
+    relatedLocationSlugs: ["north-vancouver"],
+    body: [
+      { type: "callout", label: "Quick answer", text: "In the 2026 Metro Vancouver market, junk removal starts around $99\u2013150 for a single item or minimum load, runs roughly $200\u2013500 for a quarter to half truckload, and reaches $600\u20131,000+ for a full truck. Price follows volume \u2014 how much truck space your load fills \u2014 plus weight for heavy materials. Send photos and you\u2019ll have a firm range for your exact load, usually within hours, before anyone shows up." },
+
+      { type: "heading", text: "How junk removal pricing works" },
+      { type: "paragraph", text: "Nearly every company in Greater Vancouver prices by volume: the truck is divided into fractions, and your load is quoted as the share it fills. The price includes labour, loading, hauling, fuel, and the disposal and recycling fees the company pays at the other end. Two loads that look similar from the curb can price differently for reasons that make sense once you see them: weight (concrete and soil are charged by the tonne at disposal facilities), access (three flights of stairs takes longer than a driveway), and what\u2019s in the load (items with disposal surcharges, like mattresses, carry them anywhere they go)." },
+
+      { type: "heading", text: "2026 price ranges for North Vancouver" },
+      {
+        type: "table",
+        columns: ["Load size", "Typical 2026 range", "What it looks like"],
+        rows: [
+          ["Single item / minimum", "roughly $99\u2013150", "one sofa, one appliance, a few boxes"],
+          ["Quarter truck", "roughly $200\u2013300", "a small bedroom\u2019s worth, a packed closet"],
+          ["Half truck", "roughly $300\u2013500", "a typical single-garage cleanout"],
+          ["Three-quarter truck", "roughly $500\u2013700", "a one-bedroom apartment clear-out"],
+          ["Full truck", "roughly $600\u20131,000+", "a full basement or small estate"],
+        ],
+        caption:
+          "Metro Vancouver market ranges, 2026. Heavy materials (concrete, soil, drywall) are quoted by weight on top.",
+      },
+      { type: "paragraph", text: "These are market ranges, not quotes. The honest way to price a real load is from photos: send pictures through the [estimate form](/estimate), and the range you approve is what you pay \u2014 no recalculation at the door." },
+
+      { type: "heading", text: "What makes the price go up or down" },
+      {
+        type: "list",
+        items: [
+          "**Volume** is the base: less in the truck, less on the bill.",
+          "**Weight** matters for renovation and yard material \u2014 disposal sites charge by the tonne, so concrete, tile, soil and shingles are quoted by weight.",
+          "**Access:** elevators, long carries, tight lanes and staircases add crew time. Mention them (or show them in photos) and the quote stays accurate.",
+          "**Surcharged items:** mattresses and box springs carry per-piece recycling fees anywhere in Metro Vancouver \u2014 our [mattress disposal guide](/blog/how-to-get-rid-of-mattress-vancouver) breaks down every option.",
+          "**Timing:** weekends book out first in spring and fall; flexible weekday slots are the easiest way to get your preferred date.",
+        ],
+      },
+
+      { type: "heading", text: "What\u2019s included in the price (and what isn\u2019t)" },
+      { type: "paragraph", text: "A full-service price in this market normally includes the crew, all lifting and loading from wherever the items sit, hauling, dump and recycling fees, and sweeping the cleared area. It should not grow after the work starts: the number you approve is the number you pay. What\u2019s legitimately extra: hazardous materials that need dedicated depots (paint, chemicals, propane), and weight-billed materials quoted after the load is weighed. If a company can\u2019t tell you in advance which of these applies to you, that\u2019s a red flag." },
+
+      { type: "heading", text: "How to pay less (honestly)" },
+      {
+        type: "list",
+        ordered: true,
+        items: [
+          "**Send clear photos.** The single best way to avoid over-quoting \u2014 wide shots plus close-ups of anything heavy.",
+          "**Pull out what\u2019s sellable or donatable first.** Working tools, bikes and decent furniture leave the load and shrink the bill \u2014 the [garage cleanout guide](/blog/garage-cleanout-north-vancouver-cost) has a sorting list.",
+          "**Consolidate.** One half-truck visit beats two quarter-truck visits; if the basement and the garage both need clearing, do them together.",
+          "**Take metal out \u2014 or don\u2019t bother.** Scrap metal recycles free, but crews separate it anyway; only pre-sort if you enjoy it.",
+          "**Be flexible on timing.** A weekday morning slot is easier to book and never carries peak pressure.",
+        ],
+      },
+
+      { type: "heading", text: "Junk removal vs. renting a bin" },
+      { type: "paragraph", text: "A bin rental in Metro Vancouver typically runs a few hundred dollars for the rental period, plus disposal fees by weight \u2014 and you do all the loading. It wins for slow, multi-week renovation projects where debris accumulates daily. Full-service [junk removal](/services) wins when labour is the hard part (heavy furniture, stairs), when the job should be done in hours rather than weeks, or when the load includes things a bin can\u2019t take. For a typical single-garage or one-room clear-out, the total cost lands in the same band \u2014 the difference is who does the lifting." },
+
+      { type: "heading", text: "DIY: what self-hauling really costs" },
+      { type: "paragraph", text: "The North Shore Recycling & Waste Centre charges by weight with a per-visit minimum, and per-piece fees apply to mattresses. Add fuel, a vehicle that fits the load, and the trips themselves \u2014 a typical garage takes about three. DIY genuinely wins for small, light, single-trip loads with a truck you already own. Past that, the math usually favours one crew visit, because the tipping fees you\u2019d pay are already inside the quoted price." },
+      { type: "cta", label: "Get a free price range for your load \u2192", href: "/estimate" },
+
+      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
+    ],
+    faqs: [
+      {
+        question: "What is the minimum charge for junk removal in North Vancouver?",
+        answer:
+          "Minimum or single-item pickups in the 2026 Metro Vancouver market start around $99\u2013150, covering crew, hauling and disposal for one large item or a few small ones. Exact minimums vary by company and access; photo-based quotes make the number firm before booking.",
+      },
+      {
+        question: "How much does it cost to remove one sofa or appliance?",
+        answer:
+          "A single sofa, fridge or washer typically prices as a minimum load \u2014 roughly $99\u2013150 in the current market, including the lifting, hauling and disposal fees. Items on upper floors or with tight access can price slightly higher; photos settle it in advance.",
+      },
+      {
+        question: "Why is junk removal priced by volume?",
+        answer:
+          "Because truck space is what the service actually sells: a load\u2019s share of the truck determines how many jobs fit in a day and what the disposal run costs. Weight-billed materials are the exception, since disposal facilities charge those by the tonne.",
+      },
+      {
+        question: "What\u2019s the cheapest way to get rid of junk in North Vancouver?",
+        answer:
+          "Selling and donating first is free and shrinks any paid option. Self-hauling a small light load to the North Shore Recycling & Waste Centre is cheapest if you own a suitable vehicle. For anything heavy, bulky or multi-trip, one consolidated crew visit is usually the best total price once fees, fuel and time are counted.",
+      },
+      {
+        question: "Are photo quotes accurate \u2014 will the price change on arrival?",
+        answer:
+          "A photo quote should hold as long as the photos showed the real load. Reputable companies confirm the price on arrival before touching anything, and the approved number is final. Surprises only come from what the photos left out \u2014 an extra room, a pile behind a door, or heavy material nobody mentioned \u2014 so show everything and the range holds.",
+      },
+      {
+        question: "Does the quoted price include disposal and recycling fees?",
+        answer:
+          "For a full-service removal it should. Labour, loading, hauling, fuel, and the dump and recycling fees the company pays at the facility are all inside the quoted range. The legitimate exceptions are hazardous materials that need dedicated depots and weight-billed materials priced after the load is weighed \u2014 both of which a company should flag before you book.",
+      },
+    ],
+  },
+  {
     slug: "garage-cleanout-north-vancouver-cost",
     title: "Garage Cleanout in North Vancouver: Cost & Process (2026)",
     excerpt:
@@ -18,7 +123,7 @@ export const blogPosts: BlogPost[] = [
       { type: "callout", label: "Quick answer", text: "In Metro Vancouver, a typical garage cleanout runs from a minimum-load charge of roughly $100\u2013150 for a few items up to $600\u20131,000+ for a packed double garage, priced by how much truck space the load fills. Most single-car garages land somewhere in the middle as a quarter-to-half load. Send photos of the space and you\u2019ll get a firm range before anyone shows up." },
 
       { type: "heading", text: "What does a garage cleanout cost in North Vancouver?" },
-      { type: "paragraph", text: "Almost every junk removal company in Greater Vancouver prices by volume \u2014 the share of the truck your load fills \u2014 with heavy materials like concrete, soil or drywall priced by weight because disposal facilities charge by the tonne. As a 2026 market guide:" },
+      { type: "paragraph", text: "Almost every junk removal company in Greater Vancouver [prices by volume](/blog/junk-removal-cost-north-vancouver) \u2014 the share of the truck your load fills \u2014 with heavy materials like concrete, soil or drywall priced by weight because disposal facilities charge by the tonne. As a 2026 market guide:" },
       {
         type: "list",
         items: [
@@ -200,7 +305,7 @@ export const blogPosts: BlogPost[] = [
           "Leaving it in the alley or lane. Vancouver and the North Shore municipalities issue fines for illegal dumping, and abandoned mattresses are one of the most-reported items.",
           "Leaning it beside a store\u2019s or building\u2019s dumpster. Private property owners get charged for removal and increasingly report licence plates from security cameras.",
           "Trying to sell a used mattress. Under BC rules, used mattresses generally can\u2019t be resold without sanitization by a licensed processor \u2014 and buyer demand is near zero anyway.",
-          "Renting a truck for one mattress. By the time you pay the rental, fuel and depot fee, you\u2019ve usually passed the cost of a pickup \u2014 without the labour.",
+          "Renting a truck for one mattress. By the time you pay the rental, fuel and depot fee, you\u2019ve usually passed the [cost of a pickup](/blog/junk-removal-cost-north-vancouver) \u2014 without the labour.",
           "Waiting until move-out day. Booking removal for the same afternoon your movers arrive is possible, but a day earlier removes the single biggest source of moving-day chaos.",
         ],
       },
