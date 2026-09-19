@@ -87,15 +87,14 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
             <p className="mt-3 text-sm leading-7 text-stone">
               Browse NorthPeak service lines available for {location.name} properties.
             </p>
-            <div className="mt-5 grid gap-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {services.map((service) => (
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}`}
-                  className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
+                  className="rounded-2xl border border-navy/8 px-4 py-4 font-semibold text-navy hover:bg-cream"
                 >
-                  <p className="font-semibold text-navy">{service.name}</p>
-                  <p className="mt-1 text-sm text-stone">{service.summary}</p>
+                  {service.name}
                 </Link>
               ))}
             </div>

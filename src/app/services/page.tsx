@@ -28,7 +28,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow="Service hub"
         title="Removal, done to a higher standard."
-        description="Every service is scoped the same way: access, volume, disposal path, and a property left ready for its next use."
+        description="NorthPeak handles junk removal across the North Shore and Greater Vancouver — from a single sofa to a full estate. Every job starts the same way: send us a few photos, get a clear price range usually within hours, and pay exactly what was approved. Below is what we take on, and how each service works."
       />
       <section className="py-16 sm:py-20">
         <Container className="grid gap-5">

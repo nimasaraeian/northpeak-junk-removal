@@ -26,7 +26,7 @@ export const locations: LocationPage[] = [
       "Pemberton Heights",
     ],
     relatedLocationSlugs: ["west-vancouver", "burnaby", "vancouver"],
-    seoTitle: "Junk Removal North Vancouver",
+    seoTitle: "Junk Removal in North Vancouver, BC — Local Crew",
     seoDescription:
       "Local junk removal in North Vancouver from a North Shore crew. Condo cleanouts, garage resets, and household loads from Lonsdale to Deep Cove.",
   },
@@ -204,6 +204,7 @@ export const locations: LocationPage[] = [
     slug: "port-coquitlam",
     name: "Port Coquitlam",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Residential cleanouts in Port Coquitlam.",
     summary:
       "Extended coverage for Citadel, Mary Hill, and central Port Coquitlam neighbourhoods.",
@@ -230,6 +231,7 @@ export const locations: LocationPage[] = [
     slug: "port-moody",
     name: "Port Moody",
     region: "Tri-Cities",
+    deEmphasized: true,
     headline: "Inlet-side homes and hillside access.",
     summary:
       "Extended coverage for sloped properties, townhouses, and small businesses near the Burrard Inlet.",
@@ -285,6 +287,7 @@ export const locations: LocationPage[] = [
     slug: "delta",
     name: "Delta",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "North Delta, Ladner, and Tsawwassen cleanouts.",
     summary:
       "Extended coverage for river communities, ferry-corridor homes, and North Delta neighbourhoods.",
@@ -340,6 +343,7 @@ export const locations: LocationPage[] = [
     slug: "maple-ridge",
     name: "Maple Ridge",
     region: "Metro Vancouver",
+    deEmphasized: true,
     headline: "Garage, shop, and rural-edge cleanouts.",
     summary:
       "Extended coverage for Haney, Albion, and Maple Ridge properties along the urban edge.",

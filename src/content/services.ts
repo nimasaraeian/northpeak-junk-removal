@@ -24,7 +24,7 @@ export const services: Service[] = [
       "Floor, wall, and landscaping protection",
       "A clear inventory of what left the property",
     ],
-    seoTitle: "Junk Removal North Vancouver",
+    seoTitle: "Full-Service Junk Removal",
     seoDescription:
       "Professional junk removal in North Vancouver and Greater Vancouver. Transparent estimates, careful crews, and responsible disposal from NorthPeak.",
     relatedSlugs: ["furniture-removal", "garage-cleanout", "estate-cleanout"],
