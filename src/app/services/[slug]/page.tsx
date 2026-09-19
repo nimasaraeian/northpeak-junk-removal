@@ -76,7 +76,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             </p>
             <div className="mt-6">
               <Button href={{ pathname: "/estimate", query: { service: service.slug } }}>
-                Get My Estimate
+                Get My Free Estimate
               </Button>
             </div>
             <p className="mt-8 eyebrow text-stone">Available in</p>

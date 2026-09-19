@@ -71,7 +71,7 @@ function HeroCopy() {
 
       <div className="mt-4 flex w-[10.75rem] flex-col gap-2 sm:mt-5 sm:w-[11.5rem] lg:mt-8 lg:w-auto lg:flex-row lg:items-center lg:gap-3">
         <Button href="/estimate" size="lg" className="w-full px-4 text-sm lg:w-auto lg:px-7">
-          Get My Estimate →
+          Get My Free Estimate →
         </Button>
         <Button
           href="#quick-access"

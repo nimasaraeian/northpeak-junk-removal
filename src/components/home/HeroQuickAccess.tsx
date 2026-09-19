@@ -248,7 +248,7 @@ export function HeroQuickAccess() {
 
       <QuickAccessCard
         href="/estimate"
-        title="Get your estimate"
+        title="Get your free estimate"
         description="Upload photos, confirm your area, and receive a clear price range — fast and no obligation."
         accent="navy"
         icon={

@@ -7,7 +7,7 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Get a Junk Removal Estimate",
+  title: "Get a Free Junk Removal Estimate",
   description:
     "Request a junk removal estimate in North Vancouver and Greater Vancouver. Confirm your postal code, choose a service, and tell us about the space.",
   path: "/estimate",
@@ -29,7 +29,7 @@ export default async function EstimatePage({
       />
       <PageHeader
         eyebrow="Load Bay Studio"
-        title="Tell us about your project"
+        title="Get your free estimate"
         description="Confirm the scale that feels right, add photos, and we'll follow up with a clear estimate range."
       />
       <section className="py-8 sm:py-16 md:py-20">

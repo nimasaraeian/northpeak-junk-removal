@@ -178,7 +178,7 @@ export const blogPosts: BlogPost[] = [
 
       { type: "heading", text: "When\u2019s the best time to book?" },
       { type: "paragraph", text: "Spring and early fall are peak decluttering seasons on the North Shore, and weekend slots fill first. If your cleanout is tied to a move, a listing date or a renovation start, book once your date is firm \u2014 [garage cleanout crews](/services/garage-cleanout) in [North Vancouver](/locations/north-vancouver) can usually schedule within a few days, but same-week weekend slots are the first to go." },
-      { type: "cta", label: "Get a price range for your garage \u2192", href: "/estimate" },
+      { type: "cta", label: "Get a free price range for your garage \u2192", href: "/estimate" },
 
       { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd, North Vancouver. Reuse and recycle first, landfill last." },
     ],
@@ -261,7 +261,7 @@ export const blogPosts: BlogPost[] = [
       { type: "heading", text: "Option 3: Book a pickup (easiest)" },
       { type: "paragraph", text: "If you don\u2019t have a truck, can\u2019t lift a queen mattress down a staircase, or simply want it gone this week, a removal service picks it up from wherever it sits \u2014 bedroom, garage or curbside \u2014 and delivers it to a recycler." },
       { type: "paragraph", text: "With NorthPeak, [mattress and furniture removal](/services/furniture-removal) works like this: send us a few photos, get a clear price range usually within hours, and our crew removes it on a day that suits you. The price covers labour, hauling, recycling fees and floor protection on the way out \u2014 no surprise charges at the door. We serve [North Vancouver](/locations/north-vancouver), West Vancouver and Greater Vancouver seven days a week." },
-      { type: "cta", label: "Get a price range for your mattress \u2192", href: "/estimate" },
+      { type: "cta", label: "Get a free price range for your mattress \u2192", href: "/estimate" },
 
       { type: "heading", text: "What about the box spring, frame and headboard?" },
       { type: "paragraph", text: "Plan for the whole bed, not just the mattress \u2014 disposal rules differ by part:" },
