@@ -112,6 +112,7 @@ export const services: Service[] = [
     seoDescription:
       "Discreet estate cleanout in North Vancouver and West Vancouver. Staged empty-outs for families, executors, and listing preparation.",
     relatedSlugs: ["furniture-removal", "garage-cleanout", "junk-removal"],
+    guidePostSlug: "estate-cleanout-north-vancouver",
   },
   {
     slug: "construction-cleanup",

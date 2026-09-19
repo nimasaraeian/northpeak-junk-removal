@@ -20,6 +20,11 @@ export interface Service {
   seoTitle: string;
   seoDescription: string;
   relatedSlugs: string[];
+  /**
+   * Slug of a Journal post that covers this service in depth. When set, the
+   * service page links out to it; the content test asserts the post exists.
+   */
+  guidePostSlug?: string;
 }
 
 export interface LocationPage {
