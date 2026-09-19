@@ -12,7 +12,7 @@ export const siteGuideItems: SiteGuideItem[] = [
   {
     id: "estimate",
     intent: "Most popular",
-    title: "Get my estimate",
+    title: "Get my free estimate",
     description: "Upload photos, see a clear price range, and book when it fits.",
     href: "/estimate",
     featured: true,

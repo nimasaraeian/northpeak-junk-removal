@@ -23,7 +23,7 @@ export function Header() {
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
           <Button href="/estimate">
-            Get Estimate →
+            Get Free Estimate →
           </Button>
           <p className="eyebrow flex max-w-[9.5rem] items-start gap-1.5 leading-4 text-stone">
             <svg viewBox="0 0 16 16" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" fill="currentColor" aria-hidden>

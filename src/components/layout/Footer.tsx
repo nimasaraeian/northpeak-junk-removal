@@ -105,7 +105,7 @@ export function Footer() {
               <p className="text-cream/45">{site.hours}</p>
             </div>
             <Button href="/estimate" size="lg" className="mt-7 w-full sm:w-auto">
-              Get Estimate →
+              Get Free Estimate →
             </Button>
           </div>
         </div>

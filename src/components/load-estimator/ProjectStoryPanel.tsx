@@ -53,7 +53,7 @@ export function ProjectStoryPanel({
             className="w-full sm:w-auto"
             onClick={() => persistLoadTier(tier.id)}
           >
-            Get My Estimate
+            Get My Free Estimate
           </Button>
         </div>
       ) : null}

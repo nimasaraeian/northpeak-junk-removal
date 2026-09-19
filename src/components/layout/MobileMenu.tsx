@@ -39,7 +39,7 @@ export function MobileMenu() {
               </Link>
             ))}
             <Button href="/estimate" className="mt-2 w-full">
-              Get Estimate
+              Get Free Estimate
             </Button>
           </Container>
         </div>

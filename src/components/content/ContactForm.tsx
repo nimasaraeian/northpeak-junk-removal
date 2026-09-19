@@ -43,7 +43,7 @@ export function ContactForm() {
           If you need a priced range, the estimate workflow is faster than another message.
         </p>
         <div className="mt-5">
-          <Button href="/estimate">Get My Estimate</Button>
+          <Button href="/estimate">Get My Free Estimate</Button>
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import type { AssistantAction, AssistantActionKey } from "@/lib/assistant/types"
 export const assistantActions: Record<AssistantActionKey, AssistantAction> = {
   estimate: {
     key: "estimate",
-    label: "Get an Estimate",
+    label: "Get a Free Estimate",
     href: "/estimate",
   },
   services: {

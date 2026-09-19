@@ -128,7 +128,7 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
                 <PostalCodeChecker variant="plain" />
               </div>
               <div className="mt-6">
-                <Button href="/estimate">Get My Estimate</Button>
+                <Button href="/estimate">Get My Free Estimate</Button>
               </div>
             </div>
           </aside>
