@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/content/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { getPost } from "@/content/blog";
 import { indexedLocations } from "@/content/locations";
 import { getRelatedServices, getService, services } from "@/content/services";
 import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
@@ -31,6 +32,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   if (!service) notFound();
 
   const related = getRelatedServices(service.relatedSlugs);
+  const guide = service.guidePostSlug ? getPost(service.guidePostSlug) : undefined;
 
   return (
     <>
@@ -51,6 +53,14 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         <Container className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <p className="text-lg leading-8 text-navy/80">{service.description}</p>
+            {guide ? (
+              <p className="mt-6 text-base leading-7 text-stone">
+                <Link href={`/blog/${guide.slug}`} className="text-navy underline">
+                  Read our {service.name.toLowerCase()} guide
+                </Link>{" "}
+                for costs, timelines, and a step-by-step checklist.
+              </p>
+            ) : null}
             <h2 className="mt-12 font-serif text-3xl text-navy">What we typically remove</h2>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {service.items.map((item) => (

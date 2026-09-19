@@ -2,6 +2,140 @@ import type { BlogPost } from "@/types";
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "estate-cleanout-north-vancouver",
+    title: "Estate Cleanout in North Vancouver: A Family’s Guide (2026)",
+    excerpt:
+      "What an estate cleanout actually involves, what it costs on the North Shore, and a step-by-step checklist for families and executors working through a house one room at a time.",
+    date: "2026-09-19",
+    readingTime: "7 min",
+    category: "Local Guide",
+    seoTitle: "Estate Cleanout in North Vancouver: A Family’s Guide (2026)",
+    seoDescription:
+      "What an estate cleanout involves, what it costs in North Vancouver, and a step-by-step checklist for families and executors. Local crew, donation-first.",
+    relatedServiceSlugs: ["estate-cleanout"],
+    relatedLocationSlugs: ["north-vancouver"],
+    body: [
+      { type: "callout", label: "Quick answer", text: "An estate cleanout in North Vancouver typically takes 1–3 days and costs roughly $400–1,800 in the 2026 market, depending on the size of the home and how much is still in it. Usable items are donated first. Your family keeps full control over what stays: nothing leaves the house until someone has said it can." },
+
+      { type: "paragraph", text: "If you are reading this a few days after a funeral, or a few weeks after moving a parent into care, the house is probably the last thing you want to think about. It is also the thing that will not wait. What follows is the practical shape of the work: what it costs, how long it takes, and the order the steps go in." },
+      { type: "paragraph", text: "There is no rush from our side. An [estate cleanout](/services/estate-cleanout) can happen in one visit or across three weekends, and plenty of North Shore families take the second option." },
+
+      { type: "heading", text: "What is an estate cleanout, and how is it different from regular junk removal?" },
+      { type: "paragraph", text: "An estate cleanout is the full clearing of a home after a death, a move into care, or a downsize — every room, including the ones nobody has opened in a decade. The crawl space, the attic, the garage, the shed at the back of the lot with someone’s fishing gear still in it." },
+      { type: "paragraph", text: "The difference from ordinary junk removal is not the truck. It is the pace and the permission. A standard removal begins with a pile somebody has already decided about; an estate begins with a house where almost nothing has been decided, and where a coffee tin on a basement shelf might hold thirty years of savings bonds. So the order of the work inverts: sorting first, hauling last, with the family drawing the line between the two." },
+      {
+        type: "list",
+        items: [
+          "**A walkthrough before anything is touched**, so the crew knows which rooms are open and which are not.",
+          "**Room-by-room work**, so you can stop after the kitchen, take a day, and pick it up again.",
+          "**Flag, don’t assume.** Documents, photographs, jewellery, medals and keys go into set-aside boxes, never into the load.",
+          "**A slower clock.** A crew expects to pause while someone opens a box and needs a minute. That is part of the job, not an interruption to it.",
+        ],
+      },
+
+      { type: "heading", text: "What does an estate cleanout cost in North Vancouver?" },
+      { type: "paragraph", text: "Most estate cleanouts on the North Shore land between roughly $400 and $1,800 in the 2026 market. A single room — a bedroom, a home office, one storage locker — often starts from roughly $250. A larger home with full contents and an untouched garage can exceed $2,500." },
+      { type: "paragraph", text: "The range is wide because estate work is priced the way ordinary [junk removal cost](/blog/junk-removal-cost-north-vancouver) is priced: by the share of the truck your load fills, plus weight for heavy material. There is no separate estate rate on top, and that guide has the full load-size breakdown." },
+      { type: "paragraph", text: "What tends to move the number up in this part of the city:" },
+      {
+        type: "list",
+        items: [
+          "**The garage**, almost always the densest room in an estate — paint, lumber, tools, tires, forty years of half-finished projects. Our [garage cleanout guide](/blog/garage-cleanout-north-vancouver-cost) covers what to pull out first.",
+          "**Access:** hillside stairs, no driveway, a shared lane, or a strata elevator bookable only between 9 and 4.",
+          "**Heavy material:** concrete, soil, tile and renovation leftovers, billed by weight because disposal sites charge by the tonne.",
+          "**How much you keep** — every box the family takes home is a box that never enters the quote.",
+        ],
+      },
+      { type: "paragraph", text: "We quote from photos, so you get a real range without anyone walking through the house. Send pictures of each room — garage and basement included — and the range you approve is the number you pay." },
+
+      { type: "heading", text: "How long does it take?" },
+      { type: "paragraph", text: "One to three days covers most homes. A one-bedroom apartment is usually a single afternoon; a three-bedroom house with a basement and a garage is typically two to three days, often split across a week so the family can work through the keep pile between visits." },
+      { type: "paragraph", text: "The part that takes longest is almost never the hauling. It is the deciding. Families who move fastest are the ones who walked through and marked the rooms first; families who need more time take it, and the work runs in stages. Either is normal. If a listing date or probate deadline is driving the timing, say so at the quote stage." },
+
+      { type: "heading", text: "What happens to sentimental and valuable items?" },
+      { type: "paragraph", text: "This is the question every family asks, and it deserves a specific answer rather than a reassuring one." },
+      {
+        type: "list",
+        items: [
+          "**The family walkthrough comes first.** Before anything is loaded, we walk the home with you and you point out what is off limits — a room, a closet, a single drawer. Off limits means untouched.",
+          "**Set-aside boxes, not judgment calls.** Anything a crew member is unsure about goes into a marked box in a room you choose, for you to open on your own time.",
+          "**Documents, photographs and jewellery are never disposed of without your sign-off.** Not the filing cabinet, not the shoebox of negatives, not the small things at the back of a dresser drawer. If it looks like a record or a valuable, it stops and waits for you.",
+          "**Money hides in furniture.** Envelopes taped under drawers, cash in book spines, rings in kitchen tins. Estate crews know this, which is why nothing is tipped out sight-unseen.",
+        ],
+      },
+      { type: "paragraph", text: "If no family member can be on site, the same rules hold: set-aside boxes stay in the home, and we photograph anything uncertain and send it to you before it moves." },
+
+      { type: "heading", text: "What gets donated or recycled?" },
+      { type: "paragraph", text: "Donation first, recycling second, landfill last. That order matters more in an estate than anywhere else, because an estate is mostly usable goods: furniture, kitchenware, linens, books, tools, mobility aids. Most of it has years left in it." },
+      {
+        type: "list",
+        items: [
+          "**Furniture, housewares and clothing** in donatable condition go to local charities and thrift partners, not to disposal.",
+          "**Tax receipts** are available for donated goods where our partner organizations issue them — useful when an estate is being settled and every receipt belongs in the file.",
+          "**Metal, wood, cardboard and electronics** are separated into recycling streams at the sort stage.",
+          "**Paint, solvents, propane and chemicals** go to household hazardous waste depots; paint recycles free at Product Care locations.",
+          "**Medications and sharps** go back to a pharmacy; tell us if you find any and we will leave them for you.",
+        ],
+      },
+      { type: "paragraph", text: "Only what nobody can use goes to disposal. Families often tell us this is the part that makes the day easier: a mother’s dining set going to a family that needs one is a better ending than a landfill." },
+
+      { type: "heading", text: "A step-by-step checklist for families and executors" },
+      { type: "paragraph", text: "If you do nothing else, do these in this order. The first three protect the estate; the rest empty the house." },
+      {
+        type: "list",
+        ordered: true,
+        items: [
+          "**Locate the documents before anything moves.** Will, title and mortgage papers, insurance policies, bank statements, tax records, passports, certificates, vehicle registration. Check the filing cabinet, the bedside table, the freezer and the back of the closet — all four are common. Put it in one box and take it with you.",
+          "**Confirm who has authority to say yes.** The named executor signs off on what leaves. Settling this on day one prevents the most painful version of this process: a sibling learning after the fact that something is gone.",
+          "**Notify utilities and services.** Hydro, gas, water, internet, phone, insurance, property tax, and a mail redirect through Canada Post. Keep power and heat on until the cleanout is finished — nobody can work a dark basement safely.",
+          "**Walk the home as a family, before anything is sorted.** Everyone who wants something should see the house in one piece, once. Photograph the rooms as they are, and give people a day to name what matters to them.",
+          "**Mark every room keep, donate or dispose.** Painter’s tape and a marker beat any app. Label the keep items first and group them in one room; an unlabelled keep pile is how things get lost.",
+          "**Photograph anything valuable before it leaves.** Jewellery, art, collections, silver, tools, anything with a serial number — for the estate’s records and for insurance. Fifteen minutes with a phone.",
+          "**Get an appraisal if there is any doubt.** Coins, stamps, art, older furniture and estate jewellery are worth a professional opinion before a decision. An hour of appraisal has saved many families a great deal.",
+          "**Book the cleanout once the keep pile is out.** Send photos of every room, get a range, pick a date. Mention stairs, the lane, the elevator window and the garage, and the quote will hold.",
+          "**Do a final sweep with the crew.** Walk each room together before the truck leaves — closets open, cupboards open, crawl space checked. Ten minutes, and the last chance to catch a box that should have stayed.",
+          "**Hand over the keys.** Floors swept, rooms empty and photographed for the file, keys to the realtor, the property manager or the new owner.",
+        ],
+      },
+
+      { type: "heading", text: "Do you work with realtors and estate lawyers?" },
+      { type: "paragraph", text: "Yes, and often. Much of the estate work on the North Shore arrives through a listing agent or a lawyer’s office, because the cleanout sits on somebody else’s critical path — photography day, a probate filing, a completion date." },
+      { type: "paragraph", text: "So the timeline is built to the date that matters. Agents want the home empty and swept before photographs, with staging to follow; lawyers and executors work to probate dates that cannot slip. We schedule backwards from whichever applies, report progress to the one contact you name, and leave the property presentable rather than stripped raw." },
+
+      { type: "paragraph", text: "When you are ready — and only then — send a few photos of each room and you will have a clear range and a date. Our [estate cleanout service](/services/estate-cleanout) covers North Vancouver, West Vancouver, Burnaby and the rest of Greater Vancouver, seven days a week by appointment." },
+      { type: "cta", label: "Get a Free Estimate →", href: "/estimate" },
+
+      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
+    ],
+    faqs: [
+      {
+        question: "How soon can you do an estate cleanout in North Vancouver?",
+        answer:
+          "Usually within a few days of approving the quote, and sometimes sooner for a single room. Send photos and you will have a price range within hours. If a listing date or probate deadline is driving the timing, say so and the schedule is built backwards from that date.",
+      },
+      {
+        question: "Can you do the cleanout while we’re not there?",
+        answer:
+          "Yes. Many executors live out of town. We do the walkthrough by video or photos, agree in writing on what stays, and work with access arranged through a realtor, neighbour or lockbox. Set-aside boxes stay in the home, and anything uncertain is photographed and sent to you before it moves.",
+      },
+      {
+        question: "What if the home has hazardous materials or old paint?",
+        answer:
+          "Very common in an older home, and not a problem. Paint, solvents, propane tanks and chemicals cannot travel in a mixed load, so they are separated and taken to dedicated depots — paint recycles free at Product Care locations. Flag anything you already know about when you send photos.",
+      },
+      {
+        question: "Do you provide documentation for the estate’s records?",
+        answer:
+          "Yes. We can supply an itemized invoice for the estate file, before-and-after photographs of each room, and donation receipts where our partner charities issue them. Executors often need all three when accounting to beneficiaries, so ask at booking and it is prepared as the work goes.",
+      },
+      {
+        question: "Do you serve West Vancouver and Burnaby too?",
+        answer:
+          "Yes. Estate cleanouts run across the North Shore and Greater Vancouver, including West Vancouver, Burnaby and Vancouver proper, seven days a week by appointment. Travel is already inside the quoted range, so a West Vancouver address is priced the same way a North Vancouver one is.",
+      },
+    ],
+  },
+  {
     slug: "junk-removal-cost-north-vancouver",
     title: "How Much Does Junk Removal Cost in North Vancouver? (2026)",
     excerpt:
@@ -34,7 +168,7 @@ export const blogPosts: BlogPost[] = [
         caption:
           "Metro Vancouver market ranges, 2026. Heavy materials (concrete, soil, drywall) are quoted by weight on top.",
       },
-      { type: "paragraph", text: "These are market ranges, not quotes. The honest way to price a real load is from photos: send pictures through the [estimate form](/estimate), and the range you approve is what you pay \u2014 no recalculation at the door." },
+      { type: "paragraph", text: "These are market ranges, not quotes. The honest way to price a real load is from photos: send pictures through the [estimate form](/estimate), and the range you approve is what you pay \u2014 no recalculation at the door. Whole-home jobs sit above this table and are quoted as a project rather than a single load: our [estate cleanout guide](/blog/estate-cleanout-north-vancouver) covers what clearing an entire house costs and how the days are staged." },
 
       { type: "heading", text: "What makes the price go up or down" },
       {
