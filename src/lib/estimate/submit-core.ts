@@ -1,6 +1,7 @@
 import { getService } from "@/content/services";
 import { extractPhotoFiles, validatePhotos } from "@/lib/estimate/photos";
 import { generateRequestId } from "@/lib/estimate/request-id";
+import { dispatchLeadWebhook, type LeadWebhookOptions } from "@/lib/leads/webhook";
 import { checkServiceArea } from "@/lib/postal";
 import { notifyEstimate } from "@/lib/telegram/notify-estimate";
 import type { TelegramFetch } from "@/lib/telegram/client";
@@ -32,6 +33,7 @@ export interface SubmitEstimateOptions {
   fetchImpl?: TelegramFetch;
   now?: () => Date;
   createRequestId?: () => string;
+  leadWebhook?: LeadWebhookOptions;
 }
 
 export async function submitEstimateCore(
@@ -60,7 +62,8 @@ export async function submitEstimateCore(
     return { ok: false, message: area.error };
   }
 
-  if (!getService(draft.serviceSlug)) {
+  const service = getService(draft.serviceSlug);
+  if (!service) {
     return { ok: false, message: "Choose a service so we can scope the visit." };
   }
 
@@ -113,6 +116,23 @@ export async function submitEstimateCore(
         "We couldn't send your request just now. Your information is still here — please try again.",
     };
   }
+
+  // The lead is delivered, so every path below returns ok. Scheduling the
+  // webhook here means it fires exactly once per accepted estimate, and never
+  // for one the customer will be asked to resubmit.
+  dispatchLeadWebhook(
+    {
+      name: draft.name,
+      phone: draft.phone,
+      email: draft.email,
+      service: service.name,
+      city: area.city,
+      loadSize: draft.volume,
+      source: "estimate",
+      submittedAt,
+    },
+    options.leadWebhook,
+  );
 
   if (photoValidation.files.length > 0 && !delivery.photosDelivered) {
     return {
