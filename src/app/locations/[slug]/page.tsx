@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlogBody } from "@/components/content/BlogBody";
 import { CtaBanner } from "@/components/content/CtaBanner";
+import { FaqList } from "@/components/content/FaqList";
 import { PageHeader } from "@/components/content/PageHeader";
 import { PostalCodeChecker } from "@/components/estimate/PostalCodeChecker";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -8,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { getLocation, locations } from "@/content/locations";
 import { services } from "@/content/services";
-import { breadcrumbSchema, locationServiceSchema } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, locationServiceSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -32,6 +34,11 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
   const location = getLocation(slug);
   if (!location) notFound();
 
+  // Markets we write long-form landing copy for. That copy names the services,
+  // the neighbourhoods, and the nearby cities in prose, so the stock lists
+  // below would only repeat it — they render for the other locations instead.
+  const body = location.body;
+
   // De-emphasized cities are reachable by URL but are not linked from
   // anywhere on the site, including each other's "nearby" blocks.
   const relatedLocations = location.relatedLocationSlugs
@@ -49,73 +56,104 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
         ])}
       />
       <JsonLd data={locationServiceSchema(location)} />
+      {location.faqs ? <JsonLd data={faqSchema(location.faqs)} /> : null}
       <PageHeader
         eyebrow={location.region}
         title={location.headline}
         description={location.summary}
       />
+      {body ? (
+        <section className="border-b border-navy/8 bg-cream/60">
+          <Container className="flex flex-wrap items-center gap-x-6 gap-y-4 py-6">
+            <Button href="/estimate" size="lg">
+              Get My Free Estimate →
+            </Button>
+            <p className="text-sm leading-7 text-stone">
+              Send photos, get a clear range back — usually within hours, with no obligation.
+            </p>
+          </Container>
+        </section>
+      ) : null}
       <section className="py-16 sm:py-20">
         <Container className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
-            <p className="text-lg leading-8 text-navy/80">{location.description}</p>
-
-            <h2 className="mt-12 font-serif text-3xl text-navy">Common jobs here</h2>
-            <ul className="mt-5 space-y-3">
-              {location.useCases.map((item) => (
-                <li
-                  key={item}
-                  className="rounded-2xl border border-navy/8 bg-cream/50 px-4 py-3 text-sm leading-7 text-navy"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <h2 className="mt-12 font-serif text-3xl text-navy">Neighbourhoods we know</h2>
-            <ul className="mt-5 flex flex-wrap gap-2">
-              {location.neighborhoods.map((item) => (
-                <li
-                  key={item}
-                  className="rounded-full bg-cream px-4 py-2 text-sm text-navy"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <h2 className="mt-12 font-serif text-3xl text-navy">Services we provide</h2>
-            <p className="mt-3 text-sm leading-7 text-stone">
-              Browse NorthPeak service lines available for {location.name} properties.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {services.map((service) => (
-                <Link
-                  key={service.slug}
-                  href={`/services/${service.slug}`}
-                  className="rounded-2xl border border-navy/8 px-4 py-4 font-semibold text-navy hover:bg-cream"
-                >
-                  {service.name}
-                </Link>
-              ))}
-            </div>
-
-            {relatedLocations.length > 0 ? (
+            {body ? (
               <>
-                <h2 className="mt-12 font-serif text-3xl text-navy">Nearby service areas</h2>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {relatedLocations.map((related) => (
-                    <Link
-                      key={related.slug}
-                      href={`/locations/${related.slug}`}
-                      className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
+                <BlogBody blocks={body} />
+                {location.faqs ? (
+                  <section className="mt-16">
+                    <h2 className="display text-[1.85rem] leading-tight text-navy sm:text-4xl">
+                      Frequently asked questions
+                    </h2>
+                    <div className="mt-6">
+                      <FaqList items={location.faqs} variant="cards" />
+                    </div>
+                  </section>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <p className="text-lg leading-8 text-navy/80">{location.description}</p>
+
+                <h2 className="mt-12 font-serif text-3xl text-navy">Common jobs here</h2>
+                <ul className="mt-5 space-y-3">
+                  {location.useCases.map((item) => (
+                    <li
+                      key={item}
+                      className="rounded-2xl border border-navy/8 bg-cream/50 px-4 py-3 text-sm leading-7 text-navy"
                     >
-                      <p className="font-semibold text-navy">{related.name}</p>
-                      <p className="mt-1 text-sm text-stone">{related.summary}</p>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <h2 className="mt-12 font-serif text-3xl text-navy">Neighbourhoods we know</h2>
+                <ul className="mt-5 flex flex-wrap gap-2">
+                  {location.neighborhoods.map((item) => (
+                    <li
+                      key={item}
+                      className="rounded-full bg-cream px-4 py-2 text-sm text-navy"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <h2 className="mt-12 font-serif text-3xl text-navy">Services we provide</h2>
+                <p className="mt-3 text-sm leading-7 text-stone">
+                  Browse NorthPeak service lines available for {location.name} properties.
+                </p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {services.map((service) => (
+                    <Link
+                      key={service.slug}
+                      href={`/services/${service.slug}`}
+                      className="rounded-2xl border border-navy/8 px-4 py-4 font-semibold text-navy hover:bg-cream"
+                    >
+                      {service.name}
                     </Link>
                   ))}
                 </div>
+
+                {relatedLocations.length > 0 ? (
+                  <>
+                    <h2 className="mt-12 font-serif text-3xl text-navy">Nearby service areas</h2>
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {relatedLocations.map((related) => (
+                        <Link
+                          key={related.slug}
+                          href={`/locations/${related.slug}`}
+                          className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
+                        >
+                          <p className="font-semibold text-navy">{related.name}</p>
+                          <p className="mt-1 text-sm text-stone">{related.summary}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
               </>
-            ) : null}
+            )}
           </div>
 
           <aside className="space-y-5">

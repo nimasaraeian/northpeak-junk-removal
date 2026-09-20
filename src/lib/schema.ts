@@ -87,7 +87,25 @@ export function locationServiceSchema(location: LocationPage) {
     serviceType: "Junk Removal",
     description: location.seoDescription,
     url: `${site.url}/locations/${location.slug}`,
-    provider: { "@id": localBusinessId() },
+    // Same `@id` as the site-wide LocalBusiness node, so this is the one
+    // business described twice rather than two businesses. Repeating the
+    // address here keeps the served city and the yard it is served from in a
+    // single block, which is what a location page is claiming.
+    provider: {
+      "@type": "LocalBusiness",
+      "@id": localBusinessId(),
+      name: site.name,
+      url: site.url,
+      telephone: site.phone,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: site.address.streetAddress,
+        addressLocality: site.address.addressLocality,
+        addressRegion: site.address.addressRegion,
+        postalCode: site.address.postalCode,
+        addressCountry: site.address.addressCountry,
+      },
+    },
     areaServed: {
       "@type": "City",
       name: location.name,

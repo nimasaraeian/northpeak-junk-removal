@@ -47,6 +47,15 @@ export interface LocationPage {
   relatedLocationSlugs: string[];
   seoTitle: string;
   seoDescription: string;
+  /**
+   * Long-form landing copy for the markets we actively compete for in search.
+   * When present the page renders these blocks — through the same renderer the
+   * Journal uses — in place of the stock summary lists, which the copy covers
+   * in prose instead. Locations without it keep the original template.
+   */
+  body?: BlogBlock[];
+  /** Rendered as an accordion and emitted as FAQPage JSON-LD when present. */
+  faqs?: FaqItem[];
 }
 
 export interface Testimonial {
