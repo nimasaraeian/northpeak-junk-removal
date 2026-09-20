@@ -28,7 +28,79 @@ export const locations: LocationPage[] = [
     relatedLocationSlugs: ["west-vancouver", "burnaby", "vancouver"],
     seoTitle: "Junk Removal in North Vancouver, BC — Local Crew",
     seoDescription:
-      "Local junk removal in North Vancouver from a North Shore crew. Condo cleanouts, garage resets, and household loads from Lonsdale to Deep Cove.",
+      "Junk removal in North Vancouver from a local crew on West Keith Rd. Free estimates, same-week pickup, donation-first sorting. Single items from $99.",
+    body: [
+      {
+        type: "callout",
+        label: "Quick answer",
+        text: "NorthPeak provides same-week junk removal across North Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and given upfront from your photos, loads are sorted donation-first, and the crew is local: we are based on West Keith Rd, not dispatched from a call centre in another city.",
+      },
+
+      { type: "heading", text: "What junk removal services do you offer in North Vancouver?" },
+      { type: "paragraph", text: "Almost every job in this city falls into one of a handful of shapes, and all of them price the same way — by the share of the truck your load fills, agreed before we start." },
+      {
+        type: "list",
+        items: [
+          "[Furniture removal](/services/furniture-removal) — sofas, sectionals, bed frames, dressers and desks carried down a stairwell or out through a booked freight elevator. Pieces still worth using are kept separate from the rest of the load.",
+          "[Garage cleanouts](/services/garage-cleanout) — the standard Lynn Valley and Upper Lonsdale job: paint cans, old bikes, patio furniture, and boxes nobody has opened since the move in.",
+          "[Estate cleanouts](/services/estate-cleanout) — whole-home clearing for executors and families, staged room by room, with an itemized invoice and donation receipts where our partner charities issue them.",
+          "[Construction debris](/services/construction-cleanup) — drywall, tile, flooring offcuts and framing scrap from kitchen and bath renovations. Heavy material is quoted by weight, because that is how the disposal sites bill it.",
+          "[Commercial cleanouts](/services/commercial-cleanout) — office furniture, retail fixtures and back-room overflow along Marine Drive and Central Lonsdale, scheduled outside business hours when the building requires it.",
+          "[Mattress and box spring removal](/services/furniture-removal) — the same crew and the same pricing as any other bulky piece. Every mattress carries a per-unit recycling fee anywhere in Metro Vancouver; our [mattress disposal guide](/blog/how-to-get-rid-of-mattress-vancouver) walks through each option and what it costs.",
+          "[Appliance removal](/services/junk-removal) — fridges, washers, dryers and stoves, part of the general junk removal line. Sealed-unit appliances go to the correct recycling stream rather than the landfill.",
+        ],
+      },
+      { type: "paragraph", text: "If your job does not match any of those neatly, it probably still fits: the [services hub](/services) lists every line we run, and a few photos of the pile settle the question faster than a category ever will." },
+
+      { type: "heading", text: "How much does junk removal cost in North Vancouver?" },
+      { type: "paragraph", text: "Price follows volume. In the 2026 market, a single item or minimum load runs roughly $99–150. A half truck — about what one packed single garage holds — lands around $300–500. A full truck for a typical household clear-out is roughly $649–799. Heavy material such as concrete, soil, tile and shingles is quoted by weight on top of that, because disposal facilities charge it by the tonne." },
+      { type: "paragraph", text: "Those are market ranges, not quotes. The honest number for your load comes from photos: send them through the estimate form and you will have a firm range back, usually within hours. We confirm that range on arrival before anyone lifts anything, and the figure you approve is the figure you pay. For the full picture — every load fraction, what pushes the price up or down, and the legitimate ways to pay less — read our [North Vancouver junk removal cost guide](/blog/junk-removal-cost-north-vancouver). If the job is specifically a garage, the [garage cleanout cost guide](/blog/garage-cleanout-north-vancouver-cost) prices that one on its own." },
+
+      { type: "heading", text: "Which North Vancouver neighbourhoods do you serve?" },
+      { type: "paragraph", text: "All of them — City and District alike. In a normal week we are in Lower Lonsdale and Central Lonsdale for condo move-outs, up in Lynn Valley and Blueridge for basement and garage clear-outs, out to Deep Cove and Seymour for houses with long driveways and steep side yards, and across Capilano, Pemberton Heights, Norgate and Grand Boulevard for everything in between. Each corner of the city has its own access problem. The Lonsdale towers mean a booked freight elevator and a timed loading bay. Deep Cove and Seymour mean narrow lanes with nowhere to turn a truck around. The older Grand Boulevard and Pemberton Heights houses mean back-lane access and basement stairs that were never built with a sectional in mind. Norgate and Capilano usually come down to driveway width and whether the side gate opens wide enough. We confirm parking and access from your photos before the truck leaves the yard, which is why our arrival times hold." },
+      { type: "paragraph", text: "We also work across the bridges: [West Vancouver](/locations/west-vancouver), [Vancouver](/locations/vancouver) and [Burnaby](/locations/burnaby) are all core service areas on the same schedule and the same pricing. And if you are unsure which side of the City and District line your address sits on, it makes no difference to the price or the timing — the postal-code check on this page confirms availability either way." },
+
+      { type: "heading", text: "How fast can you pick up junk in North Vancouver?" },
+      { type: "paragraph", text: "Same week is the normal answer, and next day is common — North Vancouver is our home market, so the truck is already on this side of the water most mornings. Arrival windows start in the morning, which is deliberate: a morning slot leaves room to finish a load that turns out bigger than the photos suggested, rather than pushing it to another day. We confirm your window by text the day before and text again when the crew is on the way, so you are not holding an entire afternoon open on a guess. Whole-home and estate work is the exception — that is staged across several days rather than one visit, and the [estate cleanout guide](/blog/estate-cleanout-north-vancouver) sets out how those days are planned." },
+      { type: "paragraph", text: "The slots that fill first are Saturday mornings in spring and fall, which is moving and renovation season on the North Shore. If your date is fixed by a completion, a strata move-out window or a tenant turnover, say so when you send the photos rather than after you have approved the range — we would rather hold the window while we quote than find out it is gone once you book." },
+
+      { type: "heading", text: "What happens to the junk you haul?" },
+      { type: "paragraph", text: "Reuse and recycle first, landfill last. Before anything is loaded for disposal, the crew pulls out what still has life in it: usable furniture, housewares, tools, clothing and unopened household goods go to local North Shore charities and thrift partners when condition allows. Metal, wood, cardboard and electronics are separated into their own recycling streams. What genuinely cannot be reused or recycled goes to the North Shore Recycling & Waste Centre here in North Vancouver, where loads are weighed and charged by the tonne." },
+      { type: "paragraph", text: "We do not publish a diversion percentage, because an honest one would have to be measured load by load and no two loads are alike. What we will do is tell you, before the job, what we expect to be able to divert from the pile in front of us — and tell you plainly when the answer is not much. Hazardous material such as paint, solvents, fuel and propane needs a dedicated depot and cannot ride in the truck; send a photo and we will point you at the right one." },
+
+      { type: "heading", text: "Why choose a local North Vancouver crew?" },
+      { type: "paragraph", text: "We are based at 564 West Keith Rd, a few minutes from the Lonsdale corridor. That is not a marketing detail — it decides how the day runs. We know which lanes off Lonsdale are too tight for a loaded truck, which Lower Lonsdale buildings insist on a booked elevator and a certificate of insurance before the crew comes up, which back alleys in Grand Boulevard are passable after a wet week, and where you can legally park a truck on a Deep Cove street without blocking someone in." },
+      { type: "paragraph", text: "The other part is who answers. There is no franchise call centre between you and the people doing the work: the estimate you get is written by someone who will be on the job, which is why the range holds and why nobody needs to “re-quote” on your driveway. If something on site is different from the photos, we say so on the spot and tell you what it changes before we touch it. Being ten minutes away also means a second visit is a small thing: if a basement turns out to hold more than one truck, we come back rather than leaving half of it against a wall." },
+
+      { type: "cta", label: "Get My Free Estimate →", href: "/estimate" },
+    ],
+    faqs: [
+      {
+        question: "Do you offer free estimates in North Vancouver?",
+        answer:
+          "Yes. Estimates are free and carry no obligation. Send your postal code, a short description, and a few photos of the space through the estimate form, and we reply with a clear price range, usually within hours. We confirm that range on arrival before any work begins.",
+      },
+      {
+        question: "Can you remove junk from condos and apartments with elevators?",
+        answer:
+          "Yes, and it is routine work in Lower Lonsdale and Central Lonsdale. Tell us the building and we handle the booking side: freight elevator reservation, loading bay window, and any certificate of insurance your strata asks for. Floors, walls, and common areas are protected before the first item moves.",
+      },
+      {
+        question: "Do you take single items like one couch or mattress?",
+        answer:
+          "Yes. A single sofa, mattress, fridge, or washer is priced as a minimum load, roughly $99 to $150 in the current market, including the lifting, hauling, and disposal fees. Stairs or tight access can move that slightly, so send a photo and we will confirm before you book.",
+      },
+      {
+        question: "Are you licensed and insured?",
+        answer:
+          "Yes. NorthPeak is a fully insured local crew operating out of North Vancouver, and we provide proof of insurance whenever a strata, building manager, or property manager asks for it before a job. Request it at booking and we will have the paperwork ready before the crew arrives.",
+      },
+      {
+        question: "Do you serve West Vancouver too?",
+        answer:
+          "Yes. West Vancouver is a core service area on the same schedule and the same pricing as North Vancouver, from Ambleside and Dundarave through Caulfeild and the British Properties. Vancouver and Burnaby are also core areas. Enter your postal code above and it will confirm availability instantly.",
+      },
+    ],
   },
   {
     slug: "west-vancouver",
