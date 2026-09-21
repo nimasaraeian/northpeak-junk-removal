@@ -1,0 +1,36 @@
+old_path,action,destination,reason,confidence
+/,301,/,"Old homepage to new homepage. Root-to-root is a same-role mapping, not a homepage filler.",high
+/index.php,301,/,"Joomla bare front controller served the old homepage.",high
+/about_us,301,/about,"Same page role: company about page.",high
+/articles/,301,/blog,"Article index to the new article index. Same role.",high
+/certs/,301,/about,"Certificates and accreditation were the old trust page; /about is the only trust hub on the new site.",medium
+/policy/,301,/about,"Company policy statement. No policy page exists; /about is the nearest hub. Possibly the EN twin of the FA lab-quality-policy URL below.",low
+/customer-poll/,301,/contact,"Customer feedback form; /contact is the only form page on the new site. Weak topical match.",low
+/shop/,410,,"WooCommerce storefront for pipe products. No commerce and no product equivalent exists.",high
+/air-vent-valve/,410,,"Pipe fitting product/technical page. No equivalent on a junk removal site.",high
+/temp-cooficient/,410,,"PE temperature coefficient technical reference. No equivalent.",high
+/pipeline_design/,410,,"Pipeline engineering content. No equivalent.",high
+/training/,410,,"Laboratory training courses. No training or education section exists.",high
+/case-study/familiarity-with-polyethylene/,410,,"Polyethylene material case study. No equivalent.",high
+/product-category/آزمون-لوله-pe/,410,,"WooCommerce product category for PE pipe testing. No commerce on the new site.",high
+/آزمون-لوله-پلیمری/,410,,"Polymer pipe testing service page. No equivalent.",high
+/آبیاری-زیرسطحی/,410,,"Subsurface irrigation content. No equivalent.",high
+/خط-مشی-کیفیت-آزمایشگاه/,410,,"Laboratory quality policy (ISO 17025 style), lab specific. May be the FA twin of /policy/ — if so, align both to one decision.",medium
+/تولید-بر-اساس-استاندارد/,410,,"Manufacturing-to-standard content for pipe production. No equivalent.",high
+/پیمان-دادخواه/,410,,"Person/author page. Author archives are 410 per the rules.",high
+/محمد-عزیزنژاد/,410,,"Person/author page. Author archives are 410 per the rules.",high
+/صفحه-اصلی/پیمایش-تک-صفحه-ای/,410,,"Theme demo page (one-page navigation variant of the home layout).",high
+/استراتژی-محتوا/,410,,"Content strategy article, unrelated to pipe or to junk removal.",high
+/بازاریابی-آنلاین/,410,,"Online marketing article, unrelated to pipe or to junk removal.",high
+/author/*,410,,"PATTERN. Author archives.",high
+/tag/*,410,,"PATTERN. Tag archives.",high
+/category/*,410,,"PATTERN. Category archives with no new-site counterpart.",high
+/page/*,410,,"PATTERN. Root pagination pages.",high
+/*/page/*,410,,"PATTERN. Nested pagination (e.g. /articles/page/3).",high
+/?p=*,410,,"PATTERN. WordPress default permalinks; post IDs are unresolvable without the old database.",high
+/?attachment_id=*,410,,"PATTERN. WordPress attachment pages.",high
+/?s=*,410,,"PATTERN. Internal search result pages.",high
+/index.php?option=com_contact*,301,/contact,"Joomla contact component is identifiable from the component name alone.",medium
+/index.php?option=com_content*,410,,"PATTERN. Joomla article IDs/Itemid are unresolvable without the old database or menu map.",high
+/index.php?option=com_users*,410,,"PATTERN. Joomla user/login screens.",high
+/index.php?option=com_search*,410,,"PATTERN. Joomla search results.",high
