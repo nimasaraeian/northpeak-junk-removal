@@ -51,7 +51,16 @@ export const site = {
     // this to the literal 3 and make pluralising against it a type error the
     // day the count changes.
     reviewCount: 3 as number,
-    reviewUrl: "https://g.page/r/CQpStjbMaZkzEBM/review",
+    /**
+     * The public listing, not the review form.
+     *
+     * `g.page/r/…/review` opens Google's "write a review" dialog, which is
+     * the wrong destination for a button labelled "Read our Google reviews".
+     * Named `listingUrl` so the write-a-review link — which the review-request
+     * flow still needs — cannot be confused for it later.
+     */
+    listingUrl:
+      "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver",
   },
   social: {
     instagram:

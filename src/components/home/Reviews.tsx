@@ -20,7 +20,7 @@ import { Section } from "@/components/ui/Section";
  * `site.google` for why self-published ratings stay out of structured data.
  */
 export function Reviews() {
-  const { rating, reviewCount, reviewUrl } = site.google;
+  const { rating, reviewCount, listingUrl } = site.google;
 
   return (
     <Section id="reviews" eyebrow="Client notes" title="What neighbours say">
@@ -41,7 +41,7 @@ export function Reviews() {
           </div>
 
           <div className="shrink-0">
-            <Button externalHref={reviewUrl} externalRel="noopener" variant="ghost" size="lg">
+            <Button externalHref={listingUrl} externalRel="noopener" variant="ghost" size="lg">
               Read our Google reviews
             </Button>
           </div>

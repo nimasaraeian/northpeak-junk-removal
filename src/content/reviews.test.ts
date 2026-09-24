@@ -68,10 +68,14 @@ test("the rating and count come from one constant", () => {
 });
 
 test("the Google link opens safely in a new tab", () => {
-  assert.equal(site.google.reviewUrl, "https://g.page/r/CQpStjbMaZkzEBM/review");
+  // The button reads "Read our Google reviews", so it points at the listing.
+  // `g.page/r/…/review` opens the write-a-review dialog instead and would make
+  // the label a lie.
+  assert.equal(site.google.listingUrl, "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver");
+  assert.equal(site.google.listingUrl.includes("/review"), false, "this is the write-a-review link");
 
   const source = readFileSync("src/components/home/Reviews.tsx", "utf8");
-  assert.match(source, /externalHref=\{reviewUrl\}/);
+  assert.match(source, /externalHref=\{listingUrl\}/);
   assert.match(source, /externalRel="noopener"/);
 
   // `Button` opens external links in a new tab and keeps the safe default for
