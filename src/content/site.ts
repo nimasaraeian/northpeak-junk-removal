@@ -75,6 +75,13 @@ export const site = {
     // day the count changes.
     reviewCount: 3 as number,
     /**
+     * The canonical profile URL — Google's own short link for the listing,
+     * with no path after the ID. This is the one that goes in `sameAs`: it
+     * names the entity's page rather than describing a way to find it, which
+     * is what `sameAs` is for. Not used for any visible link.
+     */
+    profileUrl: "https://g.page/r/CQpStjbMaZkzEBM",
+    /**
      * The public listing — where "Read our Google reviews" goes.
      */
     listingUrl:
