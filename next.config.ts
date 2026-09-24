@@ -1,6 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Two Journal posts were consolidated rather than expanded, because each
+   * competed with a stronger page for the same query: "what to expect" said
+   * less about North Vancouver than the location page does, and the garage
+   * tips post said less about garages than the garage cost guide does. Two
+   * URLs splitting one query is worse than one URL winning it, so the weaker
+   * ones redirect permanently into the page that absorbed them — permanent so
+   * the ranking signals move with the link rather than being dropped.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/blog/junk-removal-north-vancouver-what-to-expect",
+        destination: "/locations/north-vancouver",
+        permanent: true,
+      },
+      {
+        source: "/blog/garage-cleanout-north-shore-homes",
+        destination: "/blog/garage-cleanout-north-vancouver-cost",
+        permanent: true,
+      },
+    ];
+  },
   typedRoutes: true,
   turbopack: {
     root: process.cwd(),

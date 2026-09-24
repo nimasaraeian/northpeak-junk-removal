@@ -483,98 +483,236 @@ export const blogPosts: BlogPost[] = [
     ],
   },
   {
-    slug: "junk-removal-north-vancouver-what-to-expect",
-    title: "Junk Removal in North Vancouver: What to Expect",
-    excerpt:
-      "A clear look at how a professional removal visit works on the North Shore — from access and estimates to what happens after the truck leaves.",
-    date: "2026-09-01",
-    readingTime: "6 min",
-    category: "Local Guide",
-    seoTitle: "Junk Removal North Vancouver: What to Expect",
-    seoDescription:
-      "What a professional junk removal visit looks like in North Vancouver, including estimates, access, and responsible disposal.",
-    relatedServiceSlugs: ["junk-removal", "garage-cleanout"],
-    relatedLocationSlugs: ["north-vancouver"],
-    body: [
-      { type: "paragraph", text: "North Vancouver properties rarely offer a simple driveway and a level walk. Hillside stairs, shared laneways, and condo loading rules shape the job as much as the pile itself. A good crew plans for that before arrival." },
-      { type: "paragraph", text: "The estimate should describe volume, access, and disposal — not a vague hourly promise. If the range is honest, the visit is quieter. You should know what is included, what cannot be taken, and how long the crew expects to be on site." },
-      { type: "paragraph", text: "After the load leaves, the space should be swept and safe. Donation-ready items should have been set aside. That is the difference between hauling and recovery: the property is ready for the next use, not merely emptied." },
-    ],
-  },
-  {
     slug: "furniture-removal-vancouver-practical-guide",
-    title: "Furniture Removal in Vancouver: A Practical Guide",
+    title: "Furniture Removal in Vancouver: What to Measure First",
     excerpt:
-      "How to prepare sofas, beds, and office suites for removal in condos and houses across Vancouver.",
+      "The five measurements that decide whether a sofa comes out whole, plus condo elevator rules, donation standards, and what to photograph before you book.",
     date: "2026-08-20",
-    readingTime: "5 min",
+    readingTime: "6 min",
     category: "How-To",
-    seoTitle: "Furniture Removal Vancouver Guide",
+    seoTitle: "Furniture Removal Vancouver: What to Measure First",
     seoDescription:
-      "A practical guide to furniture removal in Vancouver, including condo access, donation, and what to measure before the crew arrives.",
+      "Measure these five things before booking furniture removal in Vancouver: doorway, stair turn, elevator, hallway, and the piece itself. Plus condo rules and donation standards.",
     relatedServiceSlugs: ["furniture-removal", "commercial-cleanout"],
     relatedLocationSlugs: ["north-vancouver", "burnaby"],
     body: [
-      { type: "paragraph", text: "Furniture removal fails when the piece is larger than the path. Measure the sofa, the stair turn, and the elevator. In Vancouver condos, book the elevator early and confirm whether lobby protection is required." },
-      { type: "paragraph", text: "Usable pieces can often be donated if they are clean, complete, and structurally sound. Torn sofas, stained mattresses, and particle-board units that have already failed should be treated as disposal, not donation." },
-      { type: "paragraph", text: "If you are emptying an office, photograph the floor plan. Cubicle systems and reception desks take longer than they appear. A short set of photos now will become a tighter estimate when the upload workflow launches." },
+      {
+        type: "callout",
+        label: "Quick answer",
+        text: "Almost every furniture removal that goes wrong goes wrong for one reason: the piece is bigger than the path. Measure five things before you book — the piece at its widest, the narrowest doorway, the stair turn, the elevator door and car depth, and the hallway width. If the piece's smallest dimension clears the narrowest point, it comes out whole. If it does not, it comes apart, and that is a plan rather than a problem.",
+      },
+      { type: "heading", text: "What exactly should I measure?" },
+      { type: "paragraph", text: "Five numbers, and they take about ten minutes with a tape measure. Write them down rather than trusting memory, because the useful comparison is between numbers, not impressions." },
+      {
+        type: "list",
+        items: [
+          "**The piece**: width, height and depth at the widest points, including feet, arms and any fixed cushioning. A sofa's diagonal — corner to opposite corner across the depth — is the number that actually matters at a turn.",
+          "**The narrowest doorway** on the route, measured inside the frame with the door open. If the door can be unscrewed from its hinges, measure that too; it usually buys an extra inch and a half.",
+          "**The stair turn**, meaning the width of the landing at the tightest point and the ceiling height above it. A straight run is almost never the problem; a half-landing turn almost always is.",
+          "**The elevator**: door opening width and height, plus car depth and diagonal. Freight elevators take taller loads than passenger cars, which is the main reason to book one.",
+          "**The hallway**, measured at its narrowest and at any corner the piece must pivot around.",
+        ],
+      },
+      { type: "heading", text: "Which pieces actually get stuck?" },
+      { type: "paragraph", text: "Sectionals are first, and it is rarely the size — it is that the connecting hardware was assembled in the room and nobody kept the instructions. Sofa beds are second: a steel folding mechanism makes them a third heavier than they look and removes any flex in the frame. After that come oversized dining tables with fixed pedestals, armoires and wardrobes taller than the ceiling clearance at a stair turn, and anything that was carried in before a renovation closed a wall." },
+      { type: "paragraph", text: "The honest answer for most of these is that they come apart. Disassembly is normal work, not a failure — bed frames, sectionals, desks and shelving are designed to separate. What is not designed to separate is an upholstered one-piece frame, and that is the case where measuring in advance saves you from finding out at the worst moment. Our [furniture removal](/services/furniture-removal) page covers how we handle both." },
+      { type: "heading", text: "What do Vancouver condo buildings actually require?" },
+      { type: "paragraph", text: "More than most people expect, and the requirements are the building's rather than ours. A freight elevator booking is standard, usually made through the concierge or the property manager and often a few days out. Many buildings require lobby and elevator protection — padded blankets on the car walls, floor covering in the lobby — and some require a certificate of insurance from the moving or removal company on file before the crew is allowed up." },
+      { type: "paragraph", text: "Loading bay windows are the constraint people forget. In downtown towers and along Lonsdale, the bay is frequently allocated in one-hour blocks, and arriving outside yours means waiting. Tell us the building when you book and we arrange the bay, the elevator and the paperwork; it is routine, but it is not instant, which is the argument for booking a few days ahead rather than the night before." },
+      { type: "heading", text: "Will a charity take my furniture?" },
+      { type: "paragraph", text: "The standard is narrower than most people assume, and it is worth knowing before you plan around it. Charities and thrift partners generally accept pieces that are clean, structurally sound, complete with their hardware, free of pet damage and odour, and from a smoke-free home. They generally decline torn or heavily worn upholstery, water damage of any kind, particle-board units that have started to sag or swell, and anything missing the bolts that hold it together." },
+      { type: "paragraph", text: "Mattresses are their own category: most Vancouver charities no longer accept used mattresses at all, for hygiene and bed-bug reasons, so recycling is nearly always the route. Our [mattress disposal guide](/blog/how-to-get-rid-of-mattress-vancouver) covers every legal option and what each costs. For everything else, if a piece qualifies it leaves the load, which means it also leaves the bill." },
+      { type: "heading", text: "What should I photograph before booking?" },
+      { type: "paragraph", text: "Photos price the job more accurately than any description, and the ones that help are not the obvious ones. Take a wide shot of the piece from the front, one from the side so the depth reads, and a close-up of any connection point or mechanism. Then photograph the route: the doorway, the stair turn from the bottom looking up, the hallway, and the elevator door with the car visible. If the piece is on an upper floor, include the flight of stairs." },
+      { type: "paragraph", text: "That set turns a guess into a firm range, usually back within hours — and it means nobody is standing in your living room re-quoting. What moves a price up is almost always access rather than the item, and access is exactly what a photograph shows and a phone call does not. The [cost guide](/blog/junk-removal-cost-north-vancouver) explains how the ranges are built." },
+      { type: "paragraph", text: "We do this work across [North Vancouver](/locations/north-vancouver), [Vancouver](/locations/vancouver), [West Vancouver](/locations/west-vancouver) and [Burnaby](/locations/burnaby). If you are clearing a whole office rather than a room, see [commercial cleanouts](/services/commercial-cleanout)." },
+      { type: "cta", label: "Get My Free Estimate →", href: "/estimate" },
     ],
-  },
-  {
-    slug: "garage-cleanout-north-shore-homes",
-    title: "Garage Cleanout Tips for North Shore Homes",
-    excerpt:
-      "How to recover a garage that has become the household archive — without losing what you still need.",
-    date: "2026-08-08",
-    readingTime: "5 min",
-    category: "How-To",
-    seoTitle: "Garage Cleanout North Shore Homes",
-    seoDescription:
-      "Garage cleanout advice for North Vancouver and West Vancouver homes, from keep-piles to responsible disposal.",
-    relatedServiceSlugs: ["garage-cleanout", "estate-cleanout"],
-    relatedLocationSlugs: ["north-vancouver", "west-vancouver"],
-    body: [
-      { type: "paragraph", text: "Most North Shore garages fail for the same reason: they absorbed every unfinished project. The first useful step is a keep-pile. Mark what stays. Everything else can be evaluated as donate, recycle, or remove." },
-      { type: "paragraph", text: "Sports gear, paint, and leftover lumber are the items that stall a cleanout. Tell the crew what is hazardous. Leave a path to the door. If the garage is also a workshop, decide whether the workbench stays before anyone arrives." },
-      { type: "paragraph", text: "A finished garage cleanout should give you parking or a clear work floor. If the space still cannot be used, the job was only a partial haul. Ask for a swept floor and a short walk-through before the crew leaves." },
+    faqs: [
+      {
+        question: "How do I know if my sofa will fit through the door?",
+        answer:
+          "Compare the sofa's smallest dimension — usually its depth, or its diagonal across the depth — against the narrowest point on the route measured inside the door frame. If the smallest dimension clears, it goes. Removing the door from its hinges typically buys another inch and a half.",
+      },
+      {
+        question: "Do you take furniture apart if it will not fit?",
+        answer:
+          "Yes, and it is part of the job rather than a surcharge. Bed frames, sectionals, desks and shelving are designed to separate. One-piece upholstered frames are the genuine exception, which is why measuring first matters — it turns a surprise on the day into a plan made in advance.",
+      },
+      {
+        question: "How far ahead should I book if I live in a condo?",
+        answer:
+          "A few days, because the building sets the pace rather than we do. Freight elevator reservations, loading bay windows and certificates of insurance all go through the concierge or property manager, and none of them happen the same evening. Tell us the building and we arrange all three.",
+      },
+      {
+        question: "What condition does furniture need to be in to be donated?",
+        answer:
+          "Clean, structurally sound, complete with its hardware, free of pet damage and odour, and from a smoke-free home. Torn upholstery, water damage and sagging particle board do not qualify. Used mattresses are declined almost everywhere in Vancouver for hygiene reasons and go to recycling instead.",
+      },
+      {
+        question: "Does it cost more to remove furniture from an upper floor?",
+        answer:
+          "It can, because stairs and long carries add crew time, which is the real variable in a furniture job. A photo of the stairwell and the route lets us price that accurately before you book, rather than discovering it on arrival. The access, not the item, usually decides the band.",
+      },
     ],
   },
   {
     slug: "commercial-junk-removal-vancouver",
-    title: "Commercial Junk Removal in Vancouver",
+    title: "Commercial Junk Removal in Vancouver: The End-of-Lease Playbook",
     excerpt:
-      "How offices, retail, and end-of-lease suites get emptied without disrupting the rest of the building.",
+      "How to empty an office, retail unit or restaurant in Vancouver without losing your deposit — building access, scheduling backwards from handover, and what the landlord actually inspects.",
     date: "2026-07-22",
     readingTime: "6 min",
     category: "Commercial",
-    seoTitle: "Commercial Junk Removal in Vancouver: Building Access",
+    seoTitle: "Commercial Junk Removal Vancouver: End-of-Lease Playbook",
     seoDescription:
-      "Commercial junk removal in Vancouver for offices, retail, and end-of-lease cleanouts, including elevator bookings and after-hours options.",
+      "Emptying a Vancouver office or retail unit at lease end: loading bay and elevator rules, how far ahead to book, what landlords inspect, and where the furniture goes.",
     relatedServiceSlugs: ["commercial-cleanout", "furniture-removal"],
     relatedLocationSlugs: ["vancouver", "burnaby"],
     body: [
-      { type: "paragraph", text: "A commercial cleanout is a building problem before it is a junk problem. Loading bays, elevator reservations, and occupied floors decide the schedule. Share those constraints in the estimate and the visit stays quiet." },
-      { type: "paragraph", text: "Office furniture looks smaller on a floor plan than it is in a freight elevator. Photograph the suite, the path to the dock, and any fixtures that must stay. That is the data a later AI-assisted range will use." },
-      { type: "paragraph", text: "End-of-lease work should leave the suite showable. Sweep, stack nothing in the corridor, and confirm with the property manager before the crew leaves. The next tenant is the real deadline." },
+      {
+        type: "callout",
+        label: "Quick answer",
+        text: "Work backwards from the handover date, not forwards from today. A commercial clear-out in Vancouver is constrained by the building — loading bay windows, freight elevator bookings, after-hours access and a certificate of insurance — not by the volume. Book the removal to finish at least two days before the landlord's inspection, so anything the walkthrough turns up can still be fixed. Most office suites run one to two truckloads; retail depends entirely on the fixtures.",
+      },
+      { type: "heading", text: "Why does the building matter more than the volume?" },
+      { type: "paragraph", text: "Because a crew that cannot get to the dock cannot do the work, however small the load. In downtown Vancouver towers and along the Broadway and Lonsdale corridors, loading bays are commonly allocated in one-hour blocks and booked days ahead. Freight elevators need a reservation and are often shared with every other tenant doing the same thing at month end. Property managers frequently require a certificate of insurance on file before any crew uses either." },
+      { type: "paragraph", text: "None of that is difficult, but all of it takes lead time, and the week your lease ends is the week every other departing tenant wants the same bay. Give us the building when you book and we arrange the bay window, the elevator and the paperwork in advance — see [commercial cleanouts](/services/commercial-cleanout) for how that side runs." },
+      { type: "heading", text: "How far ahead should the removal be booked?" },
+      { type: "paragraph", text: "Two weeks is comfortable; one week is workable; the day before handover is where deposits go to die. The reason is not our schedule — it is that the landlord's inspection is the real deadline, and an inspection that finds anything at all needs time on the other side of it. Booking the removal to finish two days before the walkthrough gives you those two days." },
+      {
+        type: "list",
+        items: [
+          "**Two weeks out**: confirm the handover date and inspection date in writing, and ask the property manager what condition the lease actually requires.",
+          "**One week out**: book the removal, the bay and the elevator. Identify anything that is a landlord fixture and must stay — this is the single most common dispute.",
+          "**Two days out**: the clear-out happens. Suite emptied, floors swept, nothing stacked in the corridor.",
+          "**Handover day**: the walkthrough finds an empty, showable unit rather than a work in progress.",
+        ],
+      },
+      { type: "heading", text: "What does the landlord actually inspect?" },
+      { type: "paragraph", text: "Less than tenants fear and more than they prepare for. The recurring items are: fixtures that were part of the premises and should not have been removed, fixtures the tenant installed that should have been removed, holes and anchors left in walls and floors, signage and branding still in place, and anything left in shared areas — corridors, the bay, the bin room. Cabling above a suspended ceiling is a regular surprise, because nobody thinks of it as a thing they own." },
+      { type: "paragraph", text: "The practical defence is a written scope before the work and photographs after it. Ask us at booking and you get an itemized record of what left the premises plus photographs of the cleared space, which is what most head offices and property managers want for the file anyway." },
+      { type: "heading", text: "Can the work happen outside business hours?" },
+      { type: "paragraph", text: "Yes, and for an operating business it usually should. Evening and weekend windows are standard for commercial work and typically cost no more than a weekday slot, because they suit the route just as well and the building is emptier. The practical benefit is not privacy — it is that the bay and the elevator are free, so the job runs at the pace of the carrying rather than the waiting." },
+      { type: "paragraph", text: "Inside an occupied building the other consideration is your neighbours. A removal that leaves a trail through a shared corridor produces a complaint that lands on your lease, not on the company that did it. Protecting the route and keeping common areas clean is not politeness; it is part of getting the deposit back." },
+      { type: "heading", text: "Where does the office furniture go?" },
+      { type: "paragraph", text: "Office furniture is one of the easiest categories to keep out of a landfill, because serviceable desks, chairs, cabinets and conference tables are genuinely wanted by charities, non-profits and community organisations. That is the first sort we make. Electronics — monitors, towers, printers, server-room leftovers and cabling — go to e-waste recycling rather than disposal. Metal, cardboard and wood are separated into their own streams." },
+      { type: "paragraph", text: "What remains goes to disposal and is weighed there, with the fee already inside the quoted price. If your organisation needs a record of the diversion for a sustainability report, ask at booking rather than afterwards; it is far easier to document as the work goes than to reconstruct from an empty suite." },
+      { type: "heading", text: "What does it cost?" },
+      { type: "paragraph", text: "Most commercial jobs are quoted as a project rather than a truck fraction, because a walkthrough or a photo set makes the volume clear and the real variables are access and timing. A single office suite of furniture is often one to two truckloads. A retail unit stripped to shell depends almost entirely on the fixtures. Restaurant equipment is dense enough that weight enters the calculation. Whichever shape yours takes, you get a firm number before the date — a business cannot approve a range that moves. The [pricing guide](/blog/junk-removal-cost-north-vancouver) sets out the underlying volume bands." },
+      { type: "paragraph", text: "We work across [Vancouver](/locations/vancouver), [North Vancouver](/locations/north-vancouver), [West Vancouver](/locations/west-vancouver) and [Burnaby](/locations/burnaby). If the space is being stripped as part of a build rather than a move-out, that is [construction cleanup](/services/construction-cleanup); if it is just the furniture, see [furniture removal](/services/furniture-removal)." },
+      { type: "cta", label: "Get My Free Estimate →", href: "/estimate" },
+    ],
+    faqs: [
+      {
+        question: "How early should I book an end-of-lease cleanout?",
+        answer:
+          "Two weeks is comfortable and one week is workable. The constraint is the building, not the truck: loading bay windows, freight elevator reservations and certificates of insurance all need lead time, and month end is when every departing tenant in the building wants the same bay.",
+      },
+      {
+        question: "Can you work evenings or weekends so we stay open?",
+        answer:
+          "Yes, and it is standard for commercial jobs. After-hours windows usually cost no more than a weekday slot because they suit the route equally well, and the building is emptier — so the bay and elevator are free and the work runs at the pace of the carrying rather than the waiting.",
+      },
+      {
+        question: "Who arranges the loading bay and elevator?",
+        answer:
+          "We do, once you tell us the building. The bay window, the freight elevator reservation and any certificate of insurance the property manager requires are arranged before the date rather than negotiated at the door, which is where a morning usually gets lost.",
+      },
+      {
+        question: "What gets tenants in trouble at the final inspection?",
+        answer:
+          "Removing a landlord fixture, leaving a tenant fixture behind, anchors and holes in walls or floors, signage still up, and anything left in shared corridors or the bin room. Cabling above a suspended ceiling is the classic surprise, because few tenants think of it as theirs to clear.",
+      },
+      {
+        question: "Can you document what was removed?",
+        answer:
+          "Yes, on request at booking. We can provide an itemized record of what left the premises and photographs of the cleared space — what most property managers and head offices want for the file, and what settles a dispute about condition far better than memory does.",
+      },
+      {
+        question: "Do you recycle old office electronics?",
+        answer:
+          "Yes. Monitors, towers, printers, networking gear and cabling go to e-waste recycling rather than disposal, and serviceable furniture goes to charities and non-profits before anything else. If you need the diversion documented for a sustainability report, ask before the work starts.",
+      },
     ],
   },
   {
     slug: "construction-cleanup-vancouver-renovations",
-    title: "Construction Cleanup After a Vancouver Renovation",
+    title: "Construction Cleanup After a Vancouver Renovation: What to Clear, and When",
     excerpt:
-      "What to remove between trades so the finish work can start — and what should never go in a mixed load.",
+      "Why renovation debris is priced by weight, what must never go in a mixed load, the asbestos rule for pre-1990 homes, and why clearing between trades beats clearing at the end.",
     date: "2026-07-10",
-    readingTime: "5 min",
+    readingTime: "6 min",
     category: "How-To",
     seoTitle: "Construction Cleanup After a Vancouver Renovation",
     seoDescription:
-      "Construction debris removal in Vancouver after renovations: mixed loads, fixtures, and how to keep remaining trades moving.",
+      "Renovation debris removal in Vancouver: why heavy material is priced by weight, the pre-1990 asbestos rule, what a mixed load cannot take, and when to clear between trades.",
     relatedServiceSlugs: ["construction-cleanup", "junk-removal"],
     relatedLocationSlugs: ["vancouver", "north-vancouver"],
     body: [
-      { type: "paragraph", text: "Renovation leftover is not household junk. Offcuts, packaging, old cabinetry, and demolition remnants have different disposal paths. Tell the crew what is wood, what is metal, and what is mixed." },
-      { type: "paragraph", text: "The useful moment for a cleanup is between trades, not after the last one has already been delayed. Book the load-out before flooring or paint so the finish has a clear room." },
-      { type: "paragraph", text: "Hazardous leftovers — paints, solvents, some adhesives — do not belong in a mixed construction load. Set them aside. A professional crew will confirm what they can take and what must go to a depot." },
+      {
+        type: "callout",
+        label: "Quick answer",
+        text: "Renovation debris is priced by weight rather than volume, because disposal facilities charge dense material by the tonne — a small pile of tile or concrete outweighs a truckload of furniture. Clear between trades rather than at the end, so debris never occupies the space the next crew needs. Paint, solvents, fuel and propane cannot go in a mixed load, and any material that might contain asbestos — common in Metro Vancouver homes built before 1990 — needs a survey and a licensed abatement contractor before anyone removes it.",
+      },
+      { type: "heading", text: "Why is renovation debris priced differently?" },
+      { type: "paragraph", text: "Because it is heavy, and weight is what the disposal facility bills. Volume pricing works for household loads because a truck of furniture and a truck of boxes cost roughly the same to tip. Renovation material breaks that assumption completely: concrete, mortar, tile, backer board, soil and asphalt shingles are dense enough that a pile you could carry in six trips outweighs an entire truck of sofas. Quoting that by volume would mean overcharging light loads to subsidise heavy ones, which is how surprise invoices happen." },
+      { type: "paragraph", text: "So most renovation quotes have two parts. The light mixed material — lumber offcuts, cabinetry, packaging, cardboard, trim, insulation — is quoted the normal volume way. The dense material is quoted by weight and confirmed after the load is weighed. A good quote tells you which part is which before you book. Our [pricing guide](/blog/junk-removal-cost-north-vancouver) explains how the two interact." },
+      { type: "heading", text: "When in the project should the debris leave?" },
+      { type: "paragraph", text: "Between trades, and earlier than feels necessary. Debris that stays on site does three things, all bad: it occupies the floor the next crew needs, it slows every trade that has to work around it, and it accumulates into a single enormous load that lands in the week the finishing trades arrive — which is also the week you have the least slack in the schedule and the most expensive people standing around." },
+      { type: "paragraph", text: "On any project running more than a few weeks, a recurring pickup is the better arrangement. The natural moments are after demolition, after rough-in, and before flooring or paint. Booking the load-out before the finishing trades rather than after them is the single scheduling decision that saves the most time on a residential renovation." },
+      { type: "heading", text: "What can go in a mixed construction load?" },
+      {
+        type: "list",
+        items: [
+          "**Yes**: drywall offcuts, lumber and framing scrap, plywood, tile and backer board, hardwood and laminate offcuts, underlay, torn-out cabinetry and countertops, doors, trim, old fixtures and sinks, insulation, roofing shingles, and the cardboard and packaging that arrives with new appliances.",
+          "**By weight, quoted separately**: concrete, mortar, brick, stone, tile in quantity, soil, and shingles. All dense, all billed by the tonne at the facility.",
+          "**No, needs a depot**: paint, stains, solvents, adhesives, caulk tubes with wet product, fuel, propane cylinders and pool chemicals. Set these aside in one place and we will tell you which depot takes each one.",
+          "**No, needs an abatement contractor**: anything that may contain asbestos — see below.",
+        ],
+      },
+      { type: "heading", text: "What is the asbestos rule in Metro Vancouver?" },
+      { type: "paragraph", text: "If the home was built before 1990, assume asbestos is possible until a survey says otherwise. It turns up in places people do not expect: vinyl floor tile and the mastic under it, sheet flooring backing, drywall joint compound, textured ceiling finishes, pipe and duct insulation, and some exterior siding. Disturbing it during demolition is what makes it dangerous, which is why the survey belongs before the demo rather than after." },
+      { type: "paragraph", text: "The rule for removal is simple and not ours to bend: suspect material needs a hazardous-materials survey, and if asbestos is confirmed, a licensed abatement contractor removes and disposes of it. No junk removal company can take it, including us — if we see it on site we stop and say so rather than load it. That is a delay of days, not weeks, and it is considerably shorter than the alternative." },
+      { type: "heading", text: "Bin rental or full-service removal?" },
+      { type: "paragraph", text: "Genuinely different tools. A bin wins on a slow build where debris accumulates daily and someone on site is already loading it — you pay for the rental period plus disposal by weight, and the labour is yours. Full-service wins when the loading is the hard part, when the site needs clearing fast between phases, when there is nowhere legal to park a bin (a real constraint on narrow North Shore lots and in permit zones), or when the load includes material a bin operator will not accept." },
+      { type: "paragraph", text: "Many renovations use both: a bin through demolition, then crew visits between the later trades when the volume is smaller and the timing matters more. There is no purity test here — the right answer is whichever one keeps the trades moving. Our [construction cleanup](/services/construction-cleanup) page covers how the crew visits are scheduled around trades rather than through them." },
+      { type: "heading", text: "What about the finished house?" },
+      { type: "paragraph", text: "Once the trades are gone, what is left is usually not construction debris at all — it is the old appliances, the furniture that did not survive the renovation, the packaging from everything new, and whatever came out of the rooms that were emptied to make space. That is ordinary [junk removal](/services/junk-removal), priced by volume, and it is often the load that finally makes the house feel finished." },
+      { type: "paragraph", text: "We handle renovation work across [North Vancouver](/locations/north-vancouver), [West Vancouver](/locations/west-vancouver), [Vancouver](/locations/vancouver) and [Burnaby](/locations/burnaby)." },
+      { type: "cta", label: "Get My Free Estimate →", href: "/estimate" },
+    ],
+    faqs: [
+      {
+        question: "Why is construction debris priced by weight instead of volume?",
+        answer:
+          "Because disposal facilities charge dense material by the tonne. Concrete, tile, mortar and soil are heavy enough that a small pile outweighs a truck of furniture, so volume pricing would overcharge light loads to subsidise heavy ones. Quoting by weight is what keeps the invoice matching the actual disposal cost.",
+      },
+      {
+        question: "Can a junk removal company take asbestos?",
+        answer:
+          "No, and no exceptions. Suspect material requires a hazardous-materials survey, and confirmed asbestos requires a licensed abatement contractor to remove and dispose of it. If we encounter it on site we stop and tell you rather than load it, then point you toward the right next step.",
+      },
+      {
+        question: "My house was built in 1972 — should I test before demolition?",
+        answer:
+          "Yes. Anything built before 1990 in Metro Vancouver should be surveyed before demolition, because asbestos hides in floor tile, mastic, drywall compound, textured ceilings and pipe insulation. Disturbing it is what creates the hazard, so the survey belongs before the demo rather than after it.",
+      },
+      {
+        question: "When during a renovation should I book the cleanup?",
+        answer:
+          "Between trades, and ideally before flooring or paint rather than after. Debris left on site occupies the space the next crew needs and turns into one enormous load in the week you have least slack. On projects over a few weeks, recurring pickups keep the site workable throughout.",
+      },
+      {
+        question: "Is it cheaper to rent a bin?",
+        answer:
+          "For a slow build where someone on site is loading it daily, often yes. Full-service wins when the loading is the hard part, when the site must clear fast between phases, when there is nowhere legal to park a bin, or when the load includes material a bin operator declines. Many projects use both.",
+      },
+      {
+        question: "Can you take the old paint and solvents too?",
+        answer:
+          "No — those need dedicated depots and cannot legally ride in the truck. Set them aside in one place and we will tell you which depot accepts each one. Everything else a typical renovation produces, including drywall, tile, lumber and cabinetry, we can take in the same visit.",
+      },
     ],
   },
 ];
