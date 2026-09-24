@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlogBody } from "@/components/content/BlogBody";
 import { CtaBanner } from "@/components/content/CtaBanner";
+import { FaqList } from "@/components/content/FaqList";
 import { PageHeader } from "@/components/content/PageHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
@@ -8,7 +10,7 @@ import { Container } from "@/components/ui/Container";
 import { getPost } from "@/content/blog";
 import { indexedLocations } from "@/content/locations";
 import { getRelatedServices, getService, services } from "@/content/services";
-import { breadcrumbSchema, serviceSchema } from "@/lib/schema";
+import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -37,6 +39,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   return (
     <>
       <JsonLd data={serviceSchema(service)} />
+      {service.faqs ? <JsonLd data={faqSchema(service.faqs)} /> : null}
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -77,6 +80,27 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
                 </li>
               ))}
             </ul>
+
+            {/* The lists above answer "what is in scope" at a glance. Everything
+                a buyer asks after that — cost, access, timing, where it goes —
+                is prose, and it is what the page is trying to rank and be
+                quoted for. */}
+            {service.body ? (
+              <div className="mt-16 border-t border-navy/10 pt-12">
+                <BlogBody blocks={service.body} />
+              </div>
+            ) : null}
+
+            {service.faqs ? (
+              <section className="mt-16">
+                <h2 className="display text-[1.85rem] leading-tight text-navy sm:text-4xl">
+                  Frequently asked questions
+                </h2>
+                <div className="mt-6">
+                  <FaqList items={service.faqs} variant="cards" />
+                </div>
+              </section>
+            ) : null}
           </div>
           <aside className="h-fit rounded-[1.6rem] border border-navy/8 bg-white p-6 shadow-[var(--shadow-card)]">
             <p className="eyebrow text-gold-deep">Next step</p>

@@ -71,10 +71,20 @@ export const site = {
   },
 } as const;
 
+/**
+ * Primary navigation.
+ *
+ * "Home" is dropped because the logo already goes there, which buys the row
+ * for the two hubs that were reachable only from the footer: the location
+ * pages carry the local search strategy, and the Journal carries the guides
+ * every service and location page links into. A hub nothing links to from the
+ * header is a hub crawlers and readers both reach last.
+ */
 export const navigation = [
-  { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
+  { href: "/locations", label: "Service Area" },
   { href: "/how-it-works", label: "How It Works" },
+  { href: "/blog", label: "Journal" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ] as const;

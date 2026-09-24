@@ -25,6 +25,16 @@ export interface Service {
    * service page links out to it; the content test asserts the post exists.
    */
   guidePostSlug?: string;
+  /**
+   * Long-form landing copy, rendered through the Journal's block renderer.
+   * Service pages shipped with ~90 words each, which is not enough to rank
+   * for — or be quoted on — the phrases they target. When present this runs
+   * below the stock lists rather than replacing them: the item and outcome
+   * grids scan faster than prose and earn their place.
+   */
+  body?: BlogBlock[];
+  /** Rendered as an accordion and emitted as FAQPage JSON-LD when present. */
+  faqs?: FaqItem[];
 }
 
 export interface LocationPage {
