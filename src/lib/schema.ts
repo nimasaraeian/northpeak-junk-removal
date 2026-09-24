@@ -16,7 +16,9 @@ export function serializeJsonLd(data: unknown) {
  * omitted entirely when none are set.
  */
 function socialProfiles() {
-  return Object.values(site.social).filter((url): url is string => Boolean(url));
+  return [...Object.values(site.social), site.google.profileUrl].filter(
+    (url): url is string => Boolean(url),
+  );
 }
 
 function organizationId() {

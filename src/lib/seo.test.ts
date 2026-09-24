@@ -102,11 +102,20 @@ test("sameAs lives on Organization alone and carries no empty entry", () => {
     assert.ok(url.startsWith("https://"), `not a profile URL: ${url}`);
   }
 
-  // The Google listing is deliberately absent. `site.google.listingUrl` is a
-  // Maps *search* URL, not a canonical profile URL, and `sameAs` is meant to
-  // name the entity's own pages — a query string is the wrong shape for that.
-  // Swap in a real place URL (maps/place/… or the g.page short link) and it
-  // belongs here; until then it is better omitted than wrong.
+  // The Google listing is named by its canonical short link, not by the Maps
+  // search URL the "Read our reviews" button uses. `sameAs` is meant to name
+  // the entity's own page; a query string describes a way to find it, which
+  // is a different claim and the wrong shape for this field.
+  assert.ok(
+    (organization.sameAs as string[]).includes(site.google.profileUrl),
+    "the Google listing should be named in sameAs",
+  );
+  assert.equal(site.google.profileUrl, "https://g.page/r/CQpStjbMaZkzEBM");
+  assert.equal(
+    site.google.profileUrl.endsWith("/review"),
+    false,
+    "that is the write-a-review dialog, not the profile",
+  );
   assert.equal(
     (organization.sameAs as string[]).some((url) => url.includes("google.com/maps")),
     false,
@@ -117,13 +126,13 @@ test("sameAs lives on Organization alone and carries no empty entry", () => {
 test("sameAs is exactly the configured profiles, or absent", () => {
   // Facebook and LinkedIn default to "" and must be filtered out: an empty
   // entry is a broken entity link, which is worse than having none at all.
-  const configured = Object.values(site.social).filter(Boolean);
+  const expected = [...Object.values(site.social), site.google.profileUrl].filter(Boolean);
   const organization = organizationSchema() as Record<string, unknown>;
 
-  if (configured.length === 0) {
+  if (expected.length === 0) {
     assert.equal("sameAs" in organization, false, "empty sameAs would be a broken entity link");
   } else {
-    assert.deepEqual(organization.sameAs, configured);
+    assert.deepEqual(organization.sameAs, expected);
   }
 });
 

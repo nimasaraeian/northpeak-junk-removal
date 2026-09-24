@@ -29,9 +29,15 @@ test("an env var set to an empty string cannot blank a live profile", () => {
   }
 });
 
-test("Organization schema names both profiles in sameAs", () => {
+test("Organization schema names both social profiles in sameAs", () => {
+  // The Google listing joins them there too; this test owns the social side,
+  // and `seo.test.ts` owns the exact contents of the array.
   const schema = organizationSchema() as Record<string, unknown>;
-  assert.deepEqual(schema.sameAs, [INSTAGRAM, X]);
+  const sameAs = schema.sameAs as string[];
+
+  assert.ok(sameAs.includes(INSTAGRAM), "Instagram is missing from sameAs");
+  assert.ok(sameAs.includes(X), "X is missing from sameAs");
+  assert.equal(sameAs.indexOf(X), sameAs.indexOf(INSTAGRAM) + 1, "profile order changed");
 });
 
 test("sameAs never carries an empty entry", () => {
