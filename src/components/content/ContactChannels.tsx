@@ -52,9 +52,25 @@ const channels = [
   },
 ] as const;
 
+/**
+ * The round icon buttons in the footer's contact row, split so the social
+ * links beside them can reuse the exact same geometry. The two halves stay
+ * separate because the brand tint sits between them, and Tailwind resolves
+ * these by source order rather than by merging.
+ */
+export const COMPACT_ICON_BUTTON_BASE =
+  "group flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/5 text-cream transition hover:border-gold/40 hover:bg-white/10";
+
+export const COMPACT_ICON_BUTTON_SIZING =
+  "h-11 w-11 ring-0 [&_svg]:h-[1.15rem] [&_svg]:w-[1.15rem]";
+
+/** The tint shape each brand fills in: shared layout, per-brand colour. */
+export const CHANNEL_ICON_SHAPE =
+  "flex items-center justify-center rounded-full ring-1 transition group-hover:scale-105";
+
 function channelIconClass(channelId: (typeof channels)[number]["id"], isDark: boolean) {
   return cx(
-    "flex items-center justify-center rounded-full ring-1 transition group-hover:scale-105",
+    CHANNEL_ICON_SHAPE,
     channelId === "call" &&
       (isDark ? "bg-gold/15 text-gold-glow ring-gold/30" : "bg-gold/10 text-gold ring-gold/25"),
     channelId === "whatsapp" && "bg-[#25D366]/15 text-[#25D366] ring-[#25D366]/30",
@@ -78,9 +94,9 @@ export function ContactChannels({ variant = "onDark", className }: ContactChanne
             aria-label={`${channel.label} NorthPeak at ${site.phone}`}
             title={channel.label}
             className={cx(
-              "group flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/5 text-cream transition hover:border-gold/40 hover:bg-white/10",
+              COMPACT_ICON_BUTTON_BASE,
               channelIconClass(channel.id, isDark),
-              "h-11 w-11 ring-0 [&_svg]:h-[1.15rem] [&_svg]:w-[1.15rem]",
+              COMPACT_ICON_BUTTON_SIZING,
             )}
           >
             {channel.icon}
