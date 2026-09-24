@@ -108,7 +108,7 @@ simply omits those links rather than rendering dead ones.
 ## 2. Fix the profile's hours today
 
 The profile currently says **Open 24 hours**. The real hours are **8:00 AM to
-8:00 PM, seven days**, and that is now what the website says in both its copy
+6:00 PM, seven days**, and that is now what the website says in both its copy
 and its structured data.
 
 Change it in the profile so all three agree. Two reasons this matters more than
@@ -284,7 +284,7 @@ directories does nothing, and inconsistent copies of your address actively hurt.
 
 | When | What | Who |
 | --- | --- | --- |
-| Today | Fix hours to 8 AM–8 PM on the profile | Owner |
+| Today | Fix hours to 8 AM–6 PM on the profile | Owner |
 | Today | Copy the review link into the hosting env vars | Owner / dev |
 | This week | Business description, services, service areas | Owner |
 | This week | Search Console verification and sitemap | Owner |

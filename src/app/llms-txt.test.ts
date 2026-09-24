@@ -42,6 +42,17 @@ test("hours agree with themselves and with the schema's source", async () => {
     text.includes(`- Hours: ${site.hours} (${site.opensAt}–${site.closesAt} daily)`),
     "the hours line is not derived from the one set of hours",
   );
+
+  // Pinned to the literal window, not only to whatever `site` happens to hold.
+  // The derived line read "08:00–20:00 daily" while the profile, Yelp and the
+  // live schema all said 18:00 — deriving correctly from a wrong constant is
+  // still wrong, and only an assertion on the value itself catches that.
+  assert.ok(
+    text.includes("(08:00–18:00 daily)"),
+    "the published hours window is not 08:00–18:00",
+  );
+  assert.equal(text.includes("20:00"), false, "the old closing hour is still quoted");
+
   // The line that contradicted itself, hardcoded before the hours were fixed.
   assert.equal(text.includes("typically 08:00–18:00"), false);
 });

@@ -77,9 +77,16 @@ test("one set of hours, stated the same way everywhere", () => {
 
   // The human-readable line has to describe the same window.
   assert.match(site.hours, /8:00\s?AM/);
-  assert.match(site.hours, /8:00\s?PM/);
+  assert.match(site.hours, /6:00\s?PM/);
+
+  // Pinned to the literals the Google Business Profile, Yelp and the live
+  // schema all state. These are the numbers everything else derives from, so
+  // a change here is a change to what four listings claim — assert them
+  // outright rather than only against each other.
   assert.equal(site.opensAt, "08:00");
-  assert.equal(site.closesAt, "20:00");
+  assert.equal(site.closesAt, "18:00");
+  assert.equal(schema.openingHoursSpecification.closes, "18:00");
+  assert.equal(schema.openingHours, "Mo-Su 08:00-18:00");
 });
 
 test("the Google Business Profile is linked as the same entity when configured", () => {
