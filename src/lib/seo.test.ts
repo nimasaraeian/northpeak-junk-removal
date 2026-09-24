@@ -89,34 +89,41 @@ test("one set of hours, stated the same way everywhere", () => {
   assert.equal(schema.openingHours, "Mo-Su 08:00-18:00");
 });
 
-test("the Google Business Profile is linked as the same entity when configured", () => {
-  const schema = localBusinessSchema() as Record<string, unknown>;
+test("sameAs lives on Organization alone and carries no empty entry", () => {
+  const organization = organizationSchema() as Record<string, unknown>;
+  const business = localBusinessSchema() as Record<string, unknown>;
 
-  if (site.google.profileUrl) {
-    assert.ok(
-      (schema.sameAs as string[]).includes(site.google.profileUrl),
-      "the listing that holds the reviews should be named in sameAs",
-    );
-  } else {
-    // Unset is the expected state until the env var is filled in; what must
-    // never happen is an empty string being emitted as a profile link.
-    assert.equal(
-      Array.isArray(schema.sameAs) && (schema.sameAs as string[]).includes(""),
-      false,
-    );
+  // One business under two @ids. Organization is the node search resolves to,
+  // so the profile links live there and are not repeated on LocalBusiness.
+  assert.ok(Array.isArray(organization.sameAs), "Organization should name its profiles");
+  assert.equal("sameAs" in business, false, "LocalBusiness should not repeat sameAs");
+
+  for (const url of organization.sameAs as string[]) {
+    assert.ok(url.startsWith("https://"), `not a profile URL: ${url}`);
   }
+
+  // The Google listing is deliberately absent. `site.google.listingUrl` is a
+  // Maps *search* URL, not a canonical profile URL, and `sameAs` is meant to
+  // name the entity's own pages — a query string is the wrong shape for that.
+  // Swap in a real place URL (maps/place/… or the g.page short link) and it
+  // belongs here; until then it is better omitted than wrong.
+  assert.equal(
+    (organization.sameAs as string[]).some((url) => url.includes("google.com/maps")),
+    false,
+    "a Maps search URL is not a canonical sameAs entry",
+  );
 });
 
-test("sameAs is omitted rather than filled with empty profiles", () => {
+test("sameAs is exactly the configured profiles, or absent", () => {
+  // Facebook and LinkedIn default to "" and must be filtered out: an empty
+  // entry is a broken entity link, which is worse than having none at all.
   const configured = Object.values(site.social).filter(Boolean);
-  for (const schema of [organizationSchema(), localBusinessSchema()] as Array<
-    Record<string, unknown>
-  >) {
-    if (configured.length === 0) {
-      assert.equal("sameAs" in schema, false, "empty sameAs would be a broken entity link");
-    } else {
-      assert.deepEqual(schema.sameAs, configured);
-    }
+  const organization = organizationSchema() as Record<string, unknown>;
+
+  if (configured.length === 0) {
+    assert.equal("sameAs" in organization, false, "empty sameAs would be a broken entity link");
+  } else {
+    assert.deepEqual(organization.sameAs, configured);
   }
 });
 
