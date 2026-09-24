@@ -62,11 +62,42 @@ test("the sitemap points at the live domain and skips de-emphasized cities", () 
   assert.equal(urls.includes(`${site.url}/blog/garage-cleanout-north-shore-homes`), false);
 });
 
-test("opening hours are emitted in the typed form as well as the string", () => {
+test("one set of hours, stated the same way everywhere", () => {
+  // The site copy said "by appointment", the schema said 08:00–18:00, and the
+  // Google Business Profile said open 24 hours. Every one of those is read by
+  // something, and disagreeing with yourself is what makes a listing look
+  // abandoned. The schema now derives from the copy rather than restating it.
   const schema = localBusinessSchema();
+
   assert.equal(schema.openingHoursSpecification["@type"], "OpeningHoursSpecification");
-  assert.equal(schema.openingHoursSpecification.opens, "08:00");
+  assert.equal(schema.openingHoursSpecification.opens, site.opensAt);
+  assert.equal(schema.openingHoursSpecification.closes, site.closesAt);
   assert.equal(schema.openingHoursSpecification.dayOfWeek.length, 7);
+  assert.equal(schema.openingHours, `Mo-Su ${site.opensAt}-${site.closesAt}`);
+
+  // The human-readable line has to describe the same window.
+  assert.match(site.hours, /8:00\s?AM/);
+  assert.match(site.hours, /8:00\s?PM/);
+  assert.equal(site.opensAt, "08:00");
+  assert.equal(site.closesAt, "20:00");
+});
+
+test("the Google Business Profile is linked as the same entity when configured", () => {
+  const schema = localBusinessSchema() as Record<string, unknown>;
+
+  if (site.google.profileUrl) {
+    assert.ok(
+      (schema.sameAs as string[]).includes(site.google.profileUrl),
+      "the listing that holds the reviews should be named in sameAs",
+    );
+  } else {
+    // Unset is the expected state until the env var is filled in; what must
+    // never happen is an empty string being emitted as a profile link.
+    assert.equal(
+      Array.isArray(schema.sameAs) && (schema.sameAs as string[]).includes(""),
+      false,
+    );
+  }
 });
 
 test("sameAs is omitted rather than filled with empty profiles", () => {
