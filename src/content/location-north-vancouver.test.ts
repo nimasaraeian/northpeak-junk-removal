@@ -248,10 +248,22 @@ test("the canonical stays on the existing route", () => {
   assert.equal(metadata.alternates?.canonical, `${site.url}/locations/${SLUG}`);
 });
 
-test("no other location page gained landing copy in this change", () => {
+test("landing copy is reserved for the cities we compete for", () => {
+  // Indexed cities earn the long-form treatment; the de-emphasized ones are
+  // served `noindex, follow` and keep the stock template, so writing landing
+  // copy for them would be work nobody reads.
   for (const item of locations) {
-    if (item.slug === SLUG) continue;
-    assert.equal(item.body, undefined, `${item.slug} should keep the stock template`);
-    assert.equal(item.faqs, undefined, `${item.slug} should keep the stock template`);
+    if (item.deEmphasized) {
+      assert.equal(item.body, undefined, `${item.slug} is de-emphasized and needs no landing copy`);
+      assert.equal(item.faqs, undefined, `${item.slug} is de-emphasized and needs no FAQ block`);
+      continue;
+    }
+
+    assert.ok(item.body, `${item.slug} is indexed but still on the stock template`);
+    assert.equal(item.faqs?.length, 5, `${item.slug} should carry five FAQ pairs`);
+    assert.ok(
+      item.seoDescription.length <= 155,
+      `${item.slug} meta description is ${item.seoDescription.length} chars`,
+    );
   }
 });
