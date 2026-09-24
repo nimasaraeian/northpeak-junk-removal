@@ -7,6 +7,18 @@ export function serializeJsonLd(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
+/**
+ * Profile URLs that are actually configured.
+ *
+ * `sameAs` is how a search engine ties this site to the accounts that post
+ * under the same name. An empty entry is a broken entity link rather than a
+ * neutral one, so unconfigured profiles are filtered out and `sameAs` is
+ * omitted entirely when none are set.
+ */
+function socialProfiles() {
+  return Object.values(site.social).filter((url): url is string => Boolean(url));
+}
+
 function organizationId() {
   return `${site.url}/#organization`;
 }
@@ -28,6 +40,7 @@ export function organizationSchema() {
     slogan: site.tagline,
     logo: `${site.url}/brand/favicon-512.png`,
     areaServed: site.areaServed,
+    ...(socialProfiles().length > 0 ? { sameAs: socialProfiles() } : {}),
   };
 }
 

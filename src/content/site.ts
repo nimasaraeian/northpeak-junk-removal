@@ -22,8 +22,20 @@ export const site = {
     longitude: -123.0877412,
   },
   hours: "By appointment, seven days a week",
+  /**
+   * Public profiles.
+   *
+   * Instagram and X are live, so they carry the real URL as their default and
+   * the env var is an override rather than the source. `||` rather than `??`
+   * on those two is deliberate: `.env.example` ships these keys blank, and an
+   * empty string is a value `??` would happily keep — which would silently
+   * drop a profile that exists. Facebook and LinkedIn have no account yet, so
+   * they stay empty and are filtered out of both the footer and `sameAs`.
+   */
   social: {
-    instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "",
+    instagram:
+      process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/northpeakjunk/",
+    x: process.env.NEXT_PUBLIC_X_URL || "https://x.com/northpeakjunk",
     facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL ?? "",
     linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "",
   },

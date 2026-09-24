@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { Logo } from "@/components/brand/Logo";
 import { ContactChannels } from "@/components/content/ContactChannels";
+import { SocialLinks } from "@/components/layout/SocialLinks";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { indexedLocations } from "@/content/locations";
@@ -93,7 +94,10 @@ export function Footer() {
             >
               {site.phone}
             </a>
-            <ContactChannels variant="compact" className="mt-5" />
+            <div className="mt-5 flex flex-wrap items-center gap-2.5">
+              <ContactChannels variant="compact" />
+              <SocialLinks />
+            </div>
             <div className="mt-6 space-y-2 border-t border-white/10 pt-6 text-sm">
               <a
                 href={`mailto:${site.email}`}
