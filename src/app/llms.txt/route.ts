@@ -1,7 +1,8 @@
-import { blogPosts } from "@/content/blog";
+import { blogPosts, getPost } from "@/content/blog";
 import { indexedLocations } from "@/content/locations";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
+import { toPlainText } from "@/lib/blog/rich-text";
 
 /**
  * `/llms.txt` — a plain-text map of the site for answer engines.
@@ -22,6 +23,37 @@ function section(title: string, lines: string[]) {
   return [`## ${title}`, "", ...lines, ""].join("\n");
 }
 
+/**
+ * The price list is read out of the cost guide's table rather than retyped.
+ *
+ * Retyping it is how a site ends up quoting itself three different ways: this
+ * file said a full truck was "$649–1,000+" while the guide's own table said
+ * "$600–1,000+", and an assistant reading both had no way to tell which was
+ * the site's position. The guide is the page that publishes these numbers, so
+ * it is the one source; change them there and this follows.
+ */
+const COST_GUIDE_SLUG = "junk-removal-cost-north-vancouver";
+
+function pricingLines() {
+  const post = getPost(COST_GUIDE_SLUG);
+  const table = post?.body.find((block) => block.type === "table");
+
+  if (!post || table?.type !== "table") {
+    // The guide is asserted to exist by `llms-txt.test.ts`; if it is ever
+    // removed, say nothing about price rather than inventing a figure.
+    return [];
+  }
+
+  return [
+    ...table.rows.map(
+      (row) => `- ${toPlainText(row[0])}: ${toPlainText(row[1])} CAD — ${toPlainText(row[2])}`,
+    ),
+    ...(table.caption ? ["", table.caption] : []),
+    "Estimates are free, quoted from photos, and carry no obligation.",
+    `Full breakdown: ${site.url}/blog/${COST_GUIDE_SLUG}`,
+  ];
+}
+
 export function GET() {
   const body = [
     `# ${site.name}`,
@@ -35,7 +67,7 @@ export function GET() {
       `- Address: ${site.address.streetAddress}, ${site.address.addressLocality}, ${site.address.addressRegion} ${site.address.postalCode}, Canada`,
       `- Phone: ${site.phone}`,
       `- Email: ${site.email}`,
-      `- Hours: ${site.hours} (typically 08:00–18:00, seven days)`,
+      `- Hours: ${site.hours} (${site.opensAt}–${site.closesAt} daily)`,
       `- Service area: ${site.areaServed}`,
       `- Website: ${site.url}`,
     ]),
@@ -47,15 +79,7 @@ export function GET() {
       "to the North Shore Recycling & Waste Centre. Hazardous material (paint,",
       "solvents, fuel, propane) needs a dedicated depot and is not collected.",
     ]),
-    section("Typical 2026 pricing (Metro Vancouver market ranges, not quotes)", [
-      "- Single item or minimum load: roughly $99–150 CAD",
-      "- Quarter truck: roughly $200–300 CAD",
-      "- Half truck (about one packed single garage): roughly $300–500 CAD",
-      "- Three-quarter truck: roughly $500–700 CAD",
-      "- Full truck: roughly $649–1,000+ CAD depending on the load",
-      "- Heavy material (concrete, soil, tile, shingles) is quoted by weight on top",
-      "Estimates are free, given from photos, and carry no obligation.",
-    ]),
+    section("Typical 2026 pricing (Metro Vancouver market ranges, not quotes)", pricingLines()),
     section(
       "Services",
       services.map(
