@@ -20,6 +20,8 @@ const sizes = {
 type ButtonProps = {
   href?: ComponentProps<typeof Link>["href"];
   externalHref?: string;
+  /** Overrides the default `noopener noreferrer` on an external link. */
+  externalRel?: string;
   children: React.ReactNode;
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
@@ -32,6 +34,7 @@ type ButtonProps = {
 export function Button({
   href,
   externalHref,
+  externalRel,
   children,
   variant = "primary",
   size = "md",
@@ -55,7 +58,7 @@ export function Button({
         className={classes}
         onClick={onClick}
         target="_blank"
-        rel="noopener noreferrer"
+        rel={externalRel ?? "noopener noreferrer"}
       >
         {children}
       </a>

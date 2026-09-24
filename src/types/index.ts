@@ -58,14 +58,6 @@ export interface LocationPage {
   faqs?: FaqItem[];
 }
 
-export interface Testimonial {
-  id: string;
-  quote: string;
-  name: string;
-  area: string;
-  service: string;
-}
-
 /**
  * A Journal illustration.
  *

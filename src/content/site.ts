@@ -32,6 +32,36 @@ export const site = {
    * drop a profile that exists. Facebook and LinkedIn have no account yet, so
    * they stay empty and are filtered out of both the footer and `sameAs`.
    */
+  /**
+   * The Google Business Profile, as the listing itself reports it.
+   *
+   * `rating` and `reviewCount` describe something outside this repo, so they
+   * go stale the moment a new review lands — check the profile and update
+   * them here, in one place, rather than in the markup.
+   *
+   * They are rendered as plain text and deliberately NOT emitted as
+   * `AggregateRating` structured data. A rating you publish about yourself on
+   * your own domain is not counted for a local business and invites a manual
+   * action; the reviews carry weight on the profile, which is what the link
+   * is for.
+   */
+  google: {
+    rating: "5.0",
+    // Widened deliberately: `site` is `as const`, which would otherwise pin
+    // this to the literal 3 and make pluralising against it a type error the
+    // day the count changes.
+    reviewCount: 3 as number,
+    /**
+     * The public listing, not the review form.
+     *
+     * `g.page/r/…/review` opens Google's "write a review" dialog, which is
+     * the wrong destination for a button labelled "Read our Google reviews".
+     * Named `listingUrl` so the write-a-review link — which the review-request
+     * flow still needs — cannot be confused for it later.
+     */
+    listingUrl:
+      "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver",
+  },
   social: {
     instagram:
       process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/northpeakjunk/",
