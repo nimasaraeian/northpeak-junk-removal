@@ -85,6 +85,11 @@ Structured data is rendered as JSON-LD:
 
 Set `NEXT_PUBLIC_SITE_URL` before production so canonicals and the sitemap use the live domain.
 
+Set `NEXT_PUBLIC_GOOGLE_REVIEW_URL` and `NEXT_PUBLIC_GOOGLE_PROFILE_URL` to turn on the review
+ask on the homepage and to declare the Google Business Profile as the same entity in the
+structured data. The off-site half of local search — review generation, profile completeness,
+citations, Search Console — is written up in [docs/local-seo-playbook.md](docs/local-seo-playbook.md).
+
 ## Photo uploads
 
 Both forms compress photos in the browser before uploading. `src/lib/compress-image.ts`

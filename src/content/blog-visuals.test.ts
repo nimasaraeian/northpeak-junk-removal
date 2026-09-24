@@ -120,7 +120,9 @@ test("the mattress post renders clean, with no hero and no figures", () => {
   assert.equal(post.body.some((block) => block.type === "figure"), false);
 });
 
-test("posts without a hero emit no share image", () => {
+test("posts without a hero fall back to the branded share card", () => {
+  // These used to emit no image at all, so every Journal link shared as a bare
+  // text stub. A post with its own art still overrides the default.
   for (const post of blogPosts.filter((item) => !item.heroImage)) {
     const metadata = pageMetadata({
       title: post.seoTitle,
@@ -128,7 +130,10 @@ test("posts without a hero emit no share image", () => {
       path: `/blog/${post.slug}`,
     });
 
-    assert.equal(metadata.openGraph?.images, undefined);
-    assert.equal(metadata.twitter?.images, undefined);
+    const og = metadata.openGraph?.images as Array<{ url: string; width: number }>;
+    assert.equal(og.length, 1);
+    assert.match(og[0].url, /\/opengraph-image$/);
+    assert.equal(og[0].width, 1200);
+    assert.ok(metadata.twitter?.images, "twitter card needs an image too");
   }
 });

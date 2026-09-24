@@ -58,7 +58,25 @@ export function localBusinessSchema() {
     slogan: site.tagline,
     priceRange: "$$",
     currenciesAccepted: "CAD",
+    // `openingHours` is a free-text string a parser has to interpret;
+    // `openingHoursSpecification` is the typed form Google reads for the
+    // "open now" state in a local result. Both are emitted, because the string
+    // form is still what some older consumers look for.
     openingHours: "Mo-Su 08:00-18:00",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+      opens: "08:00",
+      closes: "18:00",
+    },
     address: {
       "@type": "PostalAddress",
       streetAddress: site.address.streetAddress,
@@ -89,6 +107,9 @@ export function localBusinessSchema() {
       })),
     },
     parentOrganization: { "@id": organizationId() },
+    // `sameAs` lives on Organization alone, by decision. The two nodes are one
+    // business under two @ids, so repeating the profile links here would be
+    // accurate but redundant; Organization is the entity search resolves to.
   };
 }
 

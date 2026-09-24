@@ -55,13 +55,19 @@ function HeroOverlay({ children }: { children: ReactNode }) {
 function HeroCopy() {
   return (
     <div className="reveal max-w-[17.5rem] sm:max-w-xs lg:max-w-xl">
-      <p className="eyebrow text-cream/80 sm:text-[0.68rem] lg:text-cream/85">
-        Junk Removal | North Vancouver &amp; Beyond
-      </p>
-
-      <h1 className="hero-title mt-2 text-[2.15rem] sm:mt-2.5 sm:text-[2.45rem] lg:mt-5 lg:text-[4.75rem]">
-        <span className="hero-title__line">More Space.</span>
-        <span className="hero-title__line">A Better Tomorrow.</span>
+      {/* The strongest page on the site had a slogan for an h1 and the service
+          and city in a paragraph above it. Folding that line into the heading
+          gives the h1 the phrase people search for while leaving the hero
+          pixel-identical: the eyebrow keeps its own type, it is simply part of
+          the heading now. */}
+      <h1 className="mt-0">
+        <span className="eyebrow block text-cream/80 sm:text-[0.68rem] lg:text-cream/85">
+          Junk Removal in North Vancouver &amp; Beyond
+        </span>
+        <span className="hero-title mt-2 block text-[2.15rem] sm:mt-2.5 sm:text-[2.45rem] lg:mt-5 lg:text-[4.75rem]">
+          <span className="hero-title__line">More Space.</span>
+          <span className="hero-title__line">A Better Tomorrow.</span>
+        </span>
       </h1>
 
       <p className="mt-4 hidden max-w-md text-base leading-8 text-cream/82 lg:block lg:mt-5">
