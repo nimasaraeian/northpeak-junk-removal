@@ -43,7 +43,8 @@ test("answer-engine crawlers are named rather than left to the wildcard", () => 
 
   for (const rule of rules) {
     assert.equal(rule.allow, "/", `${rule.userAgent} is not allowed through`);
-    assert.deepEqual(rule.disallow, ["/api/"]);
+    // Form endpoints and the internal admin panel, closed to every agent.
+    assert.deepEqual(rule.disallow, ["/api/", "/admin"]);
   }
 });
 

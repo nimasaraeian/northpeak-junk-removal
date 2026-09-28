@@ -1,0 +1,274 @@
+/**
+ * NorthPeak Ops theme.
+ *
+ * Field-service SaaS, not the marketing site: a light gray app background,
+ * white cards, dense-but-breathable spacing, and the NorthPeak navy and gold
+ * carried through as the primary and accent. Scoped under `.np-ops` so none
+ * of it can reach a public page.
+ *
+ * The marketing palette is warm (cream, paper). This one is neutral on
+ * purpose — an operator stares at it all day, and a warm ground makes status
+ * colours harder to read at a glance.
+ */
+
+.np-ops {
+  --ops-bg: #f5f6f8;
+  --ops-surface: #ffffff;
+  --ops-surface-2: #fafbfc;
+  --ops-border: #e3e6ea;
+  --ops-border-strong: #cfd4da;
+  --ops-navy: #0c1b2e;
+  --ops-navy-soft: #16324f;
+  --ops-gold: #d0892b;
+  --ops-gold-ink: #8a5a17;
+  --ops-text: #17202c;
+  --ops-muted: #5d6b7a;
+  --ops-faint: #8a95a1;
+
+  --ops-draft-bg: #eceef1;
+  --ops-draft-ink: #4a5563;
+  --ops-sent-bg: #e3edfb;
+  --ops-sent-ink: #1d4f96;
+  --ops-won-bg: #e2f4ea;
+  --ops-won-ink: #1a6b42;
+  --ops-lost-bg: #fbe6e6;
+  --ops-lost-ink: #97231f;
+
+  --ops-warn-bg: #fdf4e0;
+  --ops-warn-border: #edcd8a;
+  --ops-warn-ink: #7a5610;
+
+  --ops-shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 4px 12px -4px rgb(16 24 40 / 0.08);
+  --ops-shadow-panel: 0 2px 4px rgb(16 24 40 / 0.04), 0 12px 32px -12px rgb(16 24 40 / 0.14);
+
+  background: var(--ops-bg);
+  color: var(--ops-text);
+  font-family:
+    Inter,
+    var(--font-plus-jakarta),
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+  font-feature-settings: "cv05", "ss01";
+  min-height: 100%;
+}
+
+/* Tabular figures everywhere money or a count appears, so columns of numbers
+   line up instead of shimmering as they update. */
+.np-ops .ops-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.np-ops .ops-card {
+  background: var(--ops-surface);
+  border: 1px solid var(--ops-border);
+  border-radius: 12px;
+  box-shadow: var(--ops-shadow-card);
+}
+
+.np-ops .ops-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ops-faint);
+}
+
+.np-ops .ops-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.np-ops .ops-pill[data-status="draft"] {
+  background: var(--ops-draft-bg);
+  color: var(--ops-draft-ink);
+}
+.np-ops .ops-pill[data-status="sent"] {
+  background: var(--ops-sent-bg);
+  color: var(--ops-sent-ink);
+}
+.np-ops .ops-pill[data-status="won"] {
+  background: var(--ops-won-bg);
+  color: var(--ops-won-ink);
+}
+.np-ops .ops-pill[data-status="lost"] {
+  background: var(--ops-lost-bg);
+  color: var(--ops-lost-ink);
+}
+
+.np-ops .ops-input,
+.np-ops .ops-select,
+.np-ops .ops-textarea {
+  width: 100%;
+  background: var(--ops-surface);
+  border: 1px solid var(--ops-border-strong);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  color: var(--ops-text);
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.np-ops .ops-input:focus,
+.np-ops .ops-select:focus,
+.np-ops .ops-textarea:focus {
+  outline: none;
+  border-color: var(--ops-navy-soft);
+  box-shadow: 0 0 0 3px rgb(22 50 79 / 0.12);
+}
+
+.np-ops .ops-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    opacity 120ms ease;
+}
+
+.np-ops .ops-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.np-ops .ops-btn[data-variant="primary"] {
+  background: var(--ops-gold);
+  color: #17110a;
+}
+.np-ops .ops-btn[data-variant="primary"]:hover:not(:disabled) {
+  background: #e09733;
+}
+
+.np-ops .ops-btn[data-variant="navy"] {
+  background: var(--ops-navy);
+  color: #ffffff;
+}
+.np-ops .ops-btn[data-variant="navy"]:hover:not(:disabled) {
+  background: var(--ops-navy-soft);
+}
+
+.np-ops .ops-btn[data-variant="ghost"] {
+  background: var(--ops-surface);
+  border-color: var(--ops-border-strong);
+  color: var(--ops-text);
+}
+.np-ops .ops-btn[data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--ops-surface-2);
+  border-color: var(--ops-navy-soft);
+}
+
+.np-ops .ops-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.np-ops .ops-table th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ops-faint);
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--ops-border);
+  white-space: nowrap;
+}
+
+.np-ops .ops-table td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--ops-border);
+  vertical-align: middle;
+}
+
+.np-ops .ops-table tbody tr {
+  transition: background 100ms ease;
+}
+
+.np-ops .ops-table tbody tr:hover {
+  background: var(--ops-surface-2);
+}
+
+.np-ops .ops-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* The internal cost block. Deliberately unlike every other card — a hatched,
+   cool-gray panel an operator will not mistake for something to read aloud. */
+.np-ops .ops-internal {
+  background: repeating-linear-gradient(
+    135deg,
+    #f3f4f6,
+    #f3f4f6 10px,
+    #eef0f3 10px,
+    #eef0f3 20px
+  );
+  border: 1px dashed var(--ops-border-strong);
+  border-radius: 10px;
+}
+
+.np-ops .ops-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #b9c4d1;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.np-ops .ops-nav-item:hover {
+  background: rgb(255 255 255 / 0.07);
+  color: #ffffff;
+}
+
+.np-ops .ops-nav-item[data-active="true"] {
+  background: rgb(208 137 43 / 0.16);
+  color: #f3c179;
+}
+
+/* Bottom tab bar — Sina works this from a phone beside the truck, so the
+   targets are 56px and the labels stay visible rather than icon-only. */
+.np-ops .ops-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-height: 56px;
+  flex: 1;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #9fb0c2;
+}
+
+.np-ops .ops-tab[data-active="true"] {
+  color: #f3c179;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-ops * {
+    transition-duration: 0.01ms !important;
+  }
+}

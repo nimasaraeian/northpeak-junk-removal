@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
-import { ContactClickTracker } from "@/components/analytics/ContactClickTracker";
-import { AssistantMount } from "@/components/assistant/AssistantMount";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { JsonLd } from "@/components/seo/JsonLd";
 import { site } from "@/content/site";
-import { localBusinessSchema, organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -68,26 +61,22 @@ export const metadata: Metadata = {
   },
 };
 
-// Unset in local development and on preview deploys, which keeps those visits
-// out of the property instead of polluting production reports.
-const gaId = process.env.NEXT_PUBLIC_GA_ID;
-
+/**
+ * The document shell, and nothing else.
+ *
+ * Header, footer, assistant, click tracking, GA4 and the business schema all
+ * moved into `components/layout/SiteFrame`, which `(site)/layout.tsx` and
+ * `not-found.tsx` render. `/admin` is outside that group, so the admin panel
+ * gets no marketing chrome and fires no GA4 — internal use stays out of the
+ * analytics property entirely.
+ */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en-CA"
       className={`${plusJakarta.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-paper text-ink">
-        <JsonLd data={organizationSchema()} />
-        <JsonLd data={localBusinessSchema()} />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <AssistantMount />
-        <ContactClickTracker />
-      </body>
-      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
+      <body className="flex min-h-full flex-col bg-paper text-ink">{children}</body>
     </html>
   );
 }
