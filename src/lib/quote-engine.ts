@@ -243,6 +243,11 @@ export const DEFAULT_PRICING_SETTINGS: PricingSettings = {
   // step with that table by `quote-engine.test.ts`, which reads the table and
   // fails if a figure here stops matching it.
   priceFloors: [
+    // The ladder's first rung. Its bound is set just above a 3-seat sofa —
+    // 54 ft³ packed, 21% of the box — because the guide's own table calls one
+    // sofa a minimum load. Without it the quarter floor would reach all the
+    // way down and price a single item at $200.
+    { label: "Single item / minimum", maxFraction: 0.22, floorCents: 9_900 },
     { label: "Quarter truck", maxFraction: 0.25, floorCents: 20_000 },
     { label: "Half truck", maxFraction: 0.5, floorCents: 30_000 },
     { label: "Three-quarter truck", maxFraction: 0.75, floorCents: 50_000 },
@@ -425,16 +430,17 @@ export function computeQuote(input: QuoteInput, settings: PricingSettings): Quot
   let rawLowCents = subtotalCents * (1 - spread);
   let rawHighCents = subtotalCents * (1 + spread);
 
-  // The floor holds a quote up to the tier the site advertises. It is skipped
-  // in two cases. Heavy mode is priced by the tonne and is not on the volume
-  // ladder at all. And a load small enough that the minimum job binds *is*
-  // the ladder's own first rung ("single item / minimum"), which sits below
-  // the quarter-truck floor — applying the quarter floor there would contradict
-  // the very table these brackets come from.
-  const bracket =
-    input.heavyMode || minJobApplied
-      ? null
-      : findFloorBracket(packedCubicFeet, capacityFt3, settings.priceFloors);
+  // The floor holds a quote up to the tier the site advertises. Heavy mode is
+  // skipped: it is priced by the tonne and is not on the volume ladder at all.
+  //
+  // Small loads need no special case. The ladder's own first rung is a
+  // bracket now, so a single item is floored at the minimum-load price rather
+  // than being pulled up to the quarter-truck one. That also means a floor
+  // the team raises above the minimum job actually takes effect, which an
+  // exemption here would have silently swallowed.
+  const bracket = input.heavyMode
+    ? null
+    : findFloorBracket(packedCubicFeet, capacityFt3, settings.priceFloors);
 
   const floorApplied = bracket !== null && rawLowCents < nonNegative(bracket.floorCents);
   let floorUpliftCents = 0;

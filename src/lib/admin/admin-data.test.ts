@@ -146,21 +146,38 @@ test("each seeded floor is the low end of its published tier", () => {
   }
 });
 
-test("the seeded brackets cover the ladder's truck-fraction rungs in order", () => {
-  const fractions = DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.maxFraction);
+test("the seeded brackets are every rung of the published ladder, in order", () => {
+  const ladder = publishedLadder();
 
-  assert.deepEqual(fractions, [0.25, 0.5, 0.75, 1]);
   assert.deepEqual(
     DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.label),
-    ["Quarter truck", "Half truck", "Three-quarter truck", "Full truck"],
+    ["Single item / minimum", "Quarter truck", "Half truck", "Three-quarter truck", "Full truck"],
   );
-  // The ladder's first rung is the minimum job, which min_job covers and the
-  // engine deliberately excludes from the brackets.
-  assert.ok(publishedLadder().has("Single item / minimum"));
-  assert.equal(
-    DEFAULT_PRICING_SETTINGS.priceFloors.some((b) => b.label.includes("Single item")),
-    false,
+  assert.deepEqual(
+    DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.maxFraction),
+    [0.22, 0.25, 0.5, 0.75, 1],
   );
+
+  // Every rung the guide publishes has a bracket, and no bracket invents one.
+  assert.deepEqual(
+    DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.label).sort(),
+    [...ladder.keys()].sort(),
+  );
+
+  // Bounds ascend, so `findFloorBracket` picks the rung a load is actually on.
+  const fractions = DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.maxFraction);
+  assert.deepEqual(fractions, [...fractions].sort((a, b) => a - b));
+});
+
+test("the minimum rung's bound clears a single large item", () => {
+  // The bound exists to keep one sofa off the quarter-truck floor, so it has
+  // to sit above a sofa and below a real quarter truck.
+  const s = DEFAULT_PRICING_SETTINGS;
+  const [minimumRung, quarter] = s.priceFloors;
+  const sofaFraction = (45 * (1 + s.packingPct / 100)) / s.truckCapacityFt3;
+
+  assert.ok(sofaFraction < minimumRung.maxFraction, "a 3-seat sofa is a minimum load");
+  assert.ok(minimumRung.maxFraction < quarter.maxFraction);
 });
 
 test("every published truck tier is quoted inside its advertised band", () => {
