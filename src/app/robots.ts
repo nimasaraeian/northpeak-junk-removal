@@ -30,6 +30,18 @@ const ANSWER_ENGINE_AGENTS = [
 ];
 
 /**
+ * Closed to every crawler, named or wildcard.
+ *
+ * `/api/` is server-rendered form endpoints: nothing to index, and a crawler
+ * walking them burns budget that belongs on the content. `/admin` is
+ * NorthPeak Ops, the internal panel — robots.txt only asks politely, so the
+ * real guarantees are the `X-Robots-Tag: noindex, nofollow` header every
+ * `/admin` response carries from `proxy.ts`, its absence from the sitemap and
+ * llms.txt, and the session gate in front of it.
+ */
+const DISALLOWED_PATHS = ["/api/", "/admin"];
+
+/**
  * Preview deployments answer on a `*.vercel.app` host with the same content as
  * production. Left indexable they compete with the canonical domain for the
  * phrases this site is built to win, so everything but production is closed.
@@ -49,14 +61,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Server-rendered form endpoints. Nothing to index, and a crawler
-        // walking them burns budget that belongs on the content.
-        disallow: ["/api/"],
+        disallow: DISALLOWED_PATHS,
       },
       ...ANSWER_ENGINE_AGENTS.map((userAgent) => ({
         userAgent,
         allow: "/",
-        disallow: ["/api/"],
+        disallow: DISALLOWED_PATHS,
       })),
     ],
     sitemap: `${site.url}/sitemap.xml`,
