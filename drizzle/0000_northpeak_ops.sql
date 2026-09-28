@@ -54,7 +54,7 @@ CREATE INDEX IF NOT EXISTS "items_catalog_category_idx" ON "items_catalog" ("cat
 -- Default pricing. `truck_capacity_ft3` is a placeholder: Settings shows a
 -- "verify truck dimensions" banner until someone saves a measured value, which
 -- is what flips truckCapacityVerified.
-INSERT INTO "settings" ("id", "pricing") VALUES (1, '{"truckCapacityFt3":400,"truckCapacityVerified":false,"minJobCents":12500,"ratePerYd3Cents":4900,"packingPct":20,"rangeSpreadPct":8,"surchargeCents":{"mattress":2000,"freon":6000,"tire":1500,"tv":2500,"piano":10000,"hazmat":0,"heavy":0},"laborCents":{"stairsPerFlight":2500,"longCarry":2500,"disassembly":3000},"heavyRatePerTonneCents":25000,"tippingFeePerTonneCents":15000,"laborRatePerHourCents":5000,"fuelFlatCents":2000,"avgDensityKgPerYd3":120}'::jsonb)
+INSERT INTO "settings" ("id", "pricing") VALUES (1, '{"truckCapacityFt3":252,"truckCapacityVerified":false,"minJobCents":12500,"ratePerYd3Cents":7800,"packingPct":20,"rangeSpreadPct":8,"surchargeCents":{"mattress":2000,"freon":6000,"tire":1500,"tv":2500,"piano":10000,"hazmat":0,"heavy":0},"laborCents":{"stairsPerFlight":2500,"longCarry":2500,"disassembly":3000},"heavyRatePerTonneCents":25000,"tippingFeePerTonneCents":15000,"laborRatePerHourCents":5000,"fuelFlatCents":2000,"avgDensityKgPerYd3":120}'::jsonb)
 ON CONFLICT ("id") DO NOTHING;
 
 INSERT INTO "items_catalog" ("name", "category", "cubic_feet", "default_surcharge_cents", "flags") VALUES

@@ -106,11 +106,17 @@ export function SettingsForm({
           role="status"
           className="rounded-lg border border-[var(--ops-warn-border)] bg-[var(--ops-warn-bg)] px-4 py-3 text-sm leading-6 text-[var(--ops-warn-ink)]"
         >
-          <strong>Verify truck dimensions.</strong> Truck capacity is still the seeded placeholder
-          of {settings.truckCapacityFt3} ft³. Measure the real box and save this page once — the
-          banner clears on save. Worth reconciling with the{" "}
-          {measuredTrailerCubicFeet} ft³ the site already publishes for the 7 × 12 × 3 ft dump
-          box; every quote scales off whichever number lands here.
+          <strong>Confirm the truck measurement.</strong> Capacity is seeded at{" "}
+          {measuredTrailerCubicFeet} ft³ — the 7 × 12 × 3 ft dump box the site publishes, measured
+          to the top of the side walls. Check that against what the trailer actually holds on a
+          full job: if you load below the walls, or heap above them, the real figure differs and
+          every quote scales off it. Adjust if needed and save once — the banner clears on save.
+          {settings.truckCapacityFt3 !== measuredTrailerCubicFeet ? (
+            <>
+              {" "}
+              Currently set to <strong>{settings.truckCapacityFt3} ft³</strong>.
+            </>
+          ) : null}
         </p>
       ) : null}
 

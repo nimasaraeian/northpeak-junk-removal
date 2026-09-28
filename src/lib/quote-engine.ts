@@ -1,7 +1,12 @@
+import { bedCapacityCuFt } from "@/content/vehicle";
+
 /**
  * NorthPeak Ops pricing engine.
  *
  * Pure TypeScript: no framework imports, no I/O, no `Date`, no randomness.
+ * The one import is `@/content/vehicle`, a leaf data module of plain
+ * constants that already describes the real trailer — capacity has one source
+ * of truth, and it is the same one the public site measures from.
  * Everything the engine needs arrives in `QuoteInput`, and the same input
  * always produces the same output — which is what makes it testable, and what
  * lets the admin UI recompute a live price on every keystroke without a round
@@ -45,8 +50,11 @@ export interface PricingSettings {
   /**
    * Usable truck volume in cubic feet.
    *
-   * Seeded as a placeholder. Settings shows a "verify truck dimensions" banner
-   * until `truckCapacityVerified` flips, which only a manual save can do.
+   * Seeded from the measured trailer in `@/content/vehicle`. Settings shows a
+   * "verify truck dimensions" banner until `truckCapacityVerified` flips,
+   * which only a manual save can do — the seeded figure is the box to the top
+   * of its side walls, and the usable load height is worth confirming on the
+   * real vehicle.
    */
   truckCapacityFt3: number;
   truckCapacityVerified: boolean;
@@ -183,19 +191,24 @@ const LABOR_HOURS = {
  * truth: a full load is advertised at $649–799, a single item from roughly
  * $99–150.
  *
- * - `ratePerYd3Cents` 4900 puts a full 400 ft³ truck at $670–785, inside the
- *   advertised full-load band.
+ * - `truckCapacityFt3` is `bedCapacityCuFt` — the 7 × 12 × 3 ft dump box the
+ *   site already publishes, 252 ft³. Not a placeholder: the same number the
+ *   public load-size pages are drawn from.
+ * - `ratePerYd3Cents` 7800 is calibrated to that capacity. A full load is
+ *   252 ft³ packed = 9.33 yd³, which divides exactly: 9.33 × $78 = $728.00,
+ *   quoting as $670–785 — inside the advertised full-load band.
  * - `minJobCents` 12500 is the midpoint of the $99–150 minimum-load band,
  *   rounded to the $5 the engine rounds to, and quotes as $115–135.
  *
- * `quote-engine.test.ts` asserts both of those against the published numbers,
- * so a rate edit that would contradict the site fails the suite.
+ * `quote-engine.test.ts` pins both ranges to exact figures, so a capacity or
+ * rate edit that would contradict the site fails the suite rather than
+ * shipping.
  */
 export const DEFAULT_PRICING_SETTINGS: PricingSettings = {
-  truckCapacityFt3: 400,
+  truckCapacityFt3: bedCapacityCuFt,
   truckCapacityVerified: false,
   minJobCents: 12500,
-  ratePerYd3Cents: 4900,
+  ratePerYd3Cents: 7800,
   packingPct: 20,
   rangeSpreadPct: 8,
   surchargeCents: {

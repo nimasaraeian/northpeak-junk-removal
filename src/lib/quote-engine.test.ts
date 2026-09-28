@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { bedCapacityCuFt } from "@/content/vehicle";
 import {
   clampPackingPct,
   computeQuote,
@@ -44,14 +45,14 @@ function input(overrides: Partial<QuoteInput> = {}): QuoteInput {
 // --- Volume path -----------------------------------------------------------
 
 test("volume path pads for packing, converts to cubic yards, and prices per yard", () => {
-  // 100 ft³ raw + 20% packing = 120 ft³ = 4.444 yd³ × $49 = $217.78
+  // 100 ft³ raw + 20% packing = 120 ft³ = 4.444 yd³ × $78 = $346.67
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 100 })] }), settings);
 
   assert.equal(result.rawCubicFeet, 100);
   assert.ok(Math.abs(result.packedCubicFeet - 120) < 1e-9);
   assert.ok(Math.abs(result.cubicYards - 120 / 27) < 1e-9);
-  assert.equal(result.volumeCents, Math.round((120 / 27) * 4900));
-  assert.equal(result.volumeCents, 21778);
+  assert.equal(result.volumeCents, Math.round((120 / 27) * 7800));
+  assert.equal(result.volumeCents, 34_667);
   assert.equal(result.minJobApplied, false);
 });
 
@@ -106,9 +107,10 @@ test("an empty item list still prices at the minimum job, not zero", () => {
 });
 
 test("the floor stops applying once volume overtakes it", () => {
-  // The crossover is at minJob / rate = 2.551 yd³ = 68.9 ft³ packed.
-  const under = computeQuote(input({ items: [item({ cubicFeetEach: 55 })] }), settings);
-  const over = computeQuote(input({ items: [item({ cubicFeetEach: 60 })] }), settings);
+  // The crossover is at minJob / rate = 1.603 yd³ = 43.3 ft³ packed, so 36 ft³
+  // of raw items either side of it.
+  const under = computeQuote(input({ items: [item({ cubicFeetEach: 30 })] }), settings);
+  const over = computeQuote(input({ items: [item({ cubicFeetEach: 45 })] }), settings);
 
   assert.equal(under.minJobApplied, true);
   assert.equal(over.minJobApplied, false);
@@ -118,31 +120,36 @@ test("the floor stops applying once volume overtakes it", () => {
 // --- Capacity and multi-load ----------------------------------------------
 
 test("a load inside capacity is a single load", () => {
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 300 })] }), settings);
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: 180 })] }), settings);
 
-  // 300 + 20% = 360 ft³, under the 400 ft³ capacity.
+  // 180 + 20% = 216 ft³, under the 252 ft³ box.
   assert.equal(result.multiLoad, false);
   assert.equal(result.loads, 1);
 });
 
 test("packed volume past capacity marks multi-load and scales proportionally", () => {
-  // 500 ft³ raw + 20% = 600 ft³ packed against a 400 ft³ truck: 1.5 loads.
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 500 })] }), settings);
+  // 315 ft³ raw + 20% = 378 ft³ packed against the 252 ft³ box: 1.5 loads.
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: 315 })] }), settings);
 
   assert.equal(result.multiLoad, true);
   assert.equal(result.loads, 2, "1.5 loads rounds up to 2 trips");
 
-  const oneLoadCents = Math.round((400 / 27) * settings.ratePerYd3Cents);
+  const oneLoadCents = Math.round(
+    (settings.truckCapacityFt3 / 27) * settings.ratePerYd3Cents,
+  );
   assert.equal(result.volumeCents, Math.round(oneLoadCents * 1.5));
 
   // Proportional scaling means the price stays linear in volume.
-  const half = computeQuote(input({ items: [item({ cubicFeetEach: 250 })] }), settings);
+  const half = computeQuote(input({ items: [item({ cubicFeetEach: 157.5 })] }), settings);
   assert.ok(Math.abs(result.volumeCents - half.volumeCents * 2) <= 2);
 });
 
 test("exactly one truckload is not flagged as multi-load", () => {
-  // 400 ft³ packed = capacity exactly, from 333.33 ft³ raw.
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 400 / 1.2 })] }), settings);
+  // Capacity exactly, in packed volume — 210 ft³ of raw items for a 252 ft³ box.
+  const result = computeQuote(
+    input({ items: [item({ cubicFeetEach: settings.truckCapacityFt3 / 1.2 })] }),
+    settings,
+  );
 
   assert.equal(result.multiLoad, false);
   assert.equal(result.loads, 1);
@@ -299,9 +306,9 @@ test("heavy mode with no weight entered still charges the minimum job", () => {
 test("the range is the spread either side of subtotal, rounded to $5", () => {
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 100 })] }), settings);
 
-  assert.equal(result.subtotalCents, 21778);
-  assert.equal(result.lowCents, roundToNearestFiveDollars(21778 * 0.92));
-  assert.equal(result.highCents, roundToNearestFiveDollars(21778 * 1.08));
+  assert.equal(result.subtotalCents, 34_667);
+  assert.equal(result.lowCents, roundToNearestFiveDollars(34_667 * 0.92));
+  assert.equal(result.highCents, roundToNearestFiveDollars(34_667 * 1.08));
   assert.equal(result.lowCents % 500, 0);
   assert.equal(result.highCents % 500, 0);
   assert.ok(result.lowCents < result.subtotalCents);
@@ -393,13 +400,13 @@ test("a percent discount is clamped to 0–100", () => {
 });
 
 test("internal cost sums disposal, crew hours, and fuel", () => {
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 270 })] }), settings);
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: 180 })] }), settings);
 
-  // 270 + 20% = 324 ft³ = 12 yd³ × 120 kg = 1440 kg.
-  assert.ok(Math.abs(result.internal.estWeightKg - 1440) < 1e-6);
+  // 180 + 20% = 216 ft³ = 8 yd³ × 120 kg = 960 kg.
+  assert.ok(Math.abs(result.internal.estWeightKg - 960) < 1e-6);
   assert.equal(
     result.internal.disposalCents,
-    Math.round(1.44 * settings.tippingFeePerTonneCents),
+    Math.round(0.96 * settings.tippingFeePerTonneCents),
   );
   assert.equal(
     result.internal.laborCostCents,
@@ -455,7 +462,17 @@ test("crew-hour estimate grows with volume, stairs, carry, and disassembly", () 
 
 // --- Consistency with the published site pricing ---------------------------
 
-test("a full truckload quotes inside the site's advertised $649–799", () => {
+test("truck capacity is the measured trailer, not a number typed in here", () => {
+  // `@/content/vehicle` is the one place the box is described — the same
+  // module the public load-size pages are drawn from. If the trailer is ever
+  // re-measured there, the engine follows without a second edit.
+  assert.equal(settings.truckCapacityFt3, bedCapacityCuFt);
+  assert.equal(bedCapacityCuFt, 252, "the 7 × 12 × 3 ft dump box");
+  // Still seeded unverified, so Settings keeps asking for a confirmation.
+  assert.equal(settings.truckCapacityVerified, false);
+});
+
+test("a full truckload quotes at $670–785, inside the advertised $649–799", () => {
   // The site publishes a full load at $649–799. A full truck is the capacity
   // in packed volume, so the raw items are capacity / (1 + packing).
   const rawForFullTruck = settings.truckCapacityFt3 / (1 + settings.packingPct / 100);
@@ -463,22 +480,27 @@ test("a full truckload quotes inside the site's advertised $649–799", () => {
 
   assert.equal(result.loads, 1);
   assert.equal(result.multiLoad, false);
-  assert.ok(
-    result.lowCents >= 64_900,
-    `full-load low ${formatCents(result.lowCents)} is under the advertised $649`,
-  );
-  assert.ok(
-    result.highCents <= 79_900,
-    `full-load high ${formatCents(result.highCents)} is over the advertised $799`,
-  );
+
+  // 252 ft³ = 9.333 yd³ × $78 = $728.00 exactly, spread 8% and rounded to $5.
+  assert.equal(result.subtotalCents, 72_800);
+  assert.equal(result.lowCents, 67_000, `full-load low was ${formatCents(result.lowCents)}`);
+  assert.equal(result.highCents, 78_500, `full-load high was ${formatCents(result.highCents)}`);
+
+  // And the band it has to sit inside, stated separately so a future rate
+  // change fails on the claim rather than on the arithmetic.
+  assert.ok(result.lowCents >= 64_900, "full-load low is under the advertised $649");
+  assert.ok(result.highCents <= 79_900, "full-load high is over the advertised $799");
 });
 
-test("a minimum job quotes inside the site's advertised $99–150", () => {
+test("a minimum job quotes at $115–135, inside the advertised $99–150", () => {
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 2 })] }), settings);
 
   assert.equal(result.minJobApplied, true);
-  assert.ok(result.lowCents >= 9_900, `minimum low ${formatCents(result.lowCents)} is under $99`);
-  assert.ok(result.highCents <= 15_000, `minimum high ${formatCents(result.highCents)} is over $150`);
+  assert.equal(result.lowCents, 11_500, `minimum low was ${formatCents(result.lowCents)}`);
+  assert.equal(result.highCents, 13_500, `minimum high was ${formatCents(result.highCents)}`);
+
+  assert.ok(result.lowCents >= 9_900, "minimum low is under the advertised $99");
+  assert.ok(result.highCents <= 15_000, "minimum high is over the advertised $150");
 });
 
 // --- Breakdown and formatting ---------------------------------------------
