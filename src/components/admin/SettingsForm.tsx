@@ -152,6 +152,70 @@ export function SettingsForm({
       </section>
 
       <section className="ops-card p-4">
+        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Published tier floors</h2>
+        <p className="mt-1 text-xs leading-5 text-[var(--ops-muted)]">
+          The low end of a quote is held up to whichever tier the load falls into, so a quote
+          never lands under the ladder the site advertises. Seeded from the cost guide&rsquo;s
+          own table. Blank a name to drop a bracket; a load bigger than the last one gets no
+          floor.
+        </p>
+        <input type="hidden" name="floorCount" value={settings.priceFloors.length} />
+        <div className="mt-3 overflow-x-auto">
+          <table className="ops-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Up to (fraction of truck)</th>
+                <th>Floor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {settings.priceFloors.map((bracket, index) => (
+                <tr key={`${bracket.label}-${index}`}>
+                  <td>
+                    <input
+                      name={`floor_label_${index}`}
+                      defaultValue={bracket.label}
+                      className="ops-input"
+                      aria-label={`Tier ${index + 1} name`}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      name={`floor_maxFraction_${index}`}
+                      type="number"
+                      min={0.01}
+                      max={10}
+                      step={0.05}
+                      defaultValue={bracket.maxFraction}
+                      className="ops-input ops-num w-28"
+                      aria-label={`${bracket.label} upper bound`}
+                    />
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <input
+                        name={`floor_floorCents_${index}`}
+                        type="number"
+                        min={0}
+                        step={1}
+                        defaultValue={bracket.floorCents}
+                        className="ops-input ops-num w-28"
+                        aria-label={`${bracket.label} floor`}
+                      />
+                      <span className="shrink-0 text-xs text-[var(--ops-faint)]">
+                        ¢ · ${(bracket.floorCents / 100).toFixed(2)}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="ops-card p-4">
         <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Item surcharges</h2>
         <p className="mt-1 text-xs text-[var(--ops-muted)]">
           Charged once per unit of a flagged item.

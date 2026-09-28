@@ -308,6 +308,15 @@ const pricingSchema = z.object({
   ratePerYd3Cents: z.coerce.number().int().min(0).max(1_000_00),
   packingPct: z.coerce.number().min(10).max(30),
   rangeSpreadPct: z.coerce.number().min(0).max(50),
+  priceFloors: z
+    .array(
+      z.object({
+        label: z.string().trim().min(1).max(60),
+        maxFraction: z.coerce.number().min(0.01).max(10),
+        floorCents: z.coerce.number().int().min(0).max(1_000_00),
+      }),
+    )
+    .max(12),
   surchargeCents: surchargeSchema,
   laborCents: z.object({
     stairsPerFlight: z.coerce.number().int().min(0).max(100_00),
@@ -334,8 +343,20 @@ export async function saveSettingsAction(
   const db = getDb();
   if (!db) return { ok: false, error: "The database is not reachable." };
 
+  // Brackets are a variable-length list, so the form numbers its rows and
+  // declares how many it sent. A row with a blank label is a deleted row.
+  const floorCount = Math.min(12, Math.max(0, Number(formData.get("floorCount") ?? 0) || 0));
+  const priceFloors = Array.from({ length: floorCount }, (_, index) => ({
+    label: String(formData.get(`floor_label_${index}`) ?? "").trim(),
+    maxFraction: numberField(formData, `floor_maxFraction_${index}`),
+    floorCents: numberField(formData, `floor_floorCents_${index}`),
+  }))
+    .filter((row) => row.label.length > 0)
+    .sort((a, b) => a.maxFraction - b.maxFraction);
+
   const candidate = {
     truckCapacityFt3: numberField(formData, "truckCapacityFt3"),
+    priceFloors,
     minJobCents: numberField(formData, "minJobCents"),
     ratePerYd3Cents: numberField(formData, "ratePerYd3Cents"),
     packingPct: numberField(formData, "packingPct"),

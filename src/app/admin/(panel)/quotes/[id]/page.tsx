@@ -106,6 +106,11 @@ export default async function QuoteDetailPage({ params }: PageProps<"/admin/quot
                 </li>
               ))}
             </ul>
+            {computed.floorApplied ? (
+              <p className="mt-2 text-xs text-[var(--ops-muted)]">
+                Adjusted to published tier floor ({computed.floorLabel}).
+              </p>
+            ) : null}
             <dl className="mt-3 grid gap-1 border-t border-[var(--ops-border)] pt-3 text-sm">
               <div className="flex justify-between gap-3">
                 <dt className="text-[var(--ops-muted)]">Access</dt>

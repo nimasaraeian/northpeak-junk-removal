@@ -33,6 +33,11 @@ export async function loadPricingSettings(): Promise<PricingSettings> {
       ...DEFAULT_PRICING_SETTINGS.laborCents,
       ...(row.pricing?.laborCents ?? {}),
     },
+    // A settings row written before the brackets existed has no list; fall
+    // back to the seeded ladder rather than silently disabling the floors.
+    priceFloors: row.pricing?.priceFloors?.length
+      ? row.pricing.priceFloors
+      : DEFAULT_PRICING_SETTINGS.priceFloors,
   };
 }
 

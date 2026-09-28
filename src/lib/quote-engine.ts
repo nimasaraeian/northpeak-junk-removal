@@ -46,6 +46,24 @@ export const HEAVY_MATERIALS: readonly HeavyMaterial[] = [
 
 export type CarryDistance = "standard" | "long";
 
+/**
+ * A published-tier price floor.
+ *
+ * The site advertises a ladder of load sizes with a price band for each. The
+ * engine's linear per-yard rate is calibrated to the full-truck band, and a
+ * linear model run down a ladder whose lower rungs are not linear undershoots
+ * them. These brackets hold the low end of a quote up to what the tier the
+ * load actually falls into is advertised at.
+ */
+export interface PriceFloorBracket {
+  /** Tier name, as the site publishes it. Shown in Settings and in the note. */
+  label: string;
+  /** Upper bound of the bracket, as a fraction of truck capacity. Inclusive. */
+  maxFraction: number;
+  /** The lowest the range low may be for a load in this bracket. */
+  floorCents: number;
+}
+
 export interface PricingSettings {
   /**
    * Usable truck volume in cubic feet.
@@ -64,6 +82,11 @@ export interface PricingSettings {
   packingPct: number;
   /** Half-width of the quoted range, percent either side of subtotal. */
   rangeSpreadPct: number;
+  /**
+   * Published-tier floors, smallest bracket first. An empty list disables
+   * the floor entirely.
+   */
+  priceFloors: PriceFloorBracket[];
   /** Per-flag surcharge, applied once per unit of a flagged item. */
   surchargeCents: Record<ItemFlag, number>;
   laborCents: {
@@ -155,7 +178,12 @@ export interface QuoteComputation {
   laborCents: number;
   heavyMode: boolean;
   heavyCents: number;
+  /** After any tier-floor uplift, so the breakdown adds up to it. */
   subtotalCents: number;
+  /** True when a published-tier floor lifted the low end. */
+  floorApplied: boolean;
+  /** The tier that did it, for the note in the UI. */
+  floorLabel: string | null;
   discountCents: number;
   lowCents: number;
   highCents: number;
@@ -211,6 +239,15 @@ export const DEFAULT_PRICING_SETTINGS: PricingSettings = {
   ratePerYd3Cents: 7800,
   packingPct: 20,
   rangeSpreadPct: 8,
+  // The low end of each rung of the ladder the cost guide publishes. Kept in
+  // step with that table by `quote-engine.test.ts`, which reads the table and
+  // fails if a figure here stops matching it.
+  priceFloors: [
+    { label: "Quarter truck", maxFraction: 0.25, floorCents: 20_000 },
+    { label: "Half truck", maxFraction: 0.5, floorCents: 30_000 },
+    { label: "Three-quarter truck", maxFraction: 0.75, floorCents: 50_000 },
+    { label: "Full truck", maxFraction: 1, floorCents: 60_000 },
+  ],
   surchargeCents: {
     mattress: 2000,
     freon: 6000,
@@ -297,6 +334,27 @@ function laborAddersCents(labor: LaborInput, settings: PricingSettings): number 
   );
 }
 
+/**
+ * The bracket a load falls in, or null when it is past the last one.
+ *
+ * Brackets are editable in Settings, so they are sorted here rather than
+ * trusted to arrive in order. A load bigger than the largest bracket — a
+ * multi-load job — gets no floor: it is already past the end of the
+ * published ladder.
+ */
+export function findFloorBracket(
+  packedCubicFeet: number,
+  capacityFt3: number,
+  brackets: PriceFloorBracket[],
+): PriceFloorBracket | null {
+  if (capacityFt3 <= 0 || brackets.length === 0) return null;
+
+  const fraction = packedCubicFeet / capacityFt3;
+  const sorted = [...brackets].sort((a, b) => a.maxFraction - b.maxFraction);
+
+  return sorted.find((bracket) => fraction <= bracket.maxFraction) ?? null;
+}
+
 function discountOffCents(amountCents: number, discount: DiscountInput | null | undefined): number {
   if (!discount) return 0;
   if (discount.type === "percent") {
@@ -361,10 +419,38 @@ export function computeQuote(input: QuoteInput, settings: PricingSettings): Quot
     ? nonNegative(settings.minJobCents) + heavyCents + laborCents
     : volumeCents + surchargeCents + laborCents;
 
-  // 6) Range, then discount off both ends, then round to the nearest $5.
+  // 6) Range, published-tier floor, then discount off both ends, rounded to $5.
   const spread = Math.min(100, Math.max(0, nonNegative(settings.rangeSpreadPct))) / 100;
-  const rawLowCents = subtotalCents * (1 - spread);
-  const rawHighCents = subtotalCents * (1 + spread);
+  let listSubtotalCents = subtotalCents;
+  let rawLowCents = subtotalCents * (1 - spread);
+  let rawHighCents = subtotalCents * (1 + spread);
+
+  // The floor holds a quote up to the tier the site advertises. It is skipped
+  // in two cases. Heavy mode is priced by the tonne and is not on the volume
+  // ladder at all. And a load small enough that the minimum job binds *is*
+  // the ladder's own first rung ("single item / minimum"), which sits below
+  // the quarter-truck floor — applying the quarter floor there would contradict
+  // the very table these brackets come from.
+  const bracket =
+    input.heavyMode || minJobApplied
+      ? null
+      : findFloorBracket(packedCubicFeet, capacityFt3, settings.priceFloors);
+
+  const floorApplied = bracket !== null && rawLowCents < nonNegative(bracket.floorCents);
+  let floorUpliftCents = 0;
+
+  if (bracket && floorApplied) {
+    // Lift the subtotal to the value that puts the low end exactly on the
+    // floor, then re-derive the range from it. Doing it this way rather than
+    // clamping the low alone keeps the spread intact — a clamp would collapse
+    // the range, because near the bottom of a bracket the high end is below
+    // the floor too. Nothing is ever lowered: the subtotal only goes up.
+    const floorCents = nonNegative(bracket.floorCents);
+    listSubtotalCents = spread < 1 ? floorCents / (1 - spread) : floorCents;
+    floorUpliftCents = Math.round(listSubtotalCents - subtotalCents);
+    rawLowCents = floorCents;
+    rawHighCents = listSubtotalCents * (1 + spread);
+  }
 
   const lowDiscountCents = discountOffCents(rawLowCents, input.discount);
   const highDiscountCents = discountOffCents(rawHighCents, input.discount);
@@ -407,7 +493,9 @@ export function computeQuote(input: QuoteInput, settings: PricingSettings): Quot
     laborCents,
     heavyMode: input.heavyMode,
     heavyCents,
-    subtotalCents,
+    subtotalCents: Math.round(listSubtotalCents),
+    floorApplied,
+    floorLabel: floorApplied && bracket ? bracket.label : null,
     discountCents,
     lowCents,
     highCents,
@@ -427,6 +515,8 @@ export function computeQuote(input: QuoteInput, settings: PricingSettings): Quot
       labor: input.labor,
       settings,
       discountCents,
+      floorUpliftCents,
+      floorLabel: floorApplied && bracket ? bracket.label : null,
     }),
     internal: {
       estWeightKg,
@@ -456,6 +546,8 @@ function buildBreakdown(args: {
   labor: LaborInput;
   settings: PricingSettings;
   discountCents: number;
+  floorUpliftCents: number;
+  floorLabel: string | null;
 }): BreakdownLine[] {
   const lines: BreakdownLine[] = [];
 
@@ -494,6 +586,14 @@ function buildBreakdown(args: {
       label: "Labor adders",
       amountCents: args.laborCents,
       detail: parts.join(" · ") || undefined,
+    });
+  }
+
+  if (args.floorUpliftCents > 0 && args.floorLabel) {
+    lines.push({
+      label: "Published tier floor",
+      amountCents: args.floorUpliftCents,
+      detail: `lifted to the ${args.floorLabel.toLowerCase()} floor`,
     });
   }
 

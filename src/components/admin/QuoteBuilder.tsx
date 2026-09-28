@@ -621,6 +621,12 @@ export function QuoteBuilder({
             {computation.minJobApplied ? " · minimum job" : ""}
           </p>
 
+          {computation.floorApplied ? (
+            <p className="mt-2 text-xs text-[var(--ops-muted)]">
+              Adjusted to published tier floor ({computation.floorLabel}).
+            </p>
+          ) : null}
+
           {computation.multiLoad ? (
             <p className="mt-2 rounded border border-[var(--ops-warn-border)] bg-[var(--ops-warn-bg)] px-2 py-1 text-xs font-medium text-[var(--ops-warn-ink)]">
               {computation.loads} truckloads

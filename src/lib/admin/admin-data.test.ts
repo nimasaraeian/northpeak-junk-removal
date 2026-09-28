@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
+import { getPost } from "@/content/blog";
 import { CATALOG_CATEGORIES, CATALOG_SEED } from "@/lib/admin/catalog-seed";
 import { buildCustomerText } from "@/lib/admin/customer-text";
 import {
@@ -106,6 +107,94 @@ test("the flagged categories carry the right flags", () => {
   for (const flags of flagsFor("hot tub")) assert.ok(flags.includes("piano"));
 });
 
+// --- Tier floors stay in step with the published ladder --------------------
+
+/**
+ * The cost guide's table is where the site publishes its price ladder, and
+ * `llms.txt` already reads it rather than retyping it. The seeded floors are
+ * the low end of each rung, so they are checked against the same table: edit
+ * the guide and this fails until the floors follow.
+ */
+function publishedLadder(): Map<string, number> {
+  const post = getPost("junk-removal-cost-north-vancouver");
+  const table = post?.body.find((block) => block.type === "table");
+  assert.ok(table && table.type === "table", "the cost guide must still publish its table");
+
+  const ladder = new Map<string, number>();
+  for (const [tier, range] of table.rows) {
+    // "roughly $200–300" / "roughly $600–1,000+" -> the low end, in cents.
+    const low = range.match(/\$([\d,]+)/);
+    if (low) ladder.set(tier, Number(low[1].replace(/,/g, "")) * 100);
+  }
+  return ladder;
+}
+
+test("each seeded floor is the low end of its published tier", () => {
+  const ladder = publishedLadder();
+
+  for (const bracket of DEFAULT_PRICING_SETTINGS.priceFloors) {
+    const published = ladder.get(bracket.label);
+    assert.ok(
+      published !== undefined,
+      `"${bracket.label}" is not a row in the cost guide's table`,
+    );
+    assert.equal(
+      bracket.floorCents,
+      published,
+      `${bracket.label} floor is ${bracket.floorCents}¢, the guide publishes ${published}¢`,
+    );
+  }
+});
+
+test("the seeded brackets cover the ladder's truck-fraction rungs in order", () => {
+  const fractions = DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.maxFraction);
+
+  assert.deepEqual(fractions, [0.25, 0.5, 0.75, 1]);
+  assert.deepEqual(
+    DEFAULT_PRICING_SETTINGS.priceFloors.map((b) => b.label),
+    ["Quarter truck", "Half truck", "Three-quarter truck", "Full truck"],
+  );
+  // The ladder's first rung is the minimum job, which min_job covers and the
+  // engine deliberately excludes from the brackets.
+  assert.ok(publishedLadder().has("Single item / minimum"));
+  assert.equal(
+    DEFAULT_PRICING_SETTINGS.priceFloors.some((b) => b.label.includes("Single item")),
+    false,
+  );
+});
+
+test("every published truck tier is quoted inside its advertised band", () => {
+  const ladder = publishedLadder();
+  const s = DEFAULT_PRICING_SETTINGS;
+  const labor = { stairsFlights: 0, carryDistance: "standard" as const, disassembly: 0 };
+
+  for (const bracket of s.priceFloors) {
+    const raw = (s.truckCapacityFt3 * bracket.maxFraction) / (1 + s.packingPct / 100);
+    const result = computeQuote(
+      {
+        items: [
+          {
+            catalogId: null,
+            label: bracket.label,
+            qty: 1,
+            cubicFeetEach: raw,
+            surchargeCents: null,
+            flags: [],
+          },
+        ],
+        labor,
+        heavyMode: false,
+      },
+      s,
+    );
+
+    assert.ok(
+      result.lowCents >= ladder.get(bracket.label)!,
+      `${bracket.label} quotes ${result.lowCents}¢ low, under the published tier`,
+    );
+  }
+});
+
 // --- Migration stays in step with the TypeScript ---------------------------
 
 const MIGRATION = readFileSync(
@@ -208,7 +297,13 @@ test("the customer message never leaks an internal figure", () => {
     ) {
       continue;
     }
-    assert.equal(text.includes(`$${dollars}`), false, `${label} leaked into the customer text`);
+    // Anchored on the right, or "$20" of fuel matches inside the "$200" of a
+    // floored range and fails on a leak that is not there.
+    assert.equal(
+      new RegExp(`\\$${dollars}(?!\\d)`).test(text),
+      false,
+      `${label} leaked into the customer text`,
+    );
   }
 
   assert.equal(/margin|cost|tipping|disposal fee/i.test(text), false);
