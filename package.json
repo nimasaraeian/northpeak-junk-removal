@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "tsx scripts/generate-admin-migration.ts",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:generate:crm": "tsx scripts/generate-crm-migration.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",

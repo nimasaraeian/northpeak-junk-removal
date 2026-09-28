@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import {
@@ -252,23 +252,98 @@ test("the root 404 carries no analytics, so /admin responses carry no GA id", ()
   assert.match(frame.slice(frameStart), /GoogleAnalytics/);
 });
 
+/** Every server-action module in the panel, so a new one cannot slip the net. */
+const ACTION_FILES = ["src/lib/admin/actions.ts", "src/lib/admin/crm-actions.ts"];
+
+function exportedActions(file: string): { name: string; source: string }[] {
+  const contents = readSource(file);
+  return [...contents.matchAll(/export async function (\w+Action)/g)].map((match) => {
+    const name = match[1];
+    const from = contents.indexOf(`export async function ${name}`);
+    const rest = contents.slice(from);
+    const end = rest.indexOf("\nexport async function", 1);
+    return { name, source: end > 0 ? rest.slice(0, end) : rest };
+  });
+}
+
+test("the action modules are the ones this test knows about", () => {
+  // A third actions file added without being listed here would go unchecked.
+  const found = readdirSync(path.join(repoRoot, "src", "lib", "admin"))
+    .filter((file) => file.includes("action") && file.endsWith(".ts") && !file.endsWith(".test.ts"))
+    .map((file) => `src/lib/admin/${file}`);
+
+  assert.deepEqual(found.sort(), [...ACTION_FILES].sort());
+});
+
 test("every mutating admin action re-checks the session for itself", () => {
   // proxy.ts covers Server Function POSTs today, but the Next docs are
   // explicit that a matcher edit can silently drop that coverage.
-  const actions = readSource("src/lib/admin/actions.ts");
-  const exported = [...actions.matchAll(/export async function (\w+Action)/g)].map(
-    (match) => match[1],
-  );
+  let checked = 0;
 
-  assert.ok(exported.length >= 5, "expected the panel's actions to be found");
-
-  for (const name of exported) {
-    if (name === "loginAction" || name === "logoutAction") continue;
-    const body = actions.slice(actions.indexOf(`export async function ${name}`));
-    const end = body.indexOf("\nexport async function", 1);
-    const scoped = end > 0 ? body.slice(0, end) : body;
-    assert.match(scoped, /requireOperator\(\)/, `${name} does not check the session`);
+  for (const file of ACTION_FILES) {
+    for (const { name, source } of exportedActions(file)) {
+      if (name === "loginAction" || name === "logoutAction") continue;
+      assert.match(source, /requireOperator\(\)/, `${file}: ${name} does not check the session`);
+      checked += 1;
+    }
   }
+
+  assert.ok(checked >= 15, `expected the panel's actions to be found, saw ${checked}`);
+});
+
+test("requireOperator is the first thing every CRM action does", () => {
+  // Not just present — present before any database call, so a stranger can
+  // never cause a write or a read on the way to being rejected.
+  for (const { name, source } of exportedActions("src/lib/admin/crm-actions.ts")) {
+    const authAt = source.indexOf("requireOperator()");
+    const dbAt = source.indexOf("getDb()");
+    assert.ok(authAt > 0, `${name} does not check the session`);
+    if (dbAt > 0) {
+      assert.ok(authAt < dbAt, `${name} reaches the database before checking the session`);
+    }
+  }
+});
+
+test("every status change writes an activity row", () => {
+  // The timeline is only trustworthy if nothing can move a record silently.
+  const source = readSource("src/lib/admin/crm-actions.ts");
+
+  for (const action of [
+    "updateLeadStatusAction",
+    "updateJobStatusAction",
+    "convertLeadToClientAction",
+    "createJobFromQuoteAction",
+  ]) {
+    const from = source.indexOf(`export async function ${action}`);
+    const rest = source.slice(from);
+    const end = rest.indexOf("\nexport async function", 1);
+    const scoped = end > 0 ? rest.slice(0, end) : rest;
+
+    assert.ok(from > 0, `${action} is missing`);
+    assert.match(scoped, /logActivity\(/, `${action} changes state without logging it`);
+  }
+
+  // And the two status actions log it as a status change specifically.
+  for (const action of ["updateLeadStatusAction", "updateJobStatusAction"]) {
+    const from = source.indexOf(`export async function ${action}`);
+    const rest = source.slice(from);
+    const end = rest.indexOf("\nexport async function", 1);
+    assert.match(
+      end > 0 ? rest.slice(0, end) : rest,
+      /kind: "status_change"/,
+      `${action} does not log a status_change`,
+    );
+  }
+});
+
+test("the activity log is append-only from the actions", () => {
+  const source = readSource("src/lib/admin/crm-actions.ts");
+
+  assert.equal(
+    /update\(activityLog\)|delete\(activityLog\)/.test(source),
+    false,
+    "the timeline must never be rewritten",
+  );
 });
 
 test("the vision route checks the session before spending an API call", () => {

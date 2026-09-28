@@ -1,6 +1,7 @@
 import { getService } from "@/content/services";
 import { extractPhotoFiles, validatePhotos } from "@/lib/estimate/photos";
 import { generateRequestId } from "@/lib/estimate/request-id";
+import { dispatchCrmLead } from "@/lib/leads/crm-intake";
 import { dispatchLeadWebhook, type LeadWebhookOptions } from "@/lib/leads/webhook";
 import { checkServiceArea } from "@/lib/postal";
 import { notifyEstimate } from "@/lib/telegram/notify-estimate";
@@ -133,6 +134,24 @@ export async function submitEstimateCore(
     },
     options.leadWebhook,
   );
+
+  // Third copy of the lead, alongside Telegram and the webhook: the row that
+  // makes it a card in the NorthPeak Ops pipeline. Scheduled exactly where
+  // the webhook is and on the same terms — after the result is decided, never
+  // awaited, and unable to fail a submission. Without a database configured
+  // it is a no-op, which is what the marketing site does in development.
+  dispatchCrmLead({
+    name: draft.name,
+    phone: draft.phone,
+    email: draft.email,
+    // `city` is undefined for a postal code outside the resolved areas; the
+    // lead still belongs in the pipeline, just without an area on the card.
+    area: area.city ?? "",
+    message: draft.description,
+    source: "website_form",
+    origin: "website_form",
+    note: `Estimate request ${requestId} — ${service.name}, ${draft.volume}.`,
+  });
 
   if (photoValidation.files.length > 0 && !delivery.photosDelivered) {
     return {

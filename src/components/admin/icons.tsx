@@ -64,3 +64,33 @@ export function LogoutIcon() {
     </svg>
   );
 }
+
+export function LeadsIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <rect x="3" y="4" width="5" height="16" rx="1.5" />
+      <rect x="9.5" y="4" width="5" height="11" rx="1.5" />
+      <rect x="16" y="4" width="5" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+export function ClientsIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <path d="M16 11.2A3 3 0 0 0 16 5.2" />
+      <path d="M17.5 20a5.6 5.6 0 0 0-2.3-4.5" />
+    </svg>
+  );
+}
+
+export function CalendarIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  );
+}
