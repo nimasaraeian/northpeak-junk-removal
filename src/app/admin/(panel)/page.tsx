@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { listQuotes, loadDashboardStats } from "@/lib/admin/data";
+import { loadCrmDashboardStats } from "@/lib/admin/crm-data";
+import { LEAD_STATUS_LABELS, PIPELINE_ORDER } from "@/lib/admin/crm";
 import { formatCents, formatRange } from "@/lib/quote-engine";
 
 export const metadata = { title: "Dashboard" };
@@ -32,10 +34,18 @@ const dateFormat = new Intl.DateTimeFormat("en-CA", {
 });
 
 export default async function AdminDashboardPage() {
-  const [stats, latest] = await Promise.all([
+  const [stats, crm, latest] = await Promise.all([
     loadDashboardStats(),
+    loadCrmDashboardStats(),
     listQuotes({}, 10),
   ]);
+
+  // The funnel only draws the stages still in play; won and lost have their
+  // own cards and would flatten the bars.
+  const funnelStages = PIPELINE_ORDER.filter(
+    (stage) => stage !== "won" && stage !== "lost",
+  );
+  const funnelMax = Math.max(1, ...funnelStages.map((stage) => crm.leadsByStage[stage]));
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -70,6 +80,44 @@ export default async function AdminDashboardPage() {
           value={stats.avgQuoteValueCents === null ? "—" : formatCents(stats.avgQuoteValueCents)}
           hint="Midpoint, all quotes this month"
         />
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Open leads"
+          value={String(crm.openLeads)}
+          hint="New through Booked"
+        />
+        <StatCard label="Jobs today" value={String(crm.jobsToday)} />
+        <StatCard
+          label="Overdue follow-ups"
+          value={String(crm.overdueFollowUps)}
+          hint={crm.overdueFollowUps > 0 ? "Someone is waiting on a call" : "All caught up"}
+        />
+        <Link href="/admin/leads" className="ops-card p-4 transition-colors hover:bg-[var(--ops-surface-2)]">
+          <p className="ops-label">Pipeline</p>
+          <ul className="mt-2 grid gap-1">
+            {funnelStages.map((stage) => {
+              const count = crm.leadsByStage[stage];
+              return (
+                <li key={stage} className="flex items-center gap-2">
+                  <span className="w-16 shrink-0 text-[0.7rem] text-[var(--ops-muted)]">
+                    {LEAD_STATUS_LABELS[stage]}
+                  </span>
+                  <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--ops-surface-2)]">
+                    <span
+                      className="block h-full rounded-full bg-[var(--ops-gold)]"
+                      style={{ width: `${(count / funnelMax) * 100}%` }}
+                    />
+                  </span>
+                  <span className="ops-num w-5 shrink-0 text-right text-[0.7rem] font-semibold">
+                    {count}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </Link>
       </div>
 
       <section className="ops-card mt-6 overflow-hidden">

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { QUOTE_STATUSES } from "@/components/admin/StatusPill";
 import { updateQuoteNotesAction, updateQuoteStatusAction } from "@/lib/admin/actions";
+import { createJobFromQuoteAction } from "@/lib/admin/crm-actions";
 import { buildCustomerText } from "@/lib/admin/customer-text";
 import type { QuoteRow, QuoteStatus } from "@/lib/db/schema";
 
@@ -113,6 +114,38 @@ export function QuoteDetailActions({
       >
         {copied ? "Copied" : "Copy customer text"}
       </button>
+
+      {/* A won quote becomes a job. It lands unscheduled, in the calendar's
+          side rail, rather than guessing a date nobody agreed to. */}
+      {quote.status === "won" ? (
+        <div className="grid gap-1">
+          <button
+            type="button"
+            className="ops-btn"
+            data-variant="navy"
+            disabled={pending || quote.jobId !== null}
+            onClick={() => {
+              setError(null);
+              startTransition(async () => {
+                const result = await createJobFromQuoteAction(quote.id);
+                if (!result.ok) {
+                  setError(result.error ?? "Could not create that job.");
+                  return;
+                }
+                router.push("/admin/calendar");
+                router.refresh();
+              });
+            }}
+          >
+            {quote.jobId ? `Job #${quote.jobId} created` : "Schedule this job"}
+          </button>
+          {quote.jobId === null ? (
+            <p className="text-xs text-[var(--ops-faint)]">
+              Creates an unscheduled job for the calendar rail.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       {error ? (
         <p role="alert" className="text-sm text-[var(--ops-lost-ink)]">

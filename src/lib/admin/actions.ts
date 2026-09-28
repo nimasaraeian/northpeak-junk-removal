@@ -31,6 +31,7 @@ import {
   type PricingSettings,
 } from "@/lib/quote-engine";
 import { loadPricingSettings } from "@/lib/admin/data";
+import { linkQuoteToCrmAction } from "@/lib/admin/crm-actions";
 
 /**
  * Every mutation the panel can perform.
@@ -141,6 +142,9 @@ const itemLineSchema = z.object({
 
 const quotePayloadSchema = z.object({
   id: z.number().int().positive().nullable(),
+  /** Optional CRM links; both null for a walk-up quote. */
+  clientId: z.number().int().positive().nullable().default(null),
+  leadId: z.number().int().positive().nullable().default(null),
   customerName: z.string().trim().max(120).default(""),
   customerPhone: z.string().trim().max(40).default(""),
   customerArea: z.string().trim().max(120).default(""),
@@ -229,6 +233,7 @@ export async function saveQuoteAction(raw: unknown): Promise<SaveQuoteResult> {
     finalHighCents: computed.highCents,
     status: payload.status,
     notes: payload.notes,
+    clientId: payload.clientId,
   };
 
   let id = payload.id ?? undefined;
@@ -244,8 +249,16 @@ export async function saveQuoteAction(raw: unknown): Promise<SaveQuoteResult> {
     id = inserted?.id;
   }
 
+  // CRM side effects live in crm-actions so quoting and the pipeline cannot
+  // drift apart: linking the client, refreshing their lifetime value, and
+  // advancing the lead to Quoted if it has not gone past that already.
+  if (id && (payload.clientId !== null || payload.leadId !== null)) {
+    await linkQuoteToCrmAction(id, payload.leadId, payload.clientId);
+  }
+
   revalidatePath("/admin");
   revalidatePath("/admin/quotes");
+  revalidatePath("/admin/leads");
   if (id) revalidatePath(`/admin/quotes/${id}`);
 
   return { ok: true, id };

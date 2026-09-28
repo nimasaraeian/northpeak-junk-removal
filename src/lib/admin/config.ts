@@ -57,6 +57,13 @@ export function envRequirements(): EnvRequirement[] {
       description:
         "Enables the photo assist box on New Quote. Without it the catalog picker works on its own.",
     },
+    {
+      name: "LEAD_INTAKE_SECRET",
+      present: (process.env.LEAD_INTAKE_SECRET?.trim() ?? "") !== "",
+      required: false,
+      description:
+        "Opens POST /api/leads/intake to outside callers. Unset closes that endpoint; our own estimate form files leads directly either way.",
+    },
   ];
 }
 

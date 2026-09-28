@@ -43,8 +43,23 @@ interface DraftLine {
   confidence?: number;
 }
 
+export interface LinkTargets {
+  clients: { id: number; name: string; area: string }[];
+  leads: { id: number; name: string; area: string }[];
+}
+
 export interface QuoteBuilderProps {
   catalog: CatalogItemRow[];
+  /** Clients and open leads a quote can be filed against. */
+  linkTargets?: LinkTargets;
+  /** Prefill from "Convert to quote" on a lead, or a client's New-quote button. */
+  prefill?: {
+    name?: string;
+    phone?: string;
+    area?: string;
+    clientId?: number | null;
+    leadId?: number | null;
+  };
   settings: PricingSettings;
   operator: string;
   photoAssistAvailable: boolean;
@@ -96,15 +111,29 @@ export function QuoteBuilder({
   operator,
   photoAssistAvailable,
   existing,
+  linkTargets,
+  prefill,
 }: QuoteBuilderProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   const [lines, setLines] = useState<DraftLine[]>(() => toDraftLines(existing));
   const [search, setSearch] = useState("");
-  const [customerName, setCustomerName] = useState(existing?.customerName ?? "");
-  const [customerPhone, setCustomerPhone] = useState(existing?.customerPhone ?? "");
-  const [customerArea, setCustomerArea] = useState(existing?.customerArea ?? "");
+  const [customerName, setCustomerName] = useState(
+    existing?.customerName ?? prefill?.name ?? "",
+  );
+  const [customerPhone, setCustomerPhone] = useState(
+    existing?.customerPhone ?? prefill?.phone ?? "",
+  );
+  const [customerArea, setCustomerArea] = useState(
+    existing?.customerArea ?? prefill?.area ?? "",
+  );
+  const [clientId, setClientId] = useState<number | null>(
+    existing?.clientId ?? prefill?.clientId ?? null,
+  );
+  // Not stored on the quote row — it only decides whether the pipeline card
+  // advances when this quote saves.
+  const [leadId, setLeadId] = useState<number | null>(prefill?.leadId ?? null);
   const [notes, setNotes] = useState(existing?.notes ?? "");
 
   const [stairsFlights, setStairsFlights] = useState(existing?.labor.stairsFlights ?? 0);
@@ -278,6 +307,8 @@ export function QuoteBuilder({
   function payloadFor(status: QuoteStatus): QuotePayload {
     return {
       id: existing?.id ?? null,
+      clientId,
+      leadId,
       customerName,
       customerPhone,
       customerArea,
@@ -734,6 +765,48 @@ export function QuoteBuilder({
               </Field>
             ) : null}
           </div>
+
+          {linkTargets ? (
+            <div className="mt-4 grid gap-3 border-t border-[var(--ops-border)] pt-4">
+              <Field
+                label="Link to client"
+                hint="Files the quote on their profile and updates lifetime value."
+              >
+                <select
+                  className="ops-select"
+                  value={clientId ?? ""}
+                  onChange={(event) =>
+                    setClientId(event.target.value ? Number(event.target.value) : null)
+                  }
+                >
+                  <option value="">Not linked</option>
+                  {linkTargets.clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.name}
+                      {client.area ? ` · ${client.area}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Link to lead" hint="Moves the pipeline card to Quoted on save.">
+                <select
+                  className="ops-select"
+                  value={leadId ?? ""}
+                  onChange={(event) =>
+                    setLeadId(event.target.value ? Number(event.target.value) : null)
+                  }
+                >
+                  <option value="">Not linked</option>
+                  {linkTargets.leads.map((lead) => (
+                    <option key={lead.id} value={lead.id}>
+                      {lead.name}
+                      {lead.area ? ` · ${lead.area}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          ) : null}
 
           <div className="mt-4 grid gap-3 border-t border-[var(--ops-border)] pt-4">
             <Field label="Customer">
