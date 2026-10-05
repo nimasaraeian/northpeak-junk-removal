@@ -22,7 +22,7 @@ export const siteGuideItems: SiteGuideItem[] = [
     intent: "First question",
     title: "Check my postal code",
     description: "Confirm North Shore or Greater Vancouver coverage in seconds.",
-    href: "/#service-area",
+    href: "/locations",
   },
   {
     id: "services",
