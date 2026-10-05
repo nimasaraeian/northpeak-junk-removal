@@ -22,7 +22,7 @@ export const siteGuideItems: SiteGuideItem[] = [
     intent: "First question",
     title: "Check my postal code",
     description: "Confirm North Shore or Greater Vancouver coverage in seconds.",
-    href: "/#service-area",
+    href: "/locations",
   },
   {
     id: "services",
@@ -30,13 +30,6 @@ export const siteGuideItems: SiteGuideItem[] = [
     title: "Find the right service",
     description: "Garage, estate, furniture, construction, and commercial cleanouts.",
     href: "/#services",
-  },
-  {
-    id: "truck",
-    intent: "Size the load",
-    title: "See what fits in the truck",
-    description: "Visual load tiers so you know what you are paying for.",
-    href: "/#stage-the-load",
   },
   {
     id: "process",
