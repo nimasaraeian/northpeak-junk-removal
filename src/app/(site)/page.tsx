@@ -2,7 +2,6 @@ import { FinalCta } from "@/components/home/FinalCta";
 import { Gallery } from "@/components/home/Gallery";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
-import { StageLoad } from "@/components/home/StageLoad";
 import { Reviews } from "@/components/home/Reviews";
 import { Services } from "@/components/home/Services";
 import { WhyNorthPeak } from "@/components/home/WhyNorthPeak";
@@ -17,7 +16,6 @@ export default function HomePage() {
       <Hero />
       <HowItWorks />
       <Services />
-      <StageLoad />
       <Gallery />
       <WhyNorthPeak />
       <Reviews />
