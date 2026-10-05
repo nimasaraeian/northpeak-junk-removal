@@ -32,13 +32,6 @@ export const siteGuideItems: SiteGuideItem[] = [
     href: "/#services",
   },
   {
-    id: "truck",
-    intent: "Size the load",
-    title: "See what fits in the truck",
-    description: "Visual load tiers so you know what you are paying for.",
-    href: "/#stage-the-load",
-  },
-  {
     id: "process",
     intent: "How it works",
     title: "Understand the process",
