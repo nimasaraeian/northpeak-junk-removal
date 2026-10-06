@@ -38,8 +38,11 @@ export function MobileMenu() {
                 {item.label}
               </Link>
             ))}
-            <Button href="/estimate" className="mt-2 w-full">
-              Get Free Estimate
+            <Button href="/book" className="mt-2 w-full" onClick={() => setOpen(false)}>
+              Book Online
+            </Button>
+            <Button href="/estimate" variant="ghost" className="w-full" onClick={() => setOpen(false)}>
+              Free Estimate
             </Button>
           </Container>
         </div>

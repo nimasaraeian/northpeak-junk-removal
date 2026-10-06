@@ -19,7 +19,7 @@ export const GA_EVENTS = {
 
 export type ContactMethod = "phone" | "whatsapp" | "telegram" | "email";
 
-export type LeadForm = "estimate" | "contact";
+export type LeadForm = "estimate" | "contact" | "booking";
 
 export type GaEvent = {
   name: string;
