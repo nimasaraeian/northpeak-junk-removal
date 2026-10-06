@@ -1,4 +1,5 @@
 import { NewRecordForm } from "@/components/admin/NewRecordForm";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Add lead" };
 export const dynamic = "force-dynamic";
