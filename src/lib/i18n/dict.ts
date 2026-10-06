@@ -348,6 +348,35 @@ export const FA: Record<string, string> = {
   "tile": "سرامیک",
   "shingles": "شینگل",
 
+  // Lists / filters
+  "lead": "سرنخ",
+  "leads": "سرنخ",
+  "Name or phone": "نام یا تلفن",
+  "All": "همه",
+  "Stage": "مرحله",
+  "Filter": "فیلتر",
+  "Clear": "پاک‌کردن",
+  "No leads yet": "هنوز سرنخی نیست",
+  "Website enquiries land here automatically the moment the form posts. You can also add one by hand after a phone call.":
+    "درخواست‌های وب‌سایت لحظه‌ای که فرم ثبت شود خودکار اینجا می‌آیند. بعد از تماس تلفنی هم می‌توانی دستی یکی اضافه کنی.",
+  "Add the first lead": "افزودن اولین سرنخ",
+  "That move did not save.": "جابه‌جایی ذخیره نشد.",
+  "Nothing here.": "اینجا چیزی نیست.",
+  "Move to another stage": "انتقال به مرحلهٔ دیگر",
+  "Worth a line — it is the only way the lost column tells you anything later.":
+    "یک خط ارزش دارد — تنها راهی است که ستون «ازدست‌رفته» بعداً چیزی به تو می‌گوید.",
+  "Price, timing, went elsewhere…": "قیمت، زمان‌بندی، جای دیگر رفت…",
+
+  // CRM shared bits
+  "Note": "یادداشت",
+  "Status": "وضعیت",
+  "Call": "تماس",
+  "SMS": "پیامک",
+  "System": "سیستم",
+  "Unnamed lead": "سرنخ بی‌نام",
+  "No area": "بدون منطقه",
+  "Nothing logged yet. Calls, notes and status changes land here.": "هنوز چیزی ثبت نشده. تماس‌ها، یادداشت‌ها و تغییر وضعیت‌ها اینجا می‌آیند.",
+
   // Settings form
   "Pricing rules": "قواعد قیمت‌گذاری",
   "These drive every quote.": "این‌ها مبنای هر پیش‌فاکتورند.",

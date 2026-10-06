@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useT } from "@/lib/i18n/provider";
 import {
   ageLabel,
   followUpLabel,
@@ -10,23 +13,22 @@ import {
 } from "@/lib/admin/crm";
 import type { ActivityRow, LeadRow, LeadSource, LeadStatus } from "@/lib/db/schema";
 
-/**
- * Small shared pieces for the CRM screens, so the pipeline card, the client
- * page and the calendar all render a source badge or a timeline the same way.
- */
+/** Small shared pieces for the CRM screens. */
 
 export function LeadStatusPill({ status }: { status: LeadStatus }) {
+  const { t } = useT();
   return (
     <span className="ops-pill" data-status={LEAD_STATUS_TONE[status]}>
-      {LEAD_STATUS_LABELS[status]}
+      {t(LEAD_STATUS_LABELS[status])}
     </span>
   );
 }
 
 export function SourceBadge({ source }: { source: LeadSource }) {
+  const { t } = useT();
   return (
     <span className="rounded bg-[var(--ops-surface-2)] px-1.5 py-0.5 text-[0.68rem] font-semibold text-[var(--ops-muted)]">
-      {LEAD_SOURCE_LABELS[source]}
+      {t(LEAD_SOURCE_LABELS[source])}
     </span>
   );
 }
@@ -43,16 +45,9 @@ export function OwnerChip({ owner }: { owner: string }) {
   );
 }
 
-export function FollowUpChip({
-  nextFollowUpAt,
-  now,
-}: {
-  nextFollowUpAt: Date | null;
-  now: Date;
-}) {
+export function FollowUpChip({ nextFollowUpAt, now }: { nextFollowUpAt: Date | null; now: Date }) {
   const label = followUpLabel(nextFollowUpAt, now);
   if (!label) return null;
-
   const overdue = isFollowUpOverdue(nextFollowUpAt, now);
   return (
     <span
@@ -67,17 +62,17 @@ export function FollowUpChip({
   );
 }
 
-/** The card body, shared by the board and any list that shows a lead. */
 export function LeadCardBody({ lead, now }: { lead: LeadRow; now: Date }) {
+  const { t } = useT();
   return (
     <>
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm font-semibold leading-5 text-[var(--ops-navy)]">
-          {lead.name || "Unnamed lead"}
+          {lead.name || t("Unnamed lead")}
         </span>
         <OwnerChip owner={lead.owner} />
       </div>
-      <p className="mt-0.5 text-xs text-[var(--ops-muted)]">{lead.area || "No area"}</p>
+      <p className="mt-0.5 text-xs text-[var(--ops-muted)]">{lead.area || t("No area")}</p>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <SourceBadge source={lead.source} />
         <FollowUpChip nextFollowUpAt={lead.nextFollowUpAt} now={now} />
@@ -89,10 +84,7 @@ export function LeadCardBody({ lead, now }: { lead: LeadRow; now: Date }) {
   );
 }
 
-const timelineFormat = new Intl.DateTimeFormat("en-CA", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
+const timelineFormat = new Intl.DateTimeFormat("en-CA", { dateStyle: "medium", timeStyle: "short" });
 
 const KIND_LABELS: Record<string, string> = {
   note: "Note",
@@ -103,10 +95,11 @@ const KIND_LABELS: Record<string, string> = {
 };
 
 export function ActivityTimeline({ rows }: { rows: ActivityRow[] }) {
+  const { t } = useT();
   if (rows.length === 0) {
     return (
       <p className="px-1 py-6 text-center text-sm text-[var(--ops-muted)]">
-        Nothing logged yet. Calls, notes and status changes land here.
+        {t("Nothing logged yet. Calls, notes and status changes land here.")}
       </p>
     );
   }
@@ -119,20 +112,14 @@ export function ActivityTimeline({ rows }: { rows: ActivityRow[] }) {
             <span
               aria-hidden
               className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-              style={{
-                background:
-                  row.kind === "status_change" ? "var(--ops-gold)" : "var(--ops-border-strong)",
-              }}
+              style={{ background: row.kind === "status_change" ? "var(--ops-gold)" : "var(--ops-border-strong)" }}
             />
-            {index < rows.length - 1 ? (
-              <span aria-hidden className="w-px flex-1 bg-[var(--ops-border)]" />
-            ) : null}
+            {index < rows.length - 1 ? <span aria-hidden className="w-px flex-1 bg-[var(--ops-border)]" /> : null}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm leading-6 text-[var(--ops-text)]">{row.body}</p>
             <p className="text-xs text-[var(--ops-faint)]">
-              {KIND_LABELS[row.kind] ?? row.kind} · {row.actor} ·{" "}
-              {timelineFormat.format(row.createdAt)}
+              {t(KIND_LABELS[row.kind] ?? row.kind)} · {row.actor} · {timelineFormat.format(row.createdAt)}
             </p>
           </div>
         </li>
