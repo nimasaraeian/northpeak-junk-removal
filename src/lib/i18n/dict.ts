@@ -44,10 +44,9 @@ export const FA: Record<string, string> = {
   "Quotes": "پیش‌فاکتورها",
   "Connections": "اتصال‌ها",
   "Settings": "تنظیمات",
-  // Short (bottom tab bar)
+  // Short (bottom tab bar) — "New" is defined once below with the statuses.
   "Home": "خانه",
   "Cal": "تقویم",
-  "New": "جدید",
   "Links": "اتصال‌ها",
 
   // Common
