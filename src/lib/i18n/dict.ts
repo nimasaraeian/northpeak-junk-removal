@@ -366,10 +366,26 @@ export const FA: Record<string, string> = {
   "Worth a line — it is the only way the lost column tells you anything later.":
     "یک خط ارزش دارد — تنها راهی است که ستون «ازدست‌رفته» بعداً چیزی به تو می‌گوید.",
   "Price, timing, went elsewhere…": "قیمت، زمان‌بندی، جای دیگر رفت…",
+  "client": "مشتری",
+  "clients": "مشتری",
+  "Add client": "افزودن مشتری",
+  "Name, phone or area": "نام، تلفن یا منطقه",
+  "Nothing matches that search": "چیزی با این جستجو مطابقت ندارد",
+  "No clients yet": "هنوز مشتری‌ای نیست",
+  "Try a different name, phone number or area.": "نام، شماره یا منطقهٔ دیگری را امتحان کن.",
+  "A lead becomes a client from its own page, or add one by hand if they are already on the books.":
+    "سرنخ از صفحهٔ خودش به مشتری تبدیل می‌شود، یا اگر از قبل مشتری است دستی اضافه‌اش کن.",
+  "Add the first client": "افزودن اولین مشتری",
+  "Lifetime value": "ارزش کل",
+  "Last activity": "آخرین فعالیت",
+  "quote": "پیش‌فاکتور",
+  "quotes": "پیش‌فاکتور",
+  "Since": "از تاریخ",
+  "Nothing matches those filters.": "چیزی با این فیلترها مطابقت ندارد.",
+  "Quote": "پیش‌فاکتور",
 
-  // CRM shared bits
+  // CRM shared bits ("Status" is defined once in the common block)
   "Note": "یادداشت",
-  "Status": "وضعیت",
   "Call": "تماس",
   "SMS": "پیامک",
   "System": "سیستم",
