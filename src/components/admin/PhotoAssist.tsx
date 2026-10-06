@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useT } from "@/lib/i18n/provider";
 import { compressImage } from "@/lib/compress-image";
 import { MAX_IMAGES, type VisionSuggestion } from "@/lib/admin/vision";
 
@@ -45,6 +46,7 @@ export function PhotoAssist({
 }: {
   onSuggestions: (items: VisionSuggestion[], overall: VisionOverall) => void;
 }) {
+  const { t } = useT();
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [status, setStatus] = useState<"idle" | "reading" | "analysing">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export function PhotoAssist({
       }
       setPreviews((current) => [...current, ...next].slice(0, MAX_IMAGES));
     } catch {
-      setError("Those photos could not be read on this device.");
+      setError(t("Those photos could not be read on this device."));
     } finally {
       setStatus("idle");
       if (inputRef.current) inputRef.current.value = "";
@@ -111,7 +113,7 @@ export function PhotoAssist({
       };
 
       if (!response.ok) {
-        setError(payload.error ?? "Photo assist failed.");
+        setError(payload.error ?? t("Photo assist failed."));
         return;
       }
 
@@ -119,7 +121,7 @@ export function PhotoAssist({
       if (overall.complexJob) setComplex(overall);
       onSuggestions(payload.items ?? [], overall);
     } catch {
-      setError("Could not reach photo assist.");
+      setError(t("Could not reach photo assist."));
     } finally {
       setStatus("idle");
     }
@@ -130,14 +132,13 @@ export function PhotoAssist({
   return (
     <section className="ops-card p-4">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Photos</h2>
+        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Photos")}</h2>
         <span className="text-xs text-[var(--ops-faint)]">
-          {previews.length}/{MAX_IMAGES} · not saved
+          {previews.length}/{MAX_IMAGES} · {t("not saved")}
         </span>
       </div>
       <p className="mt-1 text-xs leading-5 text-[var(--ops-muted)]">
-        Suggestions land in the item list as editable rows. Nothing is priced until you confirm
-        it.
+        {t("Suggestions land in the item list as editable rows. Nothing is priced until you confirm it.")}
       </p>
 
       <div className="mt-3 grid grid-cols-2 gap-2">
@@ -161,7 +162,7 @@ export function PhotoAssist({
 
       <div className="mt-3 flex flex-wrap gap-2">
         <label className="ops-btn cursor-pointer" data-variant="ghost">
-          Add photos
+          {t("Add photos")}
           <input
             ref={inputRef}
             type="file"
@@ -179,7 +180,7 @@ export function PhotoAssist({
           disabled={busy || previews.length === 0}
           onClick={() => void analyse()}
         >
-          {status === "analysing" ? "Reading photos…" : "Suggest items"}
+          {status === "analysing" ? t("Reading photos…") : t("Suggest items")}
         </button>
       </div>
 
@@ -188,8 +189,8 @@ export function PhotoAssist({
           role="status"
           className="mt-3 rounded-lg border border-[var(--ops-warn-border)] bg-[var(--ops-warn-bg)] px-3 py-2 text-sm leading-6 text-[var(--ops-warn-ink)]"
         >
-          <strong>Complex job — price manually.</strong>{" "}
-          {complex.reason || "These photos need a person to look at them."}
+          <strong>{t("Complex job — price manually.")}</strong>{" "}
+          {complex.reason || t("These photos need a person to look at them.")}
         </p>
       ) : null}
 
