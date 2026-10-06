@@ -4,6 +4,8 @@ import { SetupScreen } from "@/components/admin/SetupScreen";
 import {
   CalendarIcon,
   ClientsIcon,
+  ConnectionsIcon,
+  ControlIcon,
   DashboardIcon,
   LeadsIcon,
   LogoutIcon,
@@ -29,11 +31,13 @@ import { isAdminConfigured } from "@/lib/admin/config";
 
 const NAV: OpsNavItem[] = [
   { href: "/admin", label: "Dashboard", short: "Home", icon: <DashboardIcon /> },
+  { href: "/admin/control", label: "Control", short: "Control", icon: <ControlIcon /> },
   { href: "/admin/leads", label: "Leads", short: "Leads", icon: <LeadsIcon /> },
   { href: "/admin/clients", label: "Clients", short: "Clients", icon: <ClientsIcon /> },
   { href: "/admin/calendar", label: "Calendar", short: "Cal", icon: <CalendarIcon /> },
   { href: "/admin/quotes/new", label: "New Quote", short: "New", icon: <NewQuoteIcon /> },
   { href: "/admin/quotes", label: "Quotes", short: "Quotes", icon: <QuotesIcon /> },
+  { href: "/admin/connections", label: "Connections", short: "Links", icon: <ConnectionsIcon /> },
   { href: "/admin/settings", label: "Settings", short: "Settings", icon: <SettingsIcon /> },
 ];
 
