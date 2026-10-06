@@ -4,8 +4,10 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navigation } from "@/content/site";
+import { isBookingEnabled } from "@/lib/booking/feature";
 
 export function Header() {
+  const bookingOn = isBookingEnabled();
   return (
     <header className="sticky top-0 z-50 border-b border-navy/10 bg-paper/92 backdrop-blur-md">
       <Container className="relative flex min-h-[4.75rem] items-center justify-between gap-3 overflow-visible py-3 sm:min-h-[5.5rem] md:min-h-[6rem]">
@@ -21,10 +23,17 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-4 lg:flex">
-          <Button href="/estimate">
-            Get Free Estimate →
-          </Button>
+        <div className="hidden items-center gap-3 lg:flex">
+          {bookingOn ? (
+            <>
+              <Button href="/book">Book Online →</Button>
+              <Button href="/estimate" variant="ghost">
+                Free Estimate
+              </Button>
+            </>
+          ) : (
+            <Button href="/estimate">Get Free Estimate →</Button>
+          )}
           <p className="eyebrow flex max-w-[9.5rem] items-start gap-1.5 leading-4 text-stone">
             <svg viewBox="0 0 16 16" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" fill="currentColor" aria-hidden>
               <path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.2 4.5 8.5 4.5 8.5s4.5-5.3 4.5-8.5A4.5 4.5 0 0 0 8 1.5Zm0 6.2a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
