@@ -5,6 +5,7 @@ import { createAiActionAction } from "@/lib/admin/control-actions";
 import { GuardrailNote } from "@/components/admin/GuardrailNote";
 import { GUARDRAILS } from "@/lib/admin/control";
 import type { IntakeResult } from "@/lib/admin/intake";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Reads a lead's inbound message and surfaces the stated facts plus a drafted
@@ -20,6 +21,7 @@ export function IntakeAssistant({
   message: string;
   leadName: string;
 }) {
+  const { t } = useT();
   const [result, setResult] = useState<IntakeResult | null>(null);
   const [question, setQuestion] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +41,13 @@ export function IntakeAssistant({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Intake assist failed.");
+        setError(data.error ?? t("Intake assist failed."));
         return;
       }
       setResult(data as IntakeResult);
       setQuestion((data as IntakeResult).clarifyingQuestion ?? "");
     } catch {
-      setError("Could not reach the assistant.");
+      setError(t("Could not reach the assistant."));
     } finally {
       setAnalyzing(false);
     }
@@ -63,14 +65,14 @@ export function IntakeAssistant({
         entityId: leadId,
       });
       if (res.ok) setQueued(true);
-      else setError(res.error ?? "Could not queue the question.");
+      else setError(res.error ?? t("Could not queue the question."));
     });
   }
 
   if (!message.trim()) {
     return (
       <div className="ops-card p-4 text-sm text-[var(--ops-muted)]">
-        No inbound message on this lead to read.
+        {t("No inbound message on this lead to read.")}
       </div>
     );
   }
@@ -78,9 +80,9 @@ export function IntakeAssistant({
   return (
     <div className="ops-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Intake assistant</h2>
+        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Intake assistant")}</h2>
         <button className="ops-btn" data-variant="navy" onClick={analyze} disabled={analyzing}>
-          {analyzing ? "Reading…" : result ? "Re-read message" : "Read message"}
+          {analyzing ? t("Reading…") : result ? t("Re-read message") : t("Read message")}
         </button>
       </div>
 
@@ -92,13 +94,13 @@ export function IntakeAssistant({
         <div className="mt-3 grid gap-3">
           {result.items.length > 0 ? (
             <div>
-              <p className="ops-label">Items mentioned</p>
+              <p className="ops-label">{t("Items mentioned")}</p>
               <ul className="mt-1 grid gap-1 text-sm">
                 {result.items.map((item, i) => (
                   <li key={i} className="flex justify-between gap-3">
                     <span>{item.label}</span>
                     <span className="ops-num text-[var(--ops-muted)]">
-                      {item.qty === null ? "qty not stated" : `×${item.qty}`}
+                      {item.qty === null ? t("qty not stated") : `×${item.qty}`}
                     </span>
                   </li>
                 ))}
@@ -107,20 +109,20 @@ export function IntakeAssistant({
           ) : null}
 
           <dl className="grid gap-1 text-sm">
-            <Row label="Address" value={result.address} />
-            <Row label="Access" value={result.access} />
-            <Row label="Preferred time" value={result.preferredTime} />
+            <Row label={t("Address")} value={result.address} />
+            <Row label={t("Access")} value={result.access} />
+            <Row label={t("Preferred time")} value={result.preferredTime} />
           </dl>
 
           <div>
-            <p className="ops-label">Weight / volume</p>
+            <p className="ops-label">{t("Weight / volume")}</p>
             <p className="text-sm font-medium text-[var(--ops-navy)]">
-              Not estimated — confirmed on site by a person.
+              {t("Not estimated — confirmed on site by a person.")}
             </p>
           </div>
 
           <div>
-            <p className="ops-label">Draft question for the customer</p>
+            <p className="ops-label">{t("Draft question for the customer")}</p>
             <textarea
               className="ops-textarea mt-1"
               rows={3}
@@ -134,11 +136,11 @@ export function IntakeAssistant({
                 onClick={queueQuestion}
                 disabled={pending || queued || !question.trim()}
               >
-                {queued ? "Added to approval queue ✓" : "Send to approval queue"}
+                {queued ? t("Added to approval queue ✓") : t("Send to approval queue")}
               </button>
               {queued ? (
                 <span className="text-xs text-[var(--ops-muted)]">
-                  It will only reach the customer once approved on the Control page.
+                  {t("It will only reach the customer once approved on the Control page.")}
                 </span>
               ) : null}
             </div>
@@ -148,8 +150,7 @@ export function IntakeAssistant({
         </div>
       ) : (
         <p className="mt-2 text-sm text-[var(--ops-muted)]">
-          Pull the stated facts out of the customer's message and draft a question for anything
-          missing. The assistant never guesses weight or volume.
+          {t("Pull the stated facts out of the customer's message and draft a question for anything missing. The assistant never guesses weight or volume.")}
         </p>
       )}
     </div>
@@ -157,11 +158,12 @@ export function IntakeAssistant({
 }
 
 function Row({ label, value }: { label: string; value: string | null }) {
+  const { t } = useT();
   return (
     <div className="flex justify-between gap-3">
       <dt className="text-[var(--ops-muted)]">{label}</dt>
       <dd className={value ? "text-[var(--ops-text)]" : "text-[var(--ops-faint)]"}>
-        {value || "not stated"}
+        {value || t("not stated")}
       </dd>
     </div>
   );

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createJobAction, logActivityAction } from "@/lib/admin/crm-actions";
 import { reviewSmsText } from "@/lib/admin/crm";
 import type { ClientRow } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Client profile actions.
@@ -22,6 +23,7 @@ export function ClientActions({
   reviewUrl: string | null;
 }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function ClientActions({
     startTransition(async () => {
       const result = await work();
       if (!result.ok) {
-        setError(result.error ?? "That did not save.");
+        setError(result.error ?? t("That did not save."));
         return;
       }
       flash(success);
@@ -50,25 +52,25 @@ export function ClientActions({
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      setError("Could not reach the clipboard on this device.");
+      setError(t("Could not reach the clipboard on this device."));
       return;
     }
     run(
       () => logActivityAction("client", client.id, "sms", `Review request copied: ${text}`),
-      "Copied — paste it into Messages.",
+      t("Copied — paste it into Messages."),
     );
   }
 
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
-        <p className="ops-label">Actions</p>
+        <p className="ops-label">{t("Actions")}</p>
         <a
           href={`/admin/quotes/new?name=${encodeURIComponent(client.name)}&phone=${encodeURIComponent(client.phone)}&area=${encodeURIComponent(client.area)}&clientId=${client.id}`}
           className="ops-btn"
           data-variant="primary"
         >
-          New quote for this client
+          {t("New quote for this client")}
         </a>
         <button
           type="button"
@@ -87,11 +89,11 @@ export function ClientActions({
                   scheduledStart: "",
                   scheduledEnd: "",
                 }),
-              "Job created — drag it onto the calendar.",
+              t("Job created — drag it onto the calendar."),
             )
           }
         >
-          Schedule job
+          {t("Schedule job")}
         </button>
         <button
           type="button"
@@ -100,23 +102,23 @@ export function ClientActions({
           disabled={pending}
           onClick={() => void copyReviewSms()}
         >
-          Send review SMS
+          {t("Send review SMS")}
         </button>
         <p className="text-xs text-[var(--ops-faint)]">
           {reviewUrl
-            ? "Copies the message with your Google review link. Sending is v3."
-            : "No Google review link configured, so the message goes out without one. Sending is v3."}
+            ? t("Copies the message with your Google review link. Sending is v3.")
+            : t("No Google review link configured, so the message goes out without one. Sending is v3.")}
         </p>
       </div>
 
       <div className="grid gap-2">
-        <p className="ops-label">Add a note</p>
+        <p className="ops-label">{t("Add a note")}</p>
         <textarea
           className="ops-textarea"
           rows={3}
           value={note}
           onChange={(event) => setNote(event.target.value)}
-          placeholder="Gate code, dog, best time to call…"
+          placeholder={t("Gate code, dog, best time to call…")}
         />
         <button
           type="button"
@@ -128,10 +130,10 @@ export function ClientActions({
               const result = await logActivityAction("client", client.id, "note", note);
               if (result.ok) setNote("");
               return result;
-            }, "Note added.")
+            }, t("Note added."))
           }
         >
-          {pending ? "Saving…" : "Add note"}
+          {pending ? t("Saving…") : t("Add note")}
         </button>
       </div>
 

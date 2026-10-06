@@ -15,6 +15,7 @@ import {
   quotePrefillSearchParams,
 } from "@/lib/admin/crm";
 import { LEAD_OWNERS, type LeadRow, type LeadStatus } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * The lead detail action rail.
@@ -26,6 +27,7 @@ import { LEAD_OWNERS, type LeadRow, type LeadStatus } from "@/lib/db/schema";
  */
 export function LeadActions({ lead }: { lead: LeadRow }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [note, setNote] = useState("");
   const [kind, setKind] = useState<"note" | "call" | "sms">("note");
@@ -39,7 +41,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
     startTransition(async () => {
       const result = await work();
       if (!result.ok) {
-        setError(result.error ?? "That did not save.");
+        setError(result.error ?? t("That did not save."));
         return;
       }
       setToast(success);
@@ -53,7 +55,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
       setAskLost(true);
       return;
     }
-    run(() => updateLeadStatusAction(lead.id, status), `Moved to ${LEAD_STATUS_LABELS[status]}.`);
+    run(() => updateLeadStatusAction(lead.id, status), `${t("Moved to")} ${t(LEAD_STATUS_LABELS[status])}.`);
   }
 
   const quoteHref = `/admin/quotes/new?${quotePrefillSearchParams(leadToQuotePrefill(lead))}`;
@@ -61,7 +63,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
   return (
     <div className="grid gap-4">
       <div>
-        <p className="ops-label">Stage</p>
+        <p className="ops-label">{t("Stage")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {allowedTransitions(lead.status).map((status) => (
             <button
@@ -72,19 +74,19 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
               disabled={pending}
               onClick={() => setStatus(status)}
             >
-              {LEAD_STATUS_LABELS[status]}
+              {t(LEAD_STATUS_LABELS[status])}
             </button>
           ))}
         </div>
         {askLost ? (
           <div className="mt-2 rounded-lg border border-[var(--ops-border)] p-2.5">
             <label className="block">
-              <span className="ops-label">Why lost?</span>
+              <span className="ops-label">{t("Why lost?")}</span>
               <input
                 className="ops-input mt-1.5"
                 value={lostReason}
                 onChange={(event) => setLostReason(event.target.value)}
-                placeholder="Price, timing, went elsewhere…"
+                placeholder={t("Price, timing, went elsewhere…")}
               />
             </label>
             <div className="mt-2 flex gap-2">
@@ -96,12 +98,12 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
                 onClick={() => {
                   run(
                     () => updateLeadStatusAction(lead.id, "lost", lostReason),
-                    "Marked lost.",
+                    t("Marked lost."),
                   );
                   setAskLost(false);
                 }}
               >
-                Mark lost
+                {t("Mark lost")}
               </button>
               <button
                 type="button"
@@ -109,7 +111,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
                 data-variant="ghost"
                 onClick={() => setAskLost(false)}
               >
-                Cancel
+                {t("Cancel")}
               </button>
             </div>
           </div>
@@ -117,9 +119,9 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
       </div>
 
       <div className="grid gap-2">
-        <p className="ops-label">Convert</p>
+        <p className="ops-label">{t("Convert")}</p>
         <a href={quoteHref} className="ops-btn" data-variant="primary">
-          Convert to quote
+          {t("Convert to quote")}
         </a>
         <button
           type="button"
@@ -127,17 +129,17 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
           data-variant="ghost"
           disabled={pending || lead.clientId !== null}
           onClick={() =>
-            run(() => convertLeadToClientAction(lead.id), "Client created from this lead.")
+            run(() => convertLeadToClientAction(lead.id), t("Client created from this lead."))
           }
         >
-          {lead.clientId ? "Already a client" : "Convert to client"}
+          {lead.clientId ? t("Already a client") : t("Convert to client")}
         </button>
       </div>
 
       <div className="grid gap-2">
-        <p className="ops-label">Assignment</p>
+        <p className="ops-label">{t("Assignment")}</p>
         <label className="block">
-          <span className="sr-only">Owner</span>
+          <span className="sr-only">{t("Owner")}</span>
           <select
             className="ops-select"
             value={lead.owner}
@@ -145,7 +147,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
             onChange={(event) =>
               run(
                 () => updateLeadFieldsAction(lead.id, { owner: event.target.value }),
-                "Owner updated.",
+                t("Owner updated."),
               )
             }
           >
@@ -157,7 +159,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
           </select>
         </label>
         <label className="block">
-          <span className="ops-label">Next follow-up</span>
+          <span className="ops-label">{t("Next follow-up")}</span>
           <input
             type="date"
             className="ops-input mt-1.5"
@@ -168,7 +170,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
             onChange={(event) =>
               run(
                 () => updateLeadFieldsAction(lead.id, { nextFollowUpAt: event.target.value }),
-                "Follow-up set.",
+                t("Follow-up set."),
               )
             }
           />
@@ -176,7 +178,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
       </div>
 
       <div className="grid gap-2">
-        <p className="ops-label">Log</p>
+        <p className="ops-label">{t("Log")}</p>
         <div className="flex gap-2">
           {(["note", "call", "sms"] as const).map((option) => (
             <button
@@ -186,7 +188,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
               data-variant={kind === option ? "navy" : "ghost"}
               onClick={() => setKind(option)}
             >
-              {option === "note" ? "Note" : option === "call" ? "Call" : "SMS"}
+              {option === "note" ? t("Note") : option === "call" ? t("Call") : t("SMS")}
             </button>
           ))}
         </div>
@@ -196,10 +198,10 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
           value={note}
           placeholder={
             kind === "call"
-              ? "What was said on the call…"
+              ? t("What was said on the call…")
               : kind === "sms"
-                ? "What you texted them…"
-                : "Anything worth remembering…"
+                ? t("What you texted them…")
+                : t("Anything worth remembering…")
           }
           onChange={(event) => setNote(event.target.value)}
         />
@@ -213,14 +215,14 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
               const result = await logActivityAction("lead", lead.id, kind, note);
               if (result.ok) setNote("");
               return result;
-            }, "Logged.")
+            }, t("Logged."))
           }
         >
-          {pending ? "Saving…" : "Add to timeline"}
+          {pending ? t("Saving…") : t("Add to timeline")}
         </button>
         {kind !== "note" ? (
           <p className="text-xs text-[var(--ops-faint)]">
-            Records that you did it — actually sending is v3.
+            {t("Records that you did it — actually sending is v3.")}
           </p>
         ) : null}
       </div>
