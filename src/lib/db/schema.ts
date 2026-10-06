@@ -272,3 +272,22 @@ export type LeadRow = typeof leads.$inferSelect;
 export type JobRow = typeof jobs.$inferSelect;
 export type ActivityRow = typeof activityLog.$inferSelect;
 export type AiActionRow = typeof aiActions.$inferSelect;
+
+// --- Team chat (v4) --------------------------------------------------------
+
+/**
+ * Internal team chat — operator-to-operator messages inside the cockpit.
+ *
+ * Never customer-facing. Append-only in practice: the panel only ever inserts
+ * and reads. Kept deliberately small (author + body + time); threads, reads
+ * and reactions can come later without a breaking change.
+ */
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  /** Operator name from the session — who wrote it. */
+  author: text("author").notNull(),
+  body: text("body").notNull(),
+});
+
+export type MessageRow = typeof messages.$inferSelect;

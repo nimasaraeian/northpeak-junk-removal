@@ -212,6 +212,13 @@ export const FA: Record<string, string> = {
   "Reports": "گزارش‌ها",
   "Team": "تیم",
   "Team Chat": "گفتگوی تیمی",
+  "Team chat isn't set up yet — run the 0003 migration in Neon, then reload.":
+    "گفتگوی تیمی هنوز راه‌اندازی نشده — مایگریشن 0003 را در Neon اجرا کن، بعد صفحه را تازه کن.",
+  "No messages yet. Say hello to the team.": "هنوز پیامی نیست. به تیم سلام کن.",
+  "Message the team…": "به تیم پیام بده…",
+  "Send": "ارسال",
+  "Sending…": "در حال ارسال…",
+  "Could not send.": "ارسال نشد.",
   "This section is being built.": "این بخش در حال ساخت است.",
   "Open the full page": "باز کردن صفحهٔ کامل",
   "The approval queue table isn’t ready yet.": "جدول صف تأیید هنوز آماده نیست.",
