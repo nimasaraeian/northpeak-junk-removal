@@ -5,15 +5,13 @@ import { featuredServices, getService, services } from "@/content/services";
 import { submitEstimate, type EstimateActionState } from "@/lib/actions/estimate";
 import { trackGenerateLead } from "@/lib/analytics/track";
 import { Button } from "@/components/ui/Button";
-import { TruckVolumePad } from "@/components/estimate/TruckVolumePad";
 import { PhotoDropzone, type LocalPhoto } from "@/components/estimate/PhotoDropzone";
 import { PostalCodeChecker } from "@/components/estimate/PostalCodeChecker";
-import { summarizeVolume } from "@/lib/volume";
 import { cx } from "@/lib/utils";
 
 const initialState: EstimateActionState = { ok: false, message: "" };
 
-const steps = ["Load", "Area", "Service", "Contact"];
+const steps = ["Photos", "Area", "Service", "Contact"];
 
 export function EstimateWizard({
   initialPostalCode = "",
@@ -25,15 +23,11 @@ export function EstimateWizard({
   const [step, setStep] = useState(0);
   const [postalCode, setPostalCode] = useState(initialPostalCode);
   const [serviceSlug, setServiceSlug] = useState(initialService);
-  const [volumeLevelId, setVolumeLevelId] = useState("empty");
   const [accessNotes, setAccessNotes] = useState("");
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
   const [state, action, pending] = useActionState(submitEstimate, initialState);
   const leadTracked = useRef(false);
   const selectedService = getService(serviceSlug);
-  const load = summarizeVolume(volumeLevelId);
-  const volume =
-    load.cubicFeet > 0 ? load.volumeLabel : "Not filled yet — confirm from photos";
 
   // The Server Action has accepted the request — that, and nothing earlier, is
   // the lead. The ref keeps it to a single event: this effect would otherwise
@@ -98,13 +92,11 @@ export function EstimateWizard({
             else setStep(3);
           }}
         >
-          <h2 className="display text-2xl text-navy sm:text-3xl">Fill the truck</h2>
+          <h2 className="display text-2xl text-navy sm:text-3xl">Tell us about the job</h2>
           <p className="mt-2 text-sm text-stone sm:mt-3 sm:text-base">
-            Drag to rotate. Tap a fill level below — everything stays on one screen.
+            Add a couple of photos and any access notes — that&apos;s all we need to send you a
+            clear price range.
           </p>
-          <div className="mt-6">
-            <TruckVolumePad levelId={volumeLevelId} onChange={setVolumeLevelId} />
-          </div>
           <label className="mt-5 block text-sm font-semibold text-navy">
             Access notes
             <textarea
@@ -200,8 +192,8 @@ export function EstimateWizard({
           <h2 className="display text-3xl text-navy">Where should we send the range?</h2>
           <input type="hidden" name="postalCode" value={postalCode} />
           <input type="hidden" name="serviceSlug" value={serviceSlug} />
-          <input type="hidden" name="volume" value={volume} />
-          <input type="hidden" name="loadManifest" value={JSON.stringify(load.manifest)} />
+          <input type="hidden" name="volume" value="See photos" />
+          <input type="hidden" name="loadManifest" value="[]" />
           <input type="hidden" name="accessNotes" value={accessNotes} />
           <Field label="Name" name="name" autoComplete="name" required />
           <Field label="Email" name="email" type="email" autoComplete="email" required />
@@ -219,8 +211,7 @@ export function EstimateWizard({
             </select>
           </label>
           <p className="rounded-2xl bg-cream px-4 py-3 text-sm text-stone">
-            {volume}. {load.itemLine}{" "}
-            {photos.length === 1 ? "1 photo." : `${photos.length} photos.`}{" "}
+            {photos.length === 1 ? "1 photo" : `${photos.length} photos`} attached.{" "}
             {accessNotes || "No extra access notes yet."}
           </p>
           <label className="text-sm font-semibold text-navy">
