@@ -253,7 +253,11 @@ test("the root 404 carries no analytics, so /admin responses carry no GA id", ()
 });
 
 /** Every server-action module in the panel, so a new one cannot slip the net. */
-const ACTION_FILES = ["src/lib/admin/actions.ts", "src/lib/admin/crm-actions.ts"];
+const ACTION_FILES = [
+  "src/lib/admin/actions.ts",
+  "src/lib/admin/crm-actions.ts",
+  "src/lib/admin/control-actions.ts",
+];
 
 function exportedActions(file: string): { name: string; source: string }[] {
   const contents = readSource(file);

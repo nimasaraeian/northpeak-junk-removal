@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LeadActions } from "@/components/admin/LeadActions";
+import { IntakeAssistant } from "@/components/admin/IntakeAssistant";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { ageLabel } from "@/lib/admin/crm";
 import { getLead, listActivity } from "@/lib/admin/crm-data";
@@ -55,6 +56,10 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
                 {lead.message}
               </p>
             </section>
+          ) : null}
+
+          {lead.message ? (
+            <IntakeAssistant leadId={lead.id} message={lead.message} leadName={lead.name} />
           ) : null}
 
           {lead.lostReason ? (

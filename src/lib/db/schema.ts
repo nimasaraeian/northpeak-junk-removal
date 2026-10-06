@@ -204,6 +204,66 @@ export const activityLog = pgTable("activity_log", {
   body: text("body").notNull().default(""),
 });
 
+// --- Control Center (v3) ---------------------------------------------------
+
+/**
+ * The owner-approval queue.
+ *
+ * Every AI-drafted action the panel wants to take — send an estimate, message
+ * a customer, publish a post, start an ads campaign — lands here as a row the
+ * owner approves, edits, rejects or defers. Nothing leaves the panel on a
+ * draft alone. This is the "Owner Control" screen from the product concept,
+ * and the heart of the human-in-the-loop model: the software proposes, a
+ * person decides.
+ */
+export const AI_ACTION_KINDS = [
+  "send_estimate",
+  "send_message",
+  "publish_instagram",
+  "start_google_ads",
+  "intake_summary",
+  "marketing_draft",
+  "other",
+] as const;
+export type AiActionKind = (typeof AI_ACTION_KINDS)[number];
+
+export const AI_ACTION_STATUSES = [
+  "pending",
+  "approved",
+  "rejected",
+  "deferred",
+  "blocked",
+  "done",
+] as const;
+export type AiActionStatus = (typeof AI_ACTION_STATUSES)[number];
+
+/** Optional link to the record an action is about. */
+export const AI_ACTION_ENTITIES = ["lead", "client", "job", "quote", "none"] as const;
+export type AiActionEntity = (typeof AI_ACTION_ENTITIES)[number];
+
+export const aiActions = pgTable("ai_actions", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  kind: text("kind").$type<AiActionKind>().notNull(),
+  /** Short human label, e.g. "Send estimate #12 to the customer". */
+  title: text("title").notNull(),
+  /** One line on what approving it will do. */
+  summary: text("summary").notNull().default(""),
+  /** The draft itself — message text, estimate id, post body, etc. */
+  payload: jsonb("payload").$type<Record<string, unknown>>().notNull().default({}),
+  status: text("status").$type<AiActionStatus>().notNull().default("pending"),
+  /** Set when status is "blocked": why it cannot run yet (e.g. "budget not set"). */
+  blockedReason: text("blocked_reason"),
+  entityType: text("entity_type").$type<AiActionEntity>().notNull().default("none"),
+  entityId: integer("entity_id"),
+  /** Which AI role or operator drafted it. */
+  createdBy: text("created_by").notNull().default("assistant"),
+  decidedBy: text("decided_by"),
+  decidedAt: timestamp("decided_at", { withTimezone: true }),
+  /** Owner's note when approving/editing/rejecting/deferring. */
+  note: text("note").notNull().default(""),
+});
+
 export type SettingsRow = typeof settings.$inferSelect;
 export type CatalogItemRow = typeof itemsCatalog.$inferSelect;
 export type QuoteRow = typeof quotes.$inferSelect;
@@ -211,3 +271,4 @@ export type ClientRow = typeof clients.$inferSelect;
 export type LeadRow = typeof leads.$inferSelect;
 export type JobRow = typeof jobs.$inferSelect;
 export type ActivityRow = typeof activityLog.$inferSelect;
+export type AiActionRow = typeof aiActions.$inferSelect;

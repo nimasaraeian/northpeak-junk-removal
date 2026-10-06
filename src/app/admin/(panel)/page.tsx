@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { listQuotes, loadDashboardStats } from "@/lib/admin/data";
 import { loadCrmDashboardStats } from "@/lib/admin/crm-data";
+import { countPendingActions } from "@/lib/admin/control-data";
 import { LEAD_STATUS_LABELS, PIPELINE_ORDER } from "@/lib/admin/crm";
 import { formatCents, formatRange } from "@/lib/quote-engine";
 
@@ -34,10 +35,11 @@ const dateFormat = new Intl.DateTimeFormat("en-CA", {
 });
 
 export default async function AdminDashboardPage() {
-  const [stats, crm, latest] = await Promise.all([
+  const [stats, crm, latest, pendingActions] = await Promise.all([
     loadDashboardStats(),
     loadCrmDashboardStats(),
     listQuotes({}, 10),
+    countPendingActions(),
   ]);
 
   // The funnel only draws the stages still in play; won and lost have their
@@ -58,6 +60,23 @@ export default async function AdminDashboardPage() {
           New quote
         </Link>
       </div>
+
+      {pendingActions > 0 ? (
+        <Link
+          href="/admin/control"
+          className="ops-card mt-5 flex items-center justify-between gap-3 border-[var(--ops-gold)] p-4 transition-colors hover:bg-[var(--ops-surface-2)]"
+        >
+          <div>
+            <p className="ops-label">Control Center</p>
+            <p className="mt-0.5 text-sm font-semibold text-[var(--ops-navy)]">
+              {pendingActions} {pendingActions === 1 ? "action is" : "actions are"} waiting for your approval
+            </p>
+          </div>
+          <span className="ops-pill" data-status="draft">
+            Review
+          </span>
+        </Link>
+      ) : null}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Quotes this month" value={String(stats.quotesThisMonth)} />

@@ -94,3 +94,25 @@ export function CalendarIcon() {
     </svg>
   );
 }
+
+export function ControlIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <path d="M12 3a9 9 0 1 0 9 9" />
+      <path d="M12 7v5l3 2" />
+      <path d="M20 4l-2 2" />
+    </svg>
+  );
+}
+
+export function ConnectionsIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <circle cx="6" cy="6" r="2.4" />
+      <circle cx="18" cy="18" r="2.4" />
+      <circle cx="18" cy="6" r="2.4" />
+      <path d="M8.2 7.2 15.8 16.8" />
+      <path d="M8.4 6h7.2" />
+    </svg>
+  );
+}
