@@ -3,6 +3,7 @@ import { requireOperator } from "@/lib/admin/auth";
 import { isPhotoAssistAvailable } from "@/lib/admin/config";
 import { loadCatalog, loadPricingSettings } from "@/lib/admin/data";
 import { listLinkTargets } from "@/lib/admin/crm-data";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "New quote" };
 export const dynamic = "force-dynamic";
@@ -18,6 +19,7 @@ function numeric(value: string | undefined): number | null {
 
 export default async function NewQuotePage({ searchParams }: PageProps<"/admin/quotes/new">) {
   const params = await searchParams;
+  const t = await getT();
 
   const [operator, catalog, settings, linkTargets] = await Promise.all([
     requireOperator(),
@@ -38,11 +40,11 @@ export default async function NewQuotePage({ searchParams }: PageProps<"/admin/q
   return (
     <>
       <div className="mx-auto mb-4 max-w-7xl">
-        <p className="ops-label">New quote</p>
-        <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">Build an estimate</h1>
+        <p className="ops-label">{t("New quote")}</p>
+        <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">{t("Build an estimate")}</h1>
         {prefill.leadId ? (
           <p className="mt-1 text-sm text-[var(--ops-muted)]">
-            Prefilled from lead #{prefill.leadId} — saving moves that card to Quoted.
+            {t("Prefilled from lead")} #{prefill.leadId} — {t("saving moves that card to Quoted.")}
           </p>
         ) : null}
       </div>

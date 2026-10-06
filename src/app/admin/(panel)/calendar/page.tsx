@@ -9,6 +9,7 @@ import {
   weekDays,
 } from "@/lib/admin/crm";
 import { clientNamesFor, getJob, listJobsBetween, listUnscheduledJobs } from "@/lib/admin/crm-data";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Calendar" };
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function CalendarPage({ searchParams }: PageProps<"/admin/calendar">) {
   const params = await searchParams;
+  const t = await getT();
   const now = new Date();
 
   const view = first(params.view) === "day" ? "day" : "week";
@@ -52,9 +54,9 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/c
     <div className="mx-auto max-w-[100rem]">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="ops-label">Calendar</p>
+          <p className="ops-label">{t("Calendar")}</p>
           <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">
-            {scheduled.length} scheduled · {unscheduled.length} waiting
+            {scheduled.length} {t("scheduled")} · {unscheduled.length} {t("waiting")}
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -66,7 +68,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/c
             className="ops-btn"
             data-variant="ghost"
           >
-            Today
+            {t("Today")}
           </Link>
           <Link href={step(next)} className="ops-btn" data-variant="ghost" aria-label="Next">
             →
@@ -76,14 +78,14 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/c
             className="ops-btn"
             data-variant={view === "week" ? "navy" : "ghost"}
           >
-            Week
+            {t("Week")}
           </Link>
           <Link
             href={{ pathname: "/admin/calendar", query: { view: "day", date: toDateKey(anchor) } }}
             className="ops-btn"
             data-variant={view === "day" ? "navy" : "ghost"}
           >
-            Day
+            {t("Day")}
           </Link>
         </div>
       </div>

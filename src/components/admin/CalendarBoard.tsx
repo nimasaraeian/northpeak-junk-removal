@@ -16,6 +16,7 @@ import {
 } from "@/lib/admin/crm";
 import { rescheduleJobAction } from "@/lib/admin/crm-actions";
 import type { JobRow } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Week and day calendar.
@@ -58,6 +59,7 @@ export function CalendarBoard({
   todayKey,
 }: CalendarBoardProps) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [dragging, setDragging] = useState<CalendarJob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +77,7 @@ export function CalendarBoard({
         scheduledStart.toISOString(),
         scheduledEnd.toISOString(),
       );
-      if (!result.ok) setError(result.error ?? "That did not reschedule.");
+      if (!result.ok) setError(result.error ?? t("That did not reschedule."));
       router.refresh();
     });
   }
@@ -106,11 +108,11 @@ export function CalendarBoard({
               <section key={toDateKey(day)} className="mb-3">
                 <h2 className="ops-label mb-1.5">
                   {dayLabel.format(day)}
-                  {toDateKey(day) === todayKey ? " · today" : ""}
+                  {toDateKey(day) === todayKey ? ` · ${t("today")}` : ""}
                 </h2>
                 {dayJobs.length === 0 ? (
                   <p className="ops-card px-3 py-5 text-center text-sm text-[var(--ops-muted)]">
-                    Nothing booked.
+                    {t("Nothing booked.")}
                   </p>
                 ) : (
                   <ul className="grid gap-2">
@@ -236,14 +238,14 @@ export function CalendarBoard({
 
       {/* Side rail: booked work with no date yet. */}
       <aside className="ops-card h-fit p-3">
-        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Unscheduled</h2>
+        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Unscheduled")}</h2>
         <p className="mt-1 text-xs leading-5 text-[var(--ops-muted)]">
-          Drag onto a slot, or use the day picker on a phone.
+          {t("Drag onto a slot, or use the day picker on a phone.")}
         </p>
 
         {unscheduled.length === 0 ? (
           <p className="py-6 text-center text-xs text-[var(--ops-faint)]">
-            Nothing waiting. Won quotes land here via &ldquo;Schedule this job&rdquo;.
+            {t("Nothing waiting. Won quotes land here via “Schedule this job”.")}
           </p>
         ) : (
           <ul className="mt-3 grid gap-2">
@@ -259,12 +261,12 @@ export function CalendarBoard({
                   {job.clientName ?? `Job #${job.id}`}
                 </span>
                 <span className="block text-xs text-[var(--ops-muted)]">
-                  {job.address || "No address"}
+                  {job.address || t("No address")}
                 </span>
 
                 {/* Touch path: pick a day rather than dragging. */}
                 <label className="mt-1.5 block">
-                  <span className="sr-only">Schedule {job.clientName ?? `job ${job.id}`}</span>
+                  <span className="sr-only">{t("Schedule")}</span>
                   <input
                     type="date"
                     className="ops-input text-xs"
@@ -276,7 +278,7 @@ export function CalendarBoard({
                   />
                 </label>
                 <p className="mt-1 text-[0.68rem] text-[var(--ops-faint)]">
-                  Lands at {formatHour(CALENDAR_DAY_START_HOUR + 1)}, {DEFAULT_JOB_HOURS}h
+                  {t("Lands at")} {formatHour(CALENDAR_DAY_START_HOUR + 1)}, {DEFAULT_JOB_HOURS}h
                 </p>
               </li>
             ))}

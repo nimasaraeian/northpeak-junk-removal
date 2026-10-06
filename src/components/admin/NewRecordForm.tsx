@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClientAction, createLeadAction } from "@/lib/admin/crm-actions";
 import { LEAD_SOURCE_LABELS } from "@/lib/admin/crm";
 import { LEAD_OWNERS, LEAD_SOURCES } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Add-a-lead and add-a-client, which are the same six fields either way.
@@ -14,6 +15,7 @@ import { LEAD_OWNERS, LEAD_SOURCES } from "@/lib/db/schema";
  */
 export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +47,7 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
             });
 
       if (!result.ok) {
-        setError(result.error ?? "That did not save.");
+        setError(result.error ?? t("That did not save."));
         return;
       }
 
@@ -65,29 +67,29 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
   return (
     <form action={submit} className="ops-card grid max-w-2xl gap-3 p-4">
       <label className="block">
-        <span className="ops-label">Name</span>
+        <span className="ops-label">{t("Name")}</span>
         <input name="name" required className="ops-input mt-1.5" autoFocus />
       </label>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="ops-label">Phone</span>
+          <span className="ops-label">{t("Phone")}</span>
           <input name="phone" type="tel" inputMode="tel" className="ops-input ops-num mt-1.5" />
         </label>
         <label className="block">
-          <span className="ops-label">Email</span>
+          <span className="ops-label">{t("Email")}</span>
           <input name="email" type="email" className="ops-input mt-1.5" />
         </label>
         <label className="block">
-          <span className="ops-label">Area</span>
+          <span className="ops-label">{t("Area")}</span>
           <input name="area" className="ops-input mt-1.5" placeholder="North Vancouver" />
         </label>
         <label className="block">
-          <span className="ops-label">Source</span>
+          <span className="ops-label">{t("Source")}</span>
           <select name="source" defaultValue="other" className="ops-select mt-1.5">
             {LEAD_SOURCES.map((source) => (
               <option key={source} value={source}>
-                {LEAD_SOURCE_LABELS[source]}
+                {t(LEAD_SOURCE_LABELS[source])}
               </option>
             ))}
           </select>
@@ -95,13 +97,13 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
 
         {kind === "client" ? (
           <label className="block sm:col-span-2">
-            <span className="ops-label">Address</span>
+            <span className="ops-label">{t("Address")}</span>
             <input name="address" className="ops-input mt-1.5" />
           </label>
         ) : (
           <>
             <label className="block">
-              <span className="ops-label">Owner</span>
+              <span className="ops-label">{t("Owner")}</span>
               <select name="owner" defaultValue="unassigned" className="ops-select mt-1.5">
                 {LEAD_OWNERS.map((owner) => (
                   <option key={owner} value={owner}>
@@ -111,7 +113,7 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
               </select>
             </label>
             <label className="block">
-              <span className="ops-label">Next follow-up</span>
+              <span className="ops-label">{t("Next follow-up")}</span>
               <input name="nextFollowUpAt" type="date" className="ops-input mt-1.5" />
             </label>
           </>
@@ -119,7 +121,7 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
       </div>
 
       <label className="block">
-        <span className="ops-label">{kind === "lead" ? "What they want" : "Notes"}</span>
+        <span className="ops-label">{kind === "lead" ? t("What they want") : t("Notes")}</span>
         <textarea name="message" rows={3} className="ops-textarea mt-1.5" />
       </label>
 
@@ -131,7 +133,7 @@ export function NewRecordForm({ kind }: { kind: "lead" | "client" }) {
 
       <div>
         <button type="submit" className="ops-btn" data-variant="primary" disabled={pending}>
-          {pending ? "Saving…" : kind === "lead" ? "Add lead" : "Add client"}
+          {pending ? t("Saving…") : kind === "lead" ? t("Add lead") : t("Add client")}
         </button>
       </div>
     </form>
