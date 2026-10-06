@@ -10,6 +10,7 @@ import { Drawer } from "@/components/admin/cockpit/Drawer";
 import { LeadDrawerBody } from "@/components/admin/cockpit/LeadDrawer";
 import { QuickAddLeadBody } from "@/components/admin/cockpit/QuickAddLead";
 import { KanbanBoard } from "@/components/admin/cockpit/KanbanBoard";
+import { ChatPanel } from "@/components/admin/cockpit/ChatPanel";
 import { formatCents, formatRange } from "@/lib/quote-engine";
 import { PIPELINE_ORDER, LEAD_SOURCE_LABELS, isFollowUpOverdue } from "@/lib/admin/crm";
 import type { CockpitData } from "@/lib/admin/cockpit-data";
@@ -180,7 +181,7 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
           {tab === "reports" && <ReportsTab data={data} t={t} />}
           {tab === "team" && <TeamTab data={data} t={t} />}
           {tab === "settings" && <SettingsTab data={data} t={t} />}
-          {tab === "chat" && <ChatStub t={t} />}
+          {tab === "chat" && <ChatPanel t={t} operator={operator} />}
         </main>
       </div>
 
@@ -640,12 +641,3 @@ function SettingsTab({ data, t }: { data: CockpitData; t: T }) {
   );
 }
 
-// --------------------------------------------------------------------- Chat
-
-function ChatStub({ t }: { t: T }) {
-  return (
-    <div className="card">
-      <div className="empty">{t("Team chat is coming next — it needs its own store, which is the following step.")}</div>
-    </div>
-  );
-}
