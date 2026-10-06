@@ -2,13 +2,20 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/provider";
 import { logoutAction } from "@/lib/admin/actions";
 import { ControlQueue } from "@/components/admin/ControlQueue";
+import { Drawer } from "@/components/admin/cockpit/Drawer";
+import { LeadDrawerBody } from "@/components/admin/cockpit/LeadDrawer";
+import { QuickAddLeadBody } from "@/components/admin/cockpit/QuickAddLead";
+import { KanbanBoard } from "@/components/admin/cockpit/KanbanBoard";
 import { formatCents, formatRange } from "@/lib/quote-engine";
 import { PIPELINE_ORDER, LEAD_SOURCE_LABELS, isFollowUpOverdue } from "@/lib/admin/crm";
 import type { CockpitData } from "@/lib/admin/cockpit-data";
 import type { JobRow, LeadRow, LeadStatus } from "@/lib/db/schema";
+
+type DrawerState = { kind: "lead"; id: number } | { kind: "add" } | null;
 
 type TabId =
   | "dashboard"
@@ -78,11 +85,17 @@ type T = (s: string) => string;
 
 export function Cockpit({ operator, data }: { operator: string; data: CockpitData }) {
   const { t, lang, setLang } = useT();
+  const router = useRouter();
   const [tab, setTab] = useState<TabId>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [drawer, setDrawer] = useState<DrawerState>(null);
   const pending = data.control.queue.length;
   const searchable = tab === "customers" || tab === "quotes" || tab === "followups" || tab === "jobs";
+
+  const openLead = (id: number) => setDrawer({ kind: "lead", id });
+  const refresh = () => router.refresh();
+  const drawerLead = drawer?.kind === "lead" ? data.leads.find((l) => l.id === drawer.id) ?? null : null;
 
   return (
     <div className="cockpit">
@@ -149,9 +162,9 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
                   فا
                 </button>
               </div>
-              <Link href="/admin/leads/new" className="btn">
+              <button className="btn" onClick={() => setDrawer({ kind: "add" })}>
                 {t("+ Lead")}
-              </Link>
+              </button>
               <Link href="/admin/quotes/new" className="btn p">
                 {t("New quote")}
               </Link>
@@ -160,8 +173,8 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
 
           {tab === "dashboard" && <DashboardTab data={data} t={t} go={setTab} />}
           {tab === "control" && <ControlTab data={data} t={t} />}
-          {tab === "customers" && <CustomersTab data={data} t={t} query={query} />}
-          {tab === "followups" && <FollowupsTab data={data} t={t} query={query} />}
+          {tab === "customers" && <CustomersTab data={data} t={t} query={query} openLead={openLead} refresh={refresh} />}
+          {tab === "followups" && <FollowupsTab data={data} t={t} query={query} openLead={openLead} />}
           {tab === "quotes" && <QuotesTab data={data} t={t} query={query} />}
           {tab === "jobs" && <JobsTab data={data} t={t} query={query} />}
           {tab === "reports" && <ReportsTab data={data} t={t} />}
@@ -170,6 +183,18 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
           {tab === "chat" && <ChatStub t={t} />}
         </main>
       </div>
+
+      <Drawer
+        open={drawer !== null}
+        title={drawer?.kind === "add" ? t("New lead") : drawerLead ? drawerLead.name : t("Lead")}
+        onClose={() => setDrawer(null)}
+      >
+        {drawer?.kind === "add" ? (
+          <QuickAddLeadBody t={t} onCreated={() => { refresh(); setDrawer(null); }} />
+        ) : drawerLead ? (
+          <LeadDrawerBody lead={drawerLead} t={t} onChanged={refresh} />
+        ) : null}
+      </Drawer>
     </div>
   );
 }
@@ -305,17 +330,45 @@ function matchText(q: string, ...fields: (string | null | undefined)[]): boolean
   return fields.some((f) => (f ?? "").toLowerCase().includes(n));
 }
 
-function CustomersTab({ data, t, query }: { data: CockpitData; t: T; query: string }) {
+function CustomersTab({
+  data,
+  t,
+  query,
+  openLead,
+  refresh,
+}: {
+  data: CockpitData;
+  t: T;
+  query: string;
+  openLead: (id: number) => void;
+  refresh: () => void;
+}) {
   const [sub, setSub] = useState<"leads" | "clients">("leads");
+  const [view, setView] = useState<"table" | "board">("table");
+  const [err, setErr] = useState<string | null>(null);
   const leads = data.leads.filter((l) => matchText(query, l.name, l.phone, l.area, l.email));
   const clients = data.clients.filter((c) => matchText(query, c.name, c.phone, c.area, c.email));
 
   return (
     <div className="grid">
-      <div className="tabs">
-        <button className={sub === "leads" ? "on" : ""} onClick={() => setSub("leads")}>{t("Leads")} ({leads.length})</button>
-        <button className={sub === "clients" ? "on" : ""} onClick={() => setSub("clients")}>{t("Clients")} ({clients.length})</button>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+        <div className="tabs" style={{ margin: 0 }}>
+          <button className={sub === "leads" ? "on" : ""} onClick={() => setSub("leads")}>{t("Leads")} ({leads.length})</button>
+          <button className={sub === "clients" ? "on" : ""} onClick={() => setSub("clients")}>{t("Clients")} ({clients.length})</button>
+        </div>
+        {sub === "leads" ? (
+          <div className="seg" style={{ marginInlineStart: "auto" }}>
+            <button className={view === "table" ? "on" : ""} onClick={() => setView("table")}>{t("Table")}</button>
+            <button className={view === "board" ? "on" : ""} onClick={() => setView("board")}>{t("Board")}</button>
+          </div>
+        ) : null}
       </div>
+
+      {err ? <div className="err">{err}</div> : null}
+
+      {sub === "leads" && view === "board" ? (
+        <KanbanBoard leads={leads} t={t} onOpen={openLead} onChanged={refresh} onError={setErr} />
+      ) : (
       <div className="card">
         {sub === "leads" ? (
           leads.length === 0 ? <div className="empty">{t("Nothing yet.")}</div> : (
@@ -323,7 +376,7 @@ function CustomersTab({ data, t, query }: { data: CockpitData; t: T; query: stri
               <thead><tr><th>{t("Name")}</th><th>{t("Phone")}</th><th>{t("Area")}</th><th>{t("Status")}</th><th>{t("Owner")}</th></tr></thead>
               <tbody>
                 {leads.slice(0, 80).map((l) => (
-                  <tr key={l.id} className="click" onClick={() => go(`/admin/leads/${l.id}`)}>
+                  <tr key={l.id} className="click" onClick={() => openLead(l.id)}>
                     <td><div className="who"><Avatar name={l.name} /><b>{l.name}</b></div></td>
                     <td className="num" style={{ color: "var(--muted)" }}>{l.phone || "—"}</td>
                     <td style={{ color: "var(--muted)" }}>{l.area || "—"}</td>
@@ -350,13 +403,14 @@ function CustomersTab({ data, t, query }: { data: CockpitData; t: T; query: stri
           </table>
         )}
       </div>
+      )}
     </div>
   );
 }
 
 // --------------------------------------------------------------- Follow-ups
 
-function FollowupsTab({ data, t, query }: { data: CockpitData; t: T; query: string }) {
+function FollowupsTab({ data, t, query, openLead }: { data: CockpitData; t: T; query: string; openLead: (id: number) => void }) {
   const now = new Date();
   const due = useMemo(() => {
     return data.leads
@@ -383,7 +437,7 @@ function FollowupsTab({ data, t, query }: { data: CockpitData; t: T; query: stri
           <thead><tr><th>{t("Name")}</th><th>{t("When")}</th><th>{t("Phone")}</th><th>{t("Status")}</th><th>{t("Owner")}</th></tr></thead>
           <tbody>
             {due.map((l) => (
-              <tr key={l.id} className="click" onClick={() => go(`/admin/leads/${l.id}`)}>
+              <tr key={l.id} className="click" onClick={() => openLead(l.id)}>
                 <td><div className="who"><Avatar name={l.name} /><b>{l.name}</b></div></td>
                 <td>{chip(l)}</td>
                 <td className="num" style={{ color: "var(--muted)" }}>{l.phone || "—"}</td>

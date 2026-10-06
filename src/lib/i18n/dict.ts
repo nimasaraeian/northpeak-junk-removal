@@ -244,6 +244,25 @@ export const FA: Record<string, string> = {
   "Open settings to edit": "باز کردن تنظیمات برای ویرایش",
   "Team chat is coming next — it needs its own store, which is the following step.":
     "گفتگوی تیمی قدم بعدی است — به جدول اختصاصی خودش نیاز دارد که مرحلهٔ بعد اضافه می‌شود.",
+  // Drawers / quick-add / board
+  "New lead": "سرنخ جدید",
+  "Lead": "سرنخ",
+  "Table": "جدول",
+  "Board": "برد",
+  "What they said": "چه گفتند",
+  "Why lost?": "چرا ازدست رفت؟",
+  "A few words": "چند کلمه",
+  "Mark lost": "ثبت به‌عنوان ازدست‌رفته",
+  "Unassigned": "بدون مسئول",
+  "Next follow-up": "پیگیری بعدی",
+  "Add a note": "افزودن یادداشت",
+  "Call result, next step, anything…": "نتیجهٔ تماس، قدم بعدی، هرچیزی…",
+  "Save note": "ذخیرهٔ یادداشت",
+  "Customer name": "نام مشتری",
+  "Paste the inbound message here…": "پیام ورودی مشتری را اینجا بچسبان…",
+  "Add lead": "افزودن سرنخ",
+  "Saving…": "در حال ذخیره…",
+
   // Lead sources
   "Website": "وب‌سایت",
   "Google": "گوگل",
