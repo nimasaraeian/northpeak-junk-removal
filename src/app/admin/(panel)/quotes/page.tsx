@@ -3,6 +3,7 @@ import { QUOTE_STATUSES, StatusPill } from "@/components/admin/StatusPill";
 import { listQuotes } from "@/lib/admin/data";
 import type { QuoteStatus } from "@/lib/db/schema";
 import { formatRange } from "@/lib/quote-engine";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Quotes" };
 export const dynamic = "force-dynamic";
@@ -23,19 +24,20 @@ export default async function QuotesListPage({ searchParams }: PageProps<"/admin
   const search = firstValue(params.q) ?? "";
   const since = firstValue(params.since) ?? "";
 
+  const t = await getT();
   const rows = await listQuotes({ status, search, since: since || undefined });
 
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="ops-label">Quotes</p>
+          <p className="ops-label">{t("Quotes")}</p>
           <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">
-            {rows.length} {rows.length === 1 ? "quote" : "quotes"}
+            {rows.length} {rows.length === 1 ? t("quote") : t("quotes")}
           </h1>
         </div>
         <Link href="/admin/quotes/new" className="ops-btn" data-variant="primary">
-          New quote
+          {t("New quote")}
         </Link>
       </div>
 
@@ -43,36 +45,36 @@ export default async function QuotesListPage({ searchParams }: PageProps<"/admin
           send to the other one. */}
       <form className="ops-card mt-5 grid gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]">
         <label className="block">
-          <span className="ops-label">Search</span>
+          <span className="ops-label">{t("Search")}</span>
           <input
             name="q"
             defaultValue={search}
             className="ops-input mt-1.5"
-            placeholder="Name or phone"
+            placeholder={t("Name or phone")}
             type="search"
           />
         </label>
         <label className="block">
-          <span className="ops-label">Status</span>
+          <span className="ops-label">{t("Status")}</span>
           <select name="status" defaultValue={status} className="ops-select mt-1.5">
-            <option value="all">All</option>
+            <option value="all">{t("All")}</option>
             {QUOTE_STATUSES.map((value) => (
               <option key={value} value={value}>
-                {value}
+                {t(value.charAt(0).toUpperCase() + value.slice(1))}
               </option>
             ))}
           </select>
         </label>
         <label className="block">
-          <span className="ops-label">Since</span>
+          <span className="ops-label">{t("Since")}</span>
           <input name="since" type="date" defaultValue={since} className="ops-input mt-1.5" />
         </label>
         <div className="flex items-end gap-2">
           <button type="submit" className="ops-btn" data-variant="navy">
-            Filter
+            {t("Filter")}
           </button>
           <Link href="/admin/quotes" className="ops-btn" data-variant="ghost">
-            Clear
+            {t("Clear")}
           </Link>
         </div>
       </form>
@@ -80,19 +82,19 @@ export default async function QuotesListPage({ searchParams }: PageProps<"/admin
       <section className="ops-card mt-4 overflow-hidden">
         {rows.length === 0 ? (
           <p className="px-4 py-12 text-center text-sm text-[var(--ops-muted)]">
-            Nothing matches those filters.
+            {t("Nothing matches those filters.")}
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="ops-table">
               <thead>
                 <tr>
-                  <th>Customer</th>
-                  <th>Area</th>
-                  <th>Range</th>
-                  <th>Status</th>
-                  <th>By</th>
-                  <th>Date</th>
+                  <th>{t("Customer")}</th>
+                  <th>{t("Area")}</th>
+                  <th>{t("Range")}</th>
+                  <th>{t("Status")}</th>
+                  <th>{t("By")}</th>
+                  <th>{t("Date")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -103,7 +105,7 @@ export default async function QuotesListPage({ searchParams }: PageProps<"/admin
                         href={`/admin/quotes/${quote.id}`}
                         className="font-medium text-[var(--ops-navy)] hover:underline"
                       >
-                        {quote.customerName || `Quote #${quote.id}`}
+                        {quote.customerName || `${t("Quote")} #${quote.id}`}
                       </Link>
                       {quote.customerPhone ? (
                         <span className="ops-num block text-xs text-[var(--ops-faint)]">

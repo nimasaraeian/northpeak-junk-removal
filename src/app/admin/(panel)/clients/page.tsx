@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/admin/crm-bits";
 import { clientRollups, listClients } from "@/lib/admin/crm-data";
 import { formatCents } from "@/lib/quote-engine";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Clients" };
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/admin/cl
   const params = await searchParams;
   const search = (Array.isArray(params.q) ? params.q[0] : params.q) ?? "";
 
+  const t = await getT();
   const rows = await listClients(search);
   const rollups = await clientRollups(rows.map((row) => row.id));
 
@@ -19,47 +21,47 @@ export default async function ClientsPage({ searchParams }: PageProps<"/admin/cl
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="ops-label">Clients</p>
+          <p className="ops-label">{t("Clients")}</p>
           <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">
-            {rows.length} {rows.length === 1 ? "client" : "clients"}
+            {rows.length} {rows.length === 1 ? t("client") : t("clients")}
           </h1>
         </div>
         <Link href="/admin/clients/new" className="ops-btn" data-variant="primary">
-          Add client
+          {t("Add client")}
         </Link>
       </div>
 
       <form className="ops-card mt-4 flex flex-wrap items-end gap-3 p-3">
         <label className="min-w-[12rem] flex-1">
-          <span className="ops-label">Search</span>
-          <input name="q" type="search" defaultValue={search} className="ops-input mt-1.5" placeholder="Name, phone or area" />
+          <span className="ops-label">{t("Search")}</span>
+          <input name="q" type="search" defaultValue={search} className="ops-input mt-1.5" placeholder={t("Name, phone or area")} />
         </label>
-        <button type="submit" className="ops-btn" data-variant="navy">Search</button>
-        <Link href="/admin/clients" className="ops-btn" data-variant="ghost">Clear</Link>
+        <button type="submit" className="ops-btn" data-variant="navy">{t("Search")}</button>
+        <Link href="/admin/clients" className="ops-btn" data-variant="ghost">{t("Clear")}</Link>
       </form>
 
       <section className="ops-card mt-4 overflow-hidden">
         {rows.length === 0 ? (
           <EmptyState
-            title={search ? "Nothing matches that search" : "No clients yet"}
+            title={search ? t("Nothing matches that search") : t("No clients yet")}
             body={
               search
-                ? "Try a different name, phone number or area."
-                : "A lead becomes a client from its own page, or add one by hand if they are already on the books."
+                ? t("Try a different name, phone number or area.")
+                : t("A lead becomes a client from its own page, or add one by hand if they are already on the books.")
             }
-            action={search ? undefined : { href: "/admin/clients/new", label: "Add the first client" }}
+            action={search ? undefined : { href: "/admin/clients/new", label: t("Add the first client") }}
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="ops-table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Area</th>
-                  <th>Jobs</th>
-                  <th>Lifetime value</th>
-                  <th>Last activity</th>
+                  <th>{t("Name")}</th>
+                  <th>{t("Phone")}</th>
+                  <th>{t("Area")}</th>
+                  <th>{t("Jobs")}</th>
+                  <th>{t("Lifetime value")}</th>
+                  <th>{t("Last activity")}</th>
                 </tr>
               </thead>
               <tbody>

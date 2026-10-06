@@ -5,6 +5,7 @@ import { loadCrmDashboardStats } from "@/lib/admin/crm-data";
 import { countPendingActions } from "@/lib/admin/control-data";
 import { LEAD_STATUS_LABELS, PIPELINE_ORDER } from "@/lib/admin/crm";
 import { formatCents, formatRange } from "@/lib/quote-engine";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Dashboard" };
 
@@ -42,6 +43,7 @@ export default async function AdminDashboardPage() {
     countPendingActions(),
   ]);
 
+  const t = await getT();
   // The funnel only draws the stages still in play; won and lost have their
   // own cards and would flatten the bars.
   const funnelStages = PIPELINE_ORDER.filter(
@@ -53,11 +55,11 @@ export default async function AdminDashboardPage() {
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="ops-label">Dashboard</p>
-          <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">This month</h1>
+          <p className="ops-label">{t("Dashboard")}</p>
+          <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">{t("This month")}</h1>
         </div>
         <Link href="/admin/quotes/new" className="ops-btn" data-variant="primary">
-          New quote
+          {t("New quote")}
         </Link>
       </div>
 
@@ -79,49 +81,49 @@ export default async function AdminDashboardPage() {
       ) : null}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Quotes this month" value={String(stats.quotesThisMonth)} />
+        <StatCard label={t("Quotes this month")} value={String(stats.quotesThisMonth)} />
         <StatCard
-          label="Win rate"
+          label={t("Win rate")}
           value={stats.winRatePct === null ? "—" : `${Math.round(stats.winRatePct)}%`}
           hint={
             stats.decidedThisMonth === 0
-              ? "No quotes decided yet"
-              : `of ${stats.decidedThisMonth} decided`
+              ? t("No quotes decided yet")
+              : `${t("of")} ${stats.decidedThisMonth} ${t("decided")}`
           }
         />
         <StatCard
-          label="Revenue won"
+          label={t("Revenue won")}
           value={formatCents(stats.revenueWonCents)}
-          hint="Sum of won quote midpoints"
+          hint={t("Sum of won quote midpoints")}
         />
         <StatCard
-          label="Avg quote value"
+          label={t("Avg quote value")}
           value={stats.avgQuoteValueCents === null ? "—" : formatCents(stats.avgQuoteValueCents)}
-          hint="Midpoint, all quotes this month"
+          hint={t("Midpoint, all quotes this month")}
         />
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Open leads"
+          label={t("Open leads")}
           value={String(crm.openLeads)}
-          hint="New through Booked"
+          hint={t("New through Booked")}
         />
-        <StatCard label="Jobs today" value={String(crm.jobsToday)} />
+        <StatCard label={t("Jobs today")} value={String(crm.jobsToday)} />
         <StatCard
-          label="Overdue follow-ups"
+          label={t("Overdue follow-ups")}
           value={String(crm.overdueFollowUps)}
-          hint={crm.overdueFollowUps > 0 ? "Someone is waiting on a call" : "All caught up"}
+          hint={crm.overdueFollowUps > 0 ? t("Someone is waiting on a call") : t("All caught up")}
         />
         <Link href="/admin/leads" className="ops-card p-4 transition-colors hover:bg-[var(--ops-surface-2)]">
-          <p className="ops-label">Pipeline</p>
+          <p className="ops-label">{t("Pipeline")}</p>
           <ul className="mt-2 grid gap-1">
             {funnelStages.map((stage) => {
               const count = crm.leadsByStage[stage];
               return (
                 <li key={stage} className="flex items-center gap-2">
                   <span className="w-16 shrink-0 text-[0.7rem] text-[var(--ops-muted)]">
-                    {LEAD_STATUS_LABELS[stage]}
+                    {t(LEAD_STATUS_LABELS[stage])}
                   </span>
                   <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--ops-surface-2)]">
                     <span
@@ -141,30 +143,30 @@ export default async function AdminDashboardPage() {
 
       <section className="ops-card mt-6 overflow-hidden">
         <div className="flex items-center justify-between gap-3 border-b border-[var(--ops-border)] px-4 py-3">
-          <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Latest quotes</h2>
+          <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Latest quotes")}</h2>
           <Link
             href="/admin/quotes"
             className="text-sm font-medium text-[var(--ops-gold-ink)] hover:underline"
           >
-            View all
+            {t("View all")}
           </Link>
         </div>
 
         {latest.length === 0 ? (
           <p className="px-4 py-10 text-center text-sm text-[var(--ops-muted)]">
-            No quotes yet. Start with <Link href="/admin/quotes/new" className="underline">a new quote</Link>.
+            {t("No quotes yet. Start with")} <Link href="/admin/quotes/new" className="underline">{t("a new quote")}</Link>.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="ops-table">
               <thead>
                 <tr>
-                  <th>Customer</th>
-                  <th>Area</th>
-                  <th>Range</th>
-                  <th>Status</th>
-                  <th>By</th>
-                  <th>Date</th>
+                  <th>{t("Customer")}</th>
+                  <th>{t("Area")}</th>
+                  <th>{t("Range")}</th>
+                  <th>{t("Status")}</th>
+                  <th>{t("By")}</th>
+                  <th>{t("Date")}</th>
                 </tr>
               </thead>
               <tbody>

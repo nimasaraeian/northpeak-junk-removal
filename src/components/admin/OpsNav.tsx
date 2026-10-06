@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Route } from "next";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Sidebar on desktop, bottom tab bar on mobile.
@@ -28,6 +29,7 @@ function isActive(pathname: string, href: string): boolean {
 
 export function OpsSidebarNav({ items }: { items: OpsNavItem[] }) {
   const pathname = usePathname();
+  const { t } = useT();
 
   return (
     <nav className="flex flex-col gap-1" aria-label="NorthPeak Ops">
@@ -42,7 +44,7 @@ export function OpsSidebarNav({ items }: { items: OpsNavItem[] }) {
           <span aria-hidden className="shrink-0">
             {item.icon}
           </span>
-          {item.label}
+          {t(item.label)}
         </Link>
       ))}
     </nav>
@@ -51,6 +53,7 @@ export function OpsSidebarNav({ items }: { items: OpsNavItem[] }) {
 
 export function OpsTabBar({ items }: { items: OpsNavItem[] }) {
   const pathname = usePathname();
+  const { t } = useT();
 
   return (
     <nav
@@ -66,7 +69,7 @@ export function OpsTabBar({ items }: { items: OpsNavItem[] }) {
           aria-current={isActive(pathname, item.href) ? "page" : undefined}
         >
           <span aria-hidden>{item.icon}</span>
-          {item.short}
+          {t(item.short)}
         </Link>
       ))}
     </nav>

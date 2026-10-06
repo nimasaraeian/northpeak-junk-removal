@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin/crm-actions";
 import { ASSIGNEE_TONE } from "@/lib/admin/crm";
 import { JOB_ASSIGNEES, JOB_STATUSES, type JobRow } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * The panel that opens when a calendar block is clicked.
@@ -26,6 +27,7 @@ export function JobDetailPanel({
   clientName: string | null;
 }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [checklist, setChecklist] = useState(job.checklist);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export function JobDetailPanel({
     setError(null);
     startTransition(async () => {
       const result = await work();
-      if (!result.ok) setError(result.error ?? "That did not save.");
+      if (!result.ok) setError(result.error ?? t("That did not save."));
       router.refresh();
     });
   }
@@ -61,26 +63,26 @@ export function JobDetailPanel({
               {clientName ?? `Job #${job.id}`}
             </h2>
             <p className="text-sm text-[var(--ops-muted)]">
-              {job.address || "No address"}
+              {job.address || t("No address")}
               {job.scheduledStart
                 ? ` · ${job.scheduledStart.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short" })}`
-                : " · unscheduled"}
+                : ` · ${t("unscheduled")}`}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {job.clientId ? (
             <Link href={`/admin/clients/${job.clientId}`} className="ops-btn" data-variant="ghost">
-              Client
+              {t("Client")}
             </Link>
           ) : null}
           {job.quoteId ? (
             <Link href={`/admin/quotes/${job.quoteId}`} className="ops-btn" data-variant="ghost">
-              Quote #{job.quoteId}
+              {t("Quote")} #{job.quoteId}
             </Link>
           ) : null}
           <Link href="/admin/calendar" className="ops-btn" data-variant="ghost">
-            Close
+            {t("Close")}
           </Link>
         </div>
       </div>
@@ -88,10 +90,10 @@ export function JobDetailPanel({
       <div className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)]">
         <div>
           <p className="ops-label">
-            Checklist · {doneCount}/{checklist.length}
+            {t("Checklist")} · {doneCount}/{checklist.length}
           </p>
           {checklist.length === 0 ? (
-            <p className="mt-2 text-sm text-[var(--ops-muted)]">No checklist on this job.</p>
+            <p className="mt-2 text-sm text-[var(--ops-muted)]">{t("No checklist on this job.")}</p>
           ) : (
             <ul className="mt-2 grid gap-1.5">
               {checklist.map((item, index) => (
@@ -114,7 +116,7 @@ export function JobDetailPanel({
           )}
           {job.notes ? (
             <>
-              <p className="ops-label mt-4">Notes</p>
+              <p className="ops-label mt-4">{t("Notes")}</p>
               <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-[var(--ops-text)]">
                 {job.notes}
               </p>
@@ -124,7 +126,7 @@ export function JobDetailPanel({
 
         <div className="grid gap-3">
           <label className="block">
-            <span className="ops-label">Status</span>
+            <span className="ops-label">{t("Status")}</span>
             <select
               className="ops-select mt-1.5"
               value={job.status}
@@ -133,13 +135,13 @@ export function JobDetailPanel({
             >
               {JOB_STATUSES.map((status) => (
                 <option key={status} value={status}>
-                  {status.replace("_", " ")}
+                  {t(({scheduled:"Scheduled",in_progress:"In progress",done:"Done",cancelled:"Cancelled"})[status] ?? status)}
                 </option>
               ))}
             </select>
           </label>
           <label className="block">
-            <span className="ops-label">Assigned to</span>
+            <span className="ops-label">{t("Assigned to")}</span>
             <select
               className="ops-select mt-1.5"
               value={job.assignedTo}
@@ -154,7 +156,7 @@ export function JobDetailPanel({
             </select>
           </label>
           <p className="text-xs text-[var(--ops-faint)]">
-            Before/after photos land in v3 — the fields are already on the job.
+            {t("Before/after photos land in v3 — the fields are already on the job.")}
           </p>
         </div>
       </div>

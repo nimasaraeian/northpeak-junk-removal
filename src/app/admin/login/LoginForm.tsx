@@ -4,8 +4,10 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { loginAction, type ActionResult } from "@/lib/admin/actions";
 import { OPERATORS } from "@/lib/admin/session";
+import { useT } from "@/lib/i18n/provider";
 
 function SubmitButton() {
+  const { t } = useT();
   const { pending } = useFormStatus();
   return (
     <button
@@ -14,28 +16,29 @@ function SubmitButton() {
       data-variant="navy"
       disabled={pending}
     >
-      {pending ? "Checking…" : "Sign in"}
+      {pending ? t("Checking…") : t("Sign in")}
     </button>
   );
 }
 
 export function LoginForm({ next }: { next?: string }) {
+  const { t } = useT();
   const [state, formAction] = useActionState<ActionResult | null, FormData>(loginAction, null);
 
   return (
     <form action={formAction} className="ops-card w-full max-w-sm p-6">
       <p className="ops-label">NorthPeak</p>
       <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">
-        Ops sign in
+        {t("Ops sign in")}
       </h1>
       <p className="mt-2 text-sm leading-6 text-[var(--ops-muted)]">
-        Internal tool for the NorthPeak crew.
+        {t("Internal tool for the NorthPeak crew.")}
       </p>
 
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       <label className="mt-6 block">
-        <span className="ops-label">Who is this?</span>
+        <span className="ops-label">{t("Who is this?")}</span>
         <select name="name" className="ops-select mt-1.5" defaultValue={OPERATORS[0]} required>
           {OPERATORS.map((operator) => (
             <option key={operator} value={operator}>
@@ -46,7 +49,7 @@ export function LoginForm({ next }: { next?: string }) {
       </label>
 
       <label className="mt-4 block">
-        <span className="ops-label">Password</span>
+        <span className="ops-label">{t("Password")}</span>
         <input
           type="password"
           name="password"

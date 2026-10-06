@@ -5,6 +5,7 @@ import { IntakeAssistant } from "@/components/admin/IntakeAssistant";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { ageLabel } from "@/lib/admin/crm";
 import { getLead, listActivity } from "@/lib/admin/crm-data";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Lead" };
 export const dynamic = "force-dynamic";
@@ -16,13 +17,14 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
   const lead = await getLead(Number(id));
   if (!lead) notFound();
 
+  const t = await getT();
   const activity = await listActivity("lead", lead.id);
   const now = new Date();
 
   return (
     <div className="mx-auto max-w-5xl">
       <Link href="/admin/leads" className="text-sm font-medium text-[var(--ops-gold-ink)] hover:underline">
-        ← Pipeline
+        ← {t("Pipeline")}
       </Link>
 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
@@ -33,16 +35,16 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
             <SourceBadge source={lead.source} />
           </div>
           <p className="mt-1 text-sm text-[var(--ops-muted)]">
-            {[lead.phone, lead.email, lead.area].filter(Boolean).join(" · ") || "No contact details"}
+            {[lead.phone, lead.email, lead.area].filter(Boolean).join(" · ") || t("No contact details")}
           </p>
           <p className="mt-0.5 text-xs text-[var(--ops-faint)]">
-            {ageLabel(lead.createdAt, now)} old · created {stamp.format(lead.createdAt)} ·{" "}
-            {lead.createdFrom === "website_form" ? "from the website form" : `added ${lead.createdFrom}`}
+            {ageLabel(lead.createdAt, now)} {t("old · created")} {stamp.format(lead.createdAt)} ·{" "}
+            {lead.createdFrom === "website_form" ? t("from the website form") : t("added manually")}
           </p>
         </div>
         {lead.clientId ? (
           <Link href={`/admin/clients/${lead.clientId}`} className="ops-btn" data-variant="ghost">
-            View client
+            {t("View client")}
           </Link>
         ) : null}
       </div>
@@ -51,7 +53,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
         <div className="grid gap-4">
           {lead.message ? (
             <section className="ops-card p-4">
-              <h2 className="text-sm font-semibold text-[var(--ops-navy)]">What they said</h2>
+              <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("What they said")}</h2>
               <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[var(--ops-text)]">
                 {lead.message}
               </p>
@@ -64,13 +66,13 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
 
           {lead.lostReason ? (
             <section className="ops-card p-4">
-              <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Lost because</h2>
+              <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Lost because")}</h2>
               <p className="mt-1 text-sm text-[var(--ops-text)]">{lead.lostReason}</p>
             </section>
           ) : null}
 
           <section className="ops-card p-4">
-            <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Timeline</h2>
+            <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Timeline")}</h2>
             <ActivityTimeline rows={activity} />
           </section>
         </div>

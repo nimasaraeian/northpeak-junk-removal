@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { decideAiActionAction } from "@/lib/admin/control-actions";
+import { useT } from "@/lib/i18n/provider";
 import {
   AI_ACTION_KIND_LABELS,
   AI_ACTION_STATUS_LABELS,
@@ -31,6 +32,7 @@ function PayloadPreview({ payload }: { payload: Record<string, unknown> }) {
 }
 
 function QueueCard({ action }: { action: AiActionRow }) {
+  const { t } = useT();
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -40,7 +42,7 @@ function QueueCard({ action }: { action: AiActionRow }) {
     setError(null);
     startTransition(async () => {
       const res = await decideAiActionAction(action.id, decision, note.trim() || undefined);
-      if (!res.ok) setError(res.error ?? "Something went wrong.");
+      if (!res.ok) setError(res.error ?? t("Something went wrong."));
     });
   }
 
@@ -48,11 +50,11 @@ function QueueCard({ action }: { action: AiActionRow }) {
     <div className="ops-card p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="ops-label">{AI_ACTION_KIND_LABELS[action.kind]}</p>
+          <p className="ops-label">{t(AI_ACTION_KIND_LABELS[action.kind])}</p>
           <h3 className="mt-0.5 text-sm font-semibold text-[var(--ops-navy)]">{action.title}</h3>
         </div>
         <span className="ops-pill" data-status={AI_ACTION_STATUS_TONE[action.status]}>
-          {AI_ACTION_STATUS_LABELS[action.status]}
+          {t(AI_ACTION_STATUS_LABELS[action.status])}
         </span>
       </div>
 
@@ -64,17 +66,17 @@ function QueueCard({ action }: { action: AiActionRow }) {
 
       {blocked ? (
         <p className="mt-3 rounded-lg border border-[var(--ops-warn-border)] bg-[var(--ops-warn-bg)] p-2 text-xs font-medium text-[var(--ops-warn-ink)]">
-          Blocked{action.blockedReason ? `: ${action.blockedReason}` : ""}. Resolve this before it can be approved.
+          {t("Blocked")}{action.blockedReason ? `: ${action.blockedReason}` : ""}. {t("Resolve this before it can be approved.")}
         </p>
       ) : null}
 
       <label className="mt-3 block">
-        <span className="ops-label">Note (optional)</span>
+        <span className="ops-label">{t("Note (optional)")}</span>
         <input
           className="ops-input mt-1"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="e.g. send after 2pm, or why you're rejecting"
+          placeholder={t("e.g. send after 2pm, or why you're rejecting")}
           disabled={pending}
         />
       </label>
@@ -87,29 +89,30 @@ function QueueCard({ action }: { action: AiActionRow }) {
           data-variant="primary"
           onClick={() => decide("approve")}
           disabled={pending || blocked}
-          title={blocked ? "Resolve the block first" : undefined}
+          title={blocked ? t("Resolve the block first") : undefined}
         >
-          Approve
+          {t("Approve")}
         </button>
         <button className="ops-btn" data-variant="ghost" onClick={() => decide("defer")} disabled={pending}>
-          Defer
+          {t("Defer")}
         </button>
         <button className="ops-btn" data-variant="ghost" onClick={() => decide("reject")} disabled={pending}>
-          Reject
+          {t("Reject")}
         </button>
       </div>
       <p className="mt-2 text-[0.7rem] text-[var(--ops-faint)]">
-        Approving records your decision. It does not send anything on its own — outside connections come later.
+        {t("Approving records your decision. It does not send anything on its own — outside connections come later.")}
       </p>
     </div>
   );
 }
 
 export function ControlQueue({ actions }: { actions: AiActionRow[] }) {
+  const { t } = useT();
   if (actions.length === 0) {
     return (
       <div className="ops-card p-8 text-center text-sm text-[var(--ops-muted)]">
-        Nothing is waiting on you. When the assistant drafts something, it appears here for approval.
+        {t("Nothing is waiting on you. When the assistant drafts something, it appears here for approval.")}
       </div>
     );
   }

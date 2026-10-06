@@ -7,6 +7,7 @@ import { LeadCardBody } from "@/components/admin/crm-bits";
 import { updateLeadStatusAction } from "@/lib/admin/crm-actions";
 import { canTransition, LEAD_STATUS_LABELS, PIPELINE_ORDER } from "@/lib/admin/crm";
 import type { LeadRow, LeadStatus } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * The pipeline board.
@@ -33,6 +34,7 @@ type Move = { id: number; status: LeadStatus };
 
 export function LeadBoard({ leads, now }: LeadBoardProps) {
   const router = useRouter();
+  const { t } = useT();
   const [, startTransition] = useTransition();
   const nowDate = useMemo(() => new Date(now), [now]);
 
@@ -63,7 +65,7 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
     startTransition(async () => {
       applyMove({ id: lead.id, status });
       const result = await updateLeadStatusAction(lead.id, status, lostReason);
-      if (!result.ok) setError(result.error ?? "That move did not save.");
+      if (!result.ok) setError(result.error ?? t("That move did not save."));
       router.refresh();
     });
   }
@@ -115,11 +117,11 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
                   if (dragging) requestMove(dragging, status);
                   setDragging(null);
                 }}
-                aria-label={LEAD_STATUS_LABELS[status]}
+                aria-label={t(LEAD_STATUS_LABELS[status])}
               >
                 <header className="flex items-center justify-between gap-2 px-3 py-2.5">
                   <h2 className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--ops-muted)]">
-                    {LEAD_STATUS_LABELS[status]}
+                    {t(LEAD_STATUS_LABELS[status])}
                   </h2>
                   <span className="ops-num rounded-full bg-[var(--ops-surface)] px-2 py-0.5 text-xs font-semibold text-[var(--ops-muted)]">
                     {cards.length}
@@ -129,7 +131,7 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
                 <div className="flex flex-1 flex-col gap-2 px-2 pb-2">
                   {cards.length === 0 ? (
                     <p className="px-1 py-6 text-center text-xs text-[var(--ops-faint)]">
-                      Nothing here.
+                      {t("Nothing here.")}
                     </p>
                   ) : null}
 
@@ -150,7 +152,7 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
 
                       {/* The mobile path: no HTML5 drag on touch. */}
                       <label className="mt-2 block">
-                        <span className="sr-only">Move {lead.name} to another stage</span>
+                        <span className="sr-only">{t("Move to another stage")}</span>
                         <select
                           className="ops-select text-xs"
                           value={lead.status}
@@ -164,7 +166,7 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
                               value={option}
                               disabled={option !== lead.status && !canTransition(lead.status, option)}
                             >
-                              {LEAD_STATUS_LABELS[option]}
+                              {t(LEAD_STATUS_LABELS[option])}
                             </option>
                           ))}
                         </select>
@@ -190,20 +192,20 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
             }}
           >
             <h2 className="text-sm font-semibold text-[var(--ops-navy)]">
-              Why did {lostPrompt.lead.name} go?
+              {t("Why lost?")}
             </h2>
             <p className="mt-1 text-xs text-[var(--ops-muted)]">
-              Worth a line — it is the only way the lost column tells you anything later.
+              {t("Worth a line — it is the only way the lost column tells you anything later.")}
             </p>
             <input
               name="reason"
               className="ops-input mt-3"
-              placeholder="Price, timing, went elsewhere…"
+              placeholder={t("Price, timing, went elsewhere…")}
               autoFocus
             />
             <div className="mt-4 flex gap-2">
               <button type="submit" className="ops-btn flex-1" data-variant="navy">
-                Mark lost
+                {t("Mark lost")}
               </button>
               <button
                 type="button"
@@ -211,7 +213,7 @@ export function LeadBoard({ leads, now }: LeadBoardProps) {
                 data-variant="ghost"
                 onClick={() => setLostPrompt(null)}
               >
-                Cancel
+                {t("Cancel")}
               </button>
             </div>
           </form>

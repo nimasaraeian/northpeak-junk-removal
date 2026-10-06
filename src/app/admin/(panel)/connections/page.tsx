@@ -2,6 +2,7 @@ import { anthropicApiKey } from "@/lib/admin/config";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { GuardrailNote } from "@/components/admin/GuardrailNote";
 import { GUARDRAILS } from "@/lib/admin/control";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Connections" };
 export const dynamic = "force-dynamic";
@@ -26,7 +27,8 @@ const STATE_TONE: Record<ConnState, "won" | "draft" | "lost"> = {
   off: "lost",
 };
 
-export default function ConnectionsPage() {
+export default async function ConnectionsPage() {
+  const t = await getT();
   const aiOn = anthropicApiKey() !== undefined;
   const dbOn = isDatabaseConfigured();
 
@@ -64,12 +66,12 @@ export default function ConnectionsPage() {
     <div className="mx-auto max-w-3xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="ops-label">Connections</p>
-          <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">What the panel is wired to</h1>
+          <p className="ops-label">{t("Connections")}</p>
+          <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">{t("What the panel is wired to")}</h1>
         </div>
         {pending > 0 ? (
           <span className="ops-pill" data-status="draft">
-            {pending} not connected
+            {pending} {t("not connected")}
           </span>
         ) : null}
       </div>
@@ -78,11 +80,11 @@ export default function ConnectionsPage() {
         {connections.map((c) => (
           <div key={c.name} className="flex items-start justify-between gap-3 p-4">
             <div>
-              <p className="text-sm font-semibold text-[var(--ops-navy)]">{c.name}</p>
-              <p className="mt-0.5 text-xs text-[var(--ops-muted)]">{c.note}</p>
+              <p className="text-sm font-semibold text-[var(--ops-navy)]">{t(c.name)}</p>
+              <p className="mt-0.5 text-xs text-[var(--ops-muted)]">{t(c.note)}</p>
             </div>
             <span className="ops-pill shrink-0" data-status={STATE_TONE[c.state]}>
-              {STATE_LABEL[c.state]}
+              {t(STATE_LABEL[c.state])}
             </span>
           </div>
         ))}
@@ -91,8 +93,8 @@ export default function ConnectionsPage() {
       <div className="mt-4">
         <GuardrailNote
           lines={[
-            "Nothing connects to an outside service without you turning it on.",
-            GUARDRAILS.nothingUntilApproved,
+            t("Nothing connects to an outside service without you turning it on."),
+            t(GUARDRAILS.nothingUntilApproved),
           ]}
         />
       </div>
