@@ -7,6 +7,7 @@ import { updateQuoteNotesAction, updateQuoteStatusAction } from "@/lib/admin/act
 import { createJobFromQuoteAction } from "@/lib/admin/crm-actions";
 import { buildCustomerText } from "@/lib/admin/customer-text";
 import type { QuoteRow, QuoteStatus } from "@/lib/db/schema";
+import { useT } from "@/lib/i18n/provider";
 
 /**
  * Status buttons, notes, and "Copy customer text" on a saved quote.
@@ -23,6 +24,7 @@ export function QuoteDetailActions({
   operator: string;
 }) {
   const router = useRouter();
+  const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [notes, setNotes] = useState(quote.notes);
   const [copied, setCopied] = useState(false);
@@ -33,7 +35,7 @@ export function QuoteDetailActions({
     startTransition(async () => {
       const result = await updateQuoteStatusAction(quote.id, status);
       if (!result.ok) {
-        setError(result.error ?? "That did not save.");
+        setError(result.error ?? t("That did not save."));
         return;
       }
       router.refresh();
@@ -44,7 +46,7 @@ export function QuoteDetailActions({
     setError(null);
     startTransition(async () => {
       const result = await updateQuoteNotesAction(quote.id, notes);
-      if (!result.ok) setError(result.error ?? "Those notes did not save.");
+      if (!result.ok) setError(result.error ?? t("Those notes did not save."));
       else router.refresh();
     });
   }
@@ -63,14 +65,14 @@ export function QuoteDetailActions({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      setError("Could not reach the clipboard on this device.");
+      setError(t("Could not reach the clipboard on this device."));
     }
   }
 
   return (
     <div className="grid gap-4">
       <div>
-        <p className="ops-label">Status</p>
+        <p className="ops-label">{t("Status")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {QUOTE_STATUSES.map((status) => (
             <button
@@ -81,14 +83,14 @@ export function QuoteDetailActions({
               disabled={pending || quote.status === status}
               onClick={() => setStatus(status)}
             >
-              {status}
+              {t(status.charAt(0).toUpperCase() + status.slice(1))}
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <p className="ops-label">Notes</p>
+        <p className="ops-label">{t("Notes")}</p>
         <textarea
           className="ops-textarea mt-2"
           rows={4}
@@ -102,7 +104,7 @@ export function QuoteDetailActions({
           disabled={pending || notes === quote.notes}
           onClick={saveNotes}
         >
-          Save notes
+          {t("Save notes")}
         </button>
       </div>
 
@@ -112,7 +114,7 @@ export function QuoteDetailActions({
         data-variant="primary"
         onClick={() => void copyCustomerText()}
       >
-        {copied ? "Copied" : "Copy customer text"}
+        {copied ? t("Copied") : t("Copy customer text")}
       </button>
 
       {/* A won quote becomes a job. It lands unscheduled, in the calendar's
@@ -129,7 +131,7 @@ export function QuoteDetailActions({
               startTransition(async () => {
                 const result = await createJobFromQuoteAction(quote.id);
                 if (!result.ok) {
-                  setError(result.error ?? "Could not create that job.");
+                  setError(result.error ?? t("Could not create that job."));
                   return;
                 }
                 router.push("/admin/calendar");
@@ -137,11 +139,11 @@ export function QuoteDetailActions({
               });
             }}
           >
-            {quote.jobId ? `Job #${quote.jobId} created` : "Schedule this job"}
+            {quote.jobId ? `${t("Job")} #${quote.jobId} ${t("created")}` : t("Schedule this job")}
           </button>
           {quote.jobId === null ? (
             <p className="text-xs text-[var(--ops-faint)]">
-              Creates an unscheduled job for the calendar rail.
+              {t("Creates an unscheduled job for the calendar rail.")}
             </p>
           ) : null}
         </div>

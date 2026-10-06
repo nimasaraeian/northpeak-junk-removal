@@ -6,6 +6,7 @@ import { StatusPill } from "@/components/admin/StatusPill";
 import { site } from "@/content/site";
 import { getClientDossier } from "@/lib/admin/crm-data";
 import { formatCents, formatRange } from "@/lib/quote-engine";
+import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Client" };
 export const dynamic = "force-dynamic";
@@ -17,12 +18,13 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
   const dossier = await getClientDossier(Number(id));
   if (!dossier) notFound();
 
+  const t = await getT();
   const { client, leads, quotes, jobs, activity } = dossier;
 
   return (
     <div className="mx-auto max-w-5xl">
       <Link href="/admin/clients" className="text-sm font-medium text-[var(--ops-gold-ink)] hover:underline">
-        ← All clients
+        ← {t("All clients")}
       </Link>
 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
@@ -33,18 +35,18 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
           </div>
           <p className="mt-1 text-sm text-[var(--ops-muted)]">
             {[client.phone, client.email, client.address || client.area].filter(Boolean).join(" · ") ||
-              "No contact details"}
+              t("No contact details")}
           </p>
           <p className="mt-0.5 text-xs text-[var(--ops-faint)]">
-            Client since {dateFormat.format(client.createdAt)}
+            {t("Client since")} {dateFormat.format(client.createdAt)}
           </p>
         </div>
         <div className="text-right">
-          <p className="ops-label">Lifetime value</p>
+          <p className="ops-label">{t("Lifetime value")}</p>
           <p className="ops-num text-2xl font-semibold text-[var(--ops-navy)]">
             {formatCents(dossier.lifetimeValueCents)}
           </p>
-          <p className="text-xs text-[var(--ops-faint)]">Midpoint of won quotes</p>
+          <p className="text-xs text-[var(--ops-faint)]">{t("Midpoint of won quotes")}</p>
         </div>
       </div>
 
@@ -52,15 +54,15 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
         <div className="grid gap-4">
           <section className="ops-card overflow-hidden">
             <h2 className="border-b border-[var(--ops-border)] px-4 py-3 text-sm font-semibold text-[var(--ops-navy)]">
-              Quotes
+              {t("Quotes")}
             </h2>
             {quotes.length === 0 ? (
-              <p className="px-4 py-8 text-center text-sm text-[var(--ops-muted)]">No quotes yet.</p>
+              <p className="px-4 py-8 text-center text-sm text-[var(--ops-muted)]">{t("No quotes yet.")}</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="ops-table">
                   <thead>
-                    <tr><th>Quote</th><th>Range</th><th>Status</th><th>Date</th></tr>
+                    <tr><th>{t("Quote")}</th><th>{t("Range")}</th><th>{t("Status")}</th><th>{t("Date")}</th></tr>
                   </thead>
                   <tbody>
                     {quotes.map((quote) => (
@@ -85,23 +87,23 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
 
           <section className="ops-card overflow-hidden">
             <h2 className="border-b border-[var(--ops-border)] px-4 py-3 text-sm font-semibold text-[var(--ops-navy)]">
-              Jobs
+              {t("Jobs")}
             </h2>
             {jobs.length === 0 ? (
               <p className="px-4 py-8 text-center text-sm text-[var(--ops-muted)]">
-                No jobs yet. &ldquo;Schedule job&rdquo; creates one for the calendar.
+                {t("No jobs yet. “Schedule job” creates one for the calendar.")}
               </p>
             ) : (
               <ul className="divide-y divide-[var(--ops-border)]">
                 {jobs.map((job) => (
                   <li key={job.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
-                    <span className="font-medium text-[var(--ops-navy)]">Job #{job.id}</span>
+                    <span className="font-medium text-[var(--ops-navy)]">{t("Job")} #{job.id}</span>
                     <span className="text-[var(--ops-muted)]">
-                      {job.scheduledStart ? dateFormat.format(job.scheduledStart) : "Unscheduled"} ·{" "}
+                      {job.scheduledStart ? dateFormat.format(job.scheduledStart) : t("Unscheduled")} ·{" "}
                       {job.assignedTo}
                     </span>
                     <span className="ops-pill" data-status={job.status === "done" ? "won" : job.status === "cancelled" ? "lost" : "sent"}>
-                      {job.status.replace("_", " ")}
+                      {t(({scheduled:"Scheduled",in_progress:"In progress",done:"Done",cancelled:"Cancelled"})[job.status] ?? job.status)}
                     </span>
                   </li>
                 ))}
@@ -112,7 +114,7 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
           {leads.length > 0 ? (
             <section className="ops-card overflow-hidden">
               <h2 className="border-b border-[var(--ops-border)] px-4 py-3 text-sm font-semibold text-[var(--ops-navy)]">
-                Leads
+                {t("Leads")}
               </h2>
               <ul className="divide-y divide-[var(--ops-border)]">
                 {leads.map((lead) => (
@@ -128,7 +130,7 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
           ) : null}
 
           <section className="ops-card p-4">
-            <h2 className="text-sm font-semibold text-[var(--ops-navy)]">Timeline</h2>
+            <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Timeline")}</h2>
             <ActivityTimeline rows={activity} />
           </section>
         </div>
