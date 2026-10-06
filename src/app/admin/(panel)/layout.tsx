@@ -16,6 +16,8 @@ import {
 import { requireOperator } from "@/lib/admin/auth";
 import { logoutAction } from "@/lib/admin/actions";
 import { isAdminConfigured } from "@/lib/admin/config";
+import { getT } from "@/lib/i18n/server";
+import { LangToggle } from "@/components/admin/LangToggle";
 
 /**
  * The signed-in panel shell.
@@ -49,35 +51,37 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   }
 
   const operator = await requireOperator();
+  const t = await getT();
 
   return (
     <div className="flex min-h-screen">
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col bg-[var(--ops-navy)] px-3 py-5 lg:flex">
+      <aside className="fixed inset-y-0 start-0 hidden w-60 flex-col bg-[var(--ops-navy)] px-3 py-5 lg:flex">
         <Link href="/admin" className="px-2 pb-6">
           <span className="block text-base font-semibold tracking-tight text-white">
             NorthPeak <span className="text-[var(--ops-gold)]">Ops</span>
           </span>
-          <span className="mt-0.5 block text-[0.7rem] text-[#8fa0b3]">Internal · v1</span>
+          <span className="mt-0.5 block text-[0.7rem] text-[#8fa0b3]">{t("Internal · v1")}</span>
         </Link>
         <OpsSidebarNav items={NAV} />
         <p className="mt-auto px-2 text-[0.7rem] leading-5 text-[#6f8296]">
-          Internal tool. Customers never see this.
+          {t("Internal tool. Customers never see this.")}
         </p>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
+      <div className="flex min-w-0 flex-1 flex-col lg:ps-60">
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-[var(--ops-border)] bg-[var(--ops-surface)]/95 px-4 backdrop-blur sm:px-6">
           <span className="text-sm font-semibold tracking-tight text-[var(--ops-navy)] lg:hidden">
             NorthPeak <span className="text-[var(--ops-gold-ink)]">Ops</span>
           </span>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ms-auto flex items-center gap-3">
+            <LangToggle />
             <span className="text-sm text-[var(--ops-muted)]">
-              Signed in as <strong className="text-[var(--ops-text)]">{operator}</strong>
+              {t("Signed in as")} <strong className="text-[var(--ops-text)]">{operator}</strong>
             </span>
             <form action={logoutAction}>
               <button type="submit" className="ops-btn" data-variant="ghost">
                 <LogoutIcon />
-                <span className="sr-only sm:not-sr-only">Log out</span>
+                <span className="sr-only sm:not-sr-only">{t("Log out")}</span>
               </button>
             </form>
           </div>

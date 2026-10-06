@@ -53,6 +53,12 @@
   min-height: 100%;
 }
 
+/* Persian: Vazirmatn (loaded via next/font), then system fallbacks. */
+.np-ops[dir="rtl"] {
+  font-family: var(--font-vazir), Tahoma, "Segoe UI", Arial, sans-serif;
+  font-feature-settings: normal;
+}
+
 /* Tabular figures everywhere money or a count appears, so columns of numbers
    line up instead of shimmering as they update. */
 .np-ops .ops-num {
