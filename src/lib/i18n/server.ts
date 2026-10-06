@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
-import { DEFAULT_LANG, isLang, translate, type Lang } from "@/lib/i18n/dict";
-
-export const LANG_COOKIE = "np_admin_lang";
+import { DEFAULT_LANG, isLang, translate, LANG_COOKIE, type Lang } from "@/lib/i18n/dict";
 
 /** Reads the panel language from the cookie. Server components only. */
 export async function getLang(): Promise<Lang> {

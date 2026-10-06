@@ -15,6 +15,10 @@ export const LANGS = ["en", "fa"] as const;
 export type Lang = (typeof LANGS)[number];
 export const DEFAULT_LANG: Lang = "en";
 
+/** Cookie name — kept here (client-safe) so client code never imports the
+ * server module (which pulls in next/headers). */
+export const LANG_COOKIE = "np_admin_lang";
+
 export function isLang(value: unknown): value is Lang {
   return value === "en" || value === "fa";
 }

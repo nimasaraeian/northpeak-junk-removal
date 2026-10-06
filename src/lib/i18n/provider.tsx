@@ -2,8 +2,7 @@
 
 import { createContext, useCallback, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { DEFAULT_LANG, translate, type Lang } from "@/lib/i18n/dict";
-import { LANG_COOKIE } from "@/lib/i18n/server";
+import { DEFAULT_LANG, translate, LANG_COOKIE, type Lang } from "@/lib/i18n/dict";
 
 interface LangValue {
   lang: Lang;
