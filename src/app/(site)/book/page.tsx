@@ -3,7 +3,9 @@ import { BookingWizard } from "@/components/booking/BookingWizard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
 import { getService } from "@/content/services";
+import { notFound } from "next/navigation";
 import { bookingLevelEstimates } from "@/lib/booking/booking-core";
+import { isBookingEnabled } from "@/lib/booking/feature";
 import { loadPricingSettings } from "@/lib/admin/data";
 import { breadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
@@ -32,6 +34,9 @@ function todayInVancouver(): string {
 }
 
 export default async function BookPage({ searchParams }: PageProps<"/book">) {
+  // Off by default — the system is built but not live on the site yet.
+  if (!isBookingEnabled()) notFound();
+
   const query = await searchParams;
   const service = typeof query.service === "string" ? getService(query.service) : undefined;
 

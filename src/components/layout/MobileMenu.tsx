@@ -5,10 +5,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navigation } from "@/content/site";
+import { isBookingEnabled } from "@/lib/booking/feature";
 import { cx } from "@/lib/utils";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const bookingOn = isBookingEnabled();
 
   return (
     <div className="lg:hidden">
@@ -38,12 +40,25 @@ export function MobileMenu() {
                 {item.label}
               </Link>
             ))}
-            <Button href="/book" className="mt-2 w-full" onClick={() => setOpen(false)}>
-              Book Online
-            </Button>
-            <Button href="/estimate" variant="ghost" className="w-full" onClick={() => setOpen(false)}>
-              Free Estimate
-            </Button>
+            {bookingOn ? (
+              <>
+                <Button href="/book" className="mt-2 w-full" onClick={() => setOpen(false)}>
+                  Book Online
+                </Button>
+                <Button
+                  href="/estimate"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setOpen(false)}
+                >
+                  Free Estimate
+                </Button>
+              </>
+            ) : (
+              <Button href="/estimate" className="mt-2 w-full" onClick={() => setOpen(false)}>
+                Get Free Estimate
+              </Button>
+            )}
           </Container>
         </div>
       ) : null}

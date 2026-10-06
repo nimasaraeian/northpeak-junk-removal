@@ -12,6 +12,7 @@ import {
   type BookingWindowId,
 } from "@/lib/booking/booking-core";
 import { insertOnlineBooking } from "@/lib/booking/crm-booking";
+import { isBookingEnabled } from "@/lib/booking/feature";
 import { generateRequestId } from "@/lib/estimate/request-id";
 import { checkServiceArea } from "@/lib/postal";
 import { formatRange } from "@/lib/quote-engine";
@@ -62,6 +63,16 @@ export async function submitBookingCore(
   formData: FormData,
   options: SubmitBookingOptions = {},
 ): Promise<BookingActionState> {
+  // The whole public door is gated off by default. Even if a form were posted
+  // directly, nothing is created while the flag is off.
+  if (!isBookingEnabled()) {
+    return {
+      ok: false,
+      message:
+        "Online booking isn't open yet — please request a free estimate and we'll follow up with a price.",
+    };
+  }
+
   // Honeypot: a real person leaves it empty; a bot fills every field. Report
   // success without writing so the bot learns nothing.
   if (read(formData, "company")) {
