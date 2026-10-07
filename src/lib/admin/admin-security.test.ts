@@ -257,6 +257,7 @@ const ACTION_FILES = [
   "src/lib/admin/actions.ts",
   "src/lib/admin/crm-actions.ts",
   "src/lib/admin/control-actions.ts",
+  "src/lib/admin/sms-actions.ts",
 ];
 
 function exportedActions(file: string): { name: string; source: string }[] {

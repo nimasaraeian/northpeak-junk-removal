@@ -219,6 +219,18 @@ export const FA: Record<string, string> = {
   "Send": "ارسال",
   "Sending…": "در حال ارسال…",
   "Could not send.": "ارسال نشد.",
+  "Send SMS": "ارسال پیامک",
+  "Confirm": "تأیید",
+  "On our way": "در راهیم",
+  "Review": "درخواست نظر",
+  "Write a text to the customer…": "یک پیام برای مشتری بنویس…",
+  "Add your Twilio keys in Vercel to send SMS from here.":
+    "برای ارسال پیامک از اینجا، کلیدهای Twilio را در Vercel اضافه کن.",
+  "SMS (Twilio)": "پیامک (Twilio)",
+  "Send customer texts from a lead — confirmations, on-my-way, review requests.":
+    "ارسال پیامک به مشتری از روی لید — تأیید، «در راهیم»، درخواست نظر.",
+  "Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER to turn on SMS.":
+    "برای فعال‌کردن پیامک، TWILIO_ACCOUNT_SID و TWILIO_AUTH_TOKEN و TWILIO_FROM_NUMBER را ست کن.",
   "This section is being built.": "این بخش در حال ساخت است.",
   "Open the full page": "باز کردن صفحهٔ کامل",
   "The approval queue table isn’t ready yet.": "جدول صف تأیید هنوز آماده نیست.",

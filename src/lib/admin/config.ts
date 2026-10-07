@@ -36,6 +36,31 @@ export function isPhotoAssistAvailable(): boolean {
   return anthropicApiKey() !== undefined;
 }
 
+export interface TwilioConfig {
+  accountSid: string;
+  authToken: string;
+  /** The sending number, E.164 (e.g. +16045551234). */
+  fromNumber: string;
+}
+
+/**
+ * Twilio credentials, or undefined when any of the three is missing.
+ *
+ * All three are required to send; a partial set is treated as "off" so the
+ * Send SMS box simply hides rather than erroring mid-send.
+ */
+export function twilioConfig(): TwilioConfig | undefined {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID?.trim();
+  const authToken = process.env.TWILIO_AUTH_TOKEN?.trim();
+  const fromNumber = process.env.TWILIO_FROM_NUMBER?.trim();
+  if (!accountSid || !authToken || !fromNumber) return undefined;
+  return { accountSid, authToken, fromNumber };
+}
+
+export function isSmsConfigured(): boolean {
+  return twilioConfig() !== undefined;
+}
+
 export function envRequirements(): EnvRequirement[] {
   return [
     {
@@ -63,6 +88,13 @@ export function envRequirements(): EnvRequirement[] {
       required: false,
       description:
         "Opens POST /api/leads/intake to outside callers. Unset closes that endpoint; our own estimate form files leads directly either way.",
+    },
+    {
+      name: "TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_FROM_NUMBER",
+      present: isSmsConfigured(),
+      required: false,
+      description:
+        "Sends customer SMS from the panel via Twilio. All three must be set (From is the E.164 number, e.g. +16045551234). Unset hides the Send SMS box.",
     },
   ];
 }

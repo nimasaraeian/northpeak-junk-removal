@@ -6,6 +6,7 @@ import {
   updateLeadFieldsAction,
   logActivityAction,
 } from "@/lib/admin/crm-actions";
+import { sendSmsAction } from "@/lib/admin/sms-actions";
 import { PIPELINE_ORDER } from "@/lib/admin/crm";
 import { LEAD_OWNERS, type LeadRow, type LeadStatus } from "@/lib/db/schema";
 
@@ -25,12 +26,44 @@ function isoDate(d: Date | null): string {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 }
 
-export function LeadDrawerBody({ lead, t, onChanged }: { lead: LeadRow; t: T; onChanged: () => void }) {
+export function LeadDrawerBody({
+  lead,
+  t,
+  onChanged,
+  smsEnabled,
+}: {
+  lead: LeadRow;
+  t: T;
+  onChanged: () => void;
+  smsEnabled: boolean;
+}) {
   const [pending, start] = useTransition();
   const [err, setErr] = useState<string | null>(null);
   const [lostReason, setLostReason] = useState("");
   const [askLost, setAskLost] = useState(false);
   const [note, setNote] = useState("");
+  const [smsPhone, setSmsPhone] = useState(lead.phone);
+  const [smsBody, setSmsBody] = useState("");
+
+  const firstName = (lead.name || "").trim().split(/\s+/)[0] || "there";
+  const REVIEW_URL = "https://g.page/r/CQpStjbMaZkzEBM/review";
+  const smsTemplates = [
+    {
+      id: "confirm",
+      label: t("Confirm"),
+      body: `Hi ${firstName}, this is NorthPeak Junk Removal confirming your booking. We'll text you before we arrive — reply here with any questions.`,
+    },
+    {
+      id: "otw",
+      label: t("On our way"),
+      body: `Hi ${firstName}, NorthPeak Junk Removal here — our crew is on the way and will arrive shortly. Reply here if anything changes.`,
+    },
+    {
+      id: "review",
+      label: t("Review"),
+      body: `Hi ${firstName}, thanks for choosing NorthPeak Junk Removal! If you were happy with the job, a quick Google review really helps us: ${REVIEW_URL} — reply STOP to opt out.`,
+    },
+  ];
 
   function run(p: Promise<{ ok: boolean; error?: string }>) {
     setErr(null);
@@ -115,6 +148,57 @@ export function LeadDrawerBody({ lead, t, onChanged }: { lead: LeadRow; t: T; on
         >
           {t("Save note")}
         </button>
+      </div>
+
+      <div className="f">
+        <label>{t("Send SMS")}</label>
+        {smsEnabled ? (
+          <>
+            <input
+              value={smsPhone}
+              onChange={(e) => setSmsPhone(e.target.value)}
+              placeholder={t("Phone")}
+              inputMode="tel"
+            />
+            <div className="seg" style={{ marginTop: 8 }}>
+              {smsTemplates.map((tpl) => (
+                <button key={tpl.id} type="button" onClick={() => setSmsBody(tpl.body)}>
+                  {tpl.label}
+                </button>
+              ))}
+            </div>
+            <textarea
+              style={{ marginTop: 8 }}
+              value={smsBody}
+              onChange={(e) => setSmsBody(e.target.value)}
+              placeholder={t("Write a text to the customer…")}
+            />
+            <button
+              className="btn p sm"
+              style={{ marginTop: 8 }}
+              disabled={pending || !smsBody.trim() || !smsPhone.trim()}
+              onClick={() =>
+                run(
+                  sendSmsAction({
+                    entityType: "lead",
+                    entityId: lead.id,
+                    to: smsPhone.trim(),
+                    body: smsBody.trim(),
+                  }).then((r) => {
+                    if (r.ok) setSmsBody("");
+                    return r;
+                  }),
+                )
+              }
+            >
+              {t("Send SMS")}
+            </button>
+          </>
+        ) : (
+          <div style={{ fontSize: 12.5, color: "var(--muted)" }}>
+            {t("Add your Twilio keys in Vercel to send SMS from here.")}
+          </div>
+        )}
       </div>
 
       {err ? <div className="err">{err}</div> : null}

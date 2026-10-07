@@ -193,7 +193,7 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
         {drawer?.kind === "add" ? (
           <QuickAddLeadBody t={t} onCreated={() => { refresh(); setDrawer(null); }} />
         ) : drawerLead ? (
-          <LeadDrawerBody lead={drawerLead} t={t} onChanged={refresh} />
+          <LeadDrawerBody lead={drawerLead} t={t} onChanged={refresh} smsEnabled={data.smsEnabled} />
         ) : null}
       </Drawer>
     </div>
