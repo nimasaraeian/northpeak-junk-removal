@@ -8,6 +8,7 @@ import {
   type CrmDashboardStats,
 } from "@/lib/admin/crm-data";
 import { loadControlData, type ControlData } from "@/lib/admin/control-data";
+import { isSmsConfigured } from "@/lib/admin/config";
 import type { PricingSettings } from "@/lib/quote-engine";
 import type { ClientRow, JobRow, LeadRow, QuoteRow } from "@/lib/db/schema";
 
@@ -25,6 +26,8 @@ export interface CockpitData {
   jobs: JobRow[];
   pricing: PricingSettings;
   control: ControlData;
+  /** Whether Twilio is configured, so the Send SMS box can show or hide. */
+  smsEnabled: boolean;
 }
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -50,5 +53,5 @@ export async function loadCockpitData(): Promise<CockpitData> {
   // Scheduled jobs first (by date), then unscheduled in a backlog.
   const jobs = [...scheduled, ...unscheduled];
 
-  return { stats, crm, quotes, leads, clients, jobs, pricing, control };
+  return { stats, crm, quotes, leads, clients, jobs, pricing, control, smsEnabled: isSmsConfigured() };
 }

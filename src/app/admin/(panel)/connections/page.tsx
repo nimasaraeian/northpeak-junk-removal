@@ -1,4 +1,4 @@
-import { anthropicApiKey } from "@/lib/admin/config";
+import { anthropicApiKey, isSmsConfigured } from "@/lib/admin/config";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { GuardrailNote } from "@/components/admin/GuardrailNote";
 import { GUARDRAILS } from "@/lib/admin/control";
@@ -31,6 +31,7 @@ export default async function ConnectionsPage() {
   const t = await getT();
   const aiOn = anthropicApiKey() !== undefined;
   const dbOn = isDatabaseConfigured();
+  const smsOn = isSmsConfigured();
 
   const connections: Connection[] = [
     {
@@ -49,6 +50,13 @@ export default async function ConnectionsPage() {
       note: aiOn
         ? "Reads job photos and customer messages. Suggestions only."
         : "Set ANTHROPIC_API_KEY to turn on photo and intake assist.",
+    },
+    {
+      name: "SMS (Twilio)",
+      state: smsOn ? "connected" : "planned",
+      note: smsOn
+        ? "Send customer texts from a lead — confirmations, on-my-way, review requests."
+        : "Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER to turn on SMS.",
     },
     { name: "Workiz", state: "planned", note: "Field-service scheduling. Phase 2." },
     {
