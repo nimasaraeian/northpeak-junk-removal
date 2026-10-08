@@ -61,6 +61,20 @@ export function isSmsConfigured(): boolean {
   return twilioConfig() !== undefined;
 }
 
+/**
+ * Shared secret the AI phone receptionist (Retell) sends on every call to our
+ * voice endpoints, in the `X-Voice-Secret` header. The endpoints refuse without
+ * it, so only the configured agent can read availability or book a visit.
+ */
+export function voiceApiSecret(): string | undefined {
+  const value = process.env.VOICE_API_SECRET?.trim();
+  return value ? value : undefined;
+}
+
+export function isVoiceConfigured(): boolean {
+  return voiceApiSecret() !== undefined;
+}
+
 export function envRequirements(): EnvRequirement[] {
   return [
     {
@@ -95,6 +109,13 @@ export function envRequirements(): EnvRequirement[] {
       required: false,
       description:
         "Sends customer SMS from the panel via Twilio. All three must be set (From is the E.164 number, e.g. +16045551234). Unset hides the Send SMS box.",
+    },
+    {
+      name: "VOICE_API_SECRET",
+      present: isVoiceConfigured(),
+      required: false,
+      description:
+        "Shared secret the AI phone receptionist (Retell) sends in X-Voice-Secret to read availability and book estimate visits via /api/voice/*. Unset keeps those endpoints closed.",
     },
   ];
 }
