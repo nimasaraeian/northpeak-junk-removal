@@ -8,11 +8,33 @@ import type { BookingLevelEstimate } from "@/lib/booking/booking-core";
 import { trackGenerateLead } from "@/lib/analytics/track";
 import { formatRange } from "@/lib/quote-engine";
 import { Button } from "@/components/ui/Button";
+import { compressImage } from "@/lib/compress-image";
 import { cx } from "@/lib/utils";
 
 const initialState: BookingActionState = { ok: false, message: "" };
 
 const steps = ["Size", "Service", "Schedule", "Details"];
+
+const MAX_PHOTOS = 4;
+
+async function toBase64(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+interface AiEstimate {
+  cubicFeet: number;
+  lowCents: number;
+  highCents: number;
+  items: { label: string; qty: number }[];
+  complexJob: boolean;
+  reason?: string;
+}
 
 export function BookingWizard({
   estimates,
@@ -32,9 +54,81 @@ export function BookingWizard({
   const [state, action, pending] = useActionState(submitBooking, initialState);
   const leadTracked = useRef(false);
 
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [photos, setPhotos] = useState<{ url: string; mediaType: string; base64: string }[]>([]);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [ai, setAi] = useState<AiEstimate | null>(null);
+
   const selectedLevel = estimates.find((e) => e.id === levelId);
   const selectedService = services.find((s) => s.slug === serviceSlug);
   const selectedWindow = BOOKING_WINDOWS.find((w) => w.id === windowId);
+  const hasAi = ai !== null && !ai.complexJob;
+
+  async function addPhotos(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+    setAiError("");
+    try {
+      const picked = Array.from(fileList).slice(0, MAX_PHOTOS - photos.length);
+      const next: { url: string; mediaType: string; base64: string }[] = [];
+      for (const file of picked) {
+        const compressed = await compressImage(file);
+        next.push({
+          url: URL.createObjectURL(compressed.file),
+          mediaType: compressed.file.type || "image/jpeg",
+          base64: await toBase64(compressed.file),
+        });
+      }
+      setPhotos((current) => [...current, ...next].slice(0, MAX_PHOTOS));
+    } catch {
+      setAiError("Those photos couldn't be read on this device.");
+    } finally {
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function analysePhotos() {
+    if (photos.length === 0 || aiBusy) return;
+    setAiBusy(true);
+    setAiError("");
+    setAi(null);
+    try {
+      const res = await fetch("/api/book/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: photos.map((p) => ({ mediaType: p.mediaType, data: p.base64 })) }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        complexJob?: boolean;
+        reason?: string;
+        cubicFeet?: number;
+        lowCents?: number;
+        highCents?: number;
+        items?: { label: string; qty: number }[];
+      };
+      if (!res.ok) {
+        setAiError(data.error ?? "Couldn't estimate from those photos.");
+        return;
+      }
+      if (data.complexJob) {
+        setAi({ cubicFeet: 0, lowCents: 0, highCents: 0, items: [], complexJob: true, reason: data.reason });
+        return;
+      }
+      setAi({
+        cubicFeet: data.cubicFeet ?? 0,
+        lowCents: data.lowCents ?? 0,
+        highCents: data.highCents ?? 0,
+        items: data.items ?? [],
+        complexJob: false,
+      });
+      setLevelId(""); // the AI estimate replaces a bucket pick
+    } catch {
+      setAiError("Couldn't reach the estimator. Please try again.");
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (!state.ok || leadTracked.current) return;
@@ -91,7 +185,16 @@ export function BookingWizard({
         ))}
       </ol>
 
-      {selectedLevel ? (
+      {hasAi && ai ? (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-cream px-4 py-3 text-sm">
+          <span className="text-stone">
+            Photo estimate
+            {selectedService ? ` · ${selectedService.name}` : ""}
+            {dateStr && selectedWindow ? ` · ${dateStr}, ${selectedWindow.label}` : ""}
+          </span>
+          <span className="font-semibold text-navy">{formatRange(ai.lowCents, ai.highCents)}</span>
+        </div>
+      ) : selectedLevel ? (
         <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-cream px-4 py-3 text-sm">
           <span className="text-stone">
             {selectedLevel.label}
@@ -118,6 +221,7 @@ export function BookingWizard({
                 type="button"
                 onClick={() => {
                   setLevelId(level.id);
+                  setAi(null);
                   setStep(1);
                 }}
                 className={cx(
@@ -136,6 +240,84 @@ export function BookingWizard({
                 </span>
               </button>
             ))}
+          </div>
+
+          {/* Photo path — a sharper AI estimate. */}
+          <div className="mt-6 rounded-2xl border border-navy/10 p-4">
+            <p className="text-sm font-semibold text-navy">
+              Not sure which size? Add photos for an instant AI estimate.
+            </p>
+            <p className="mt-1 text-xs text-stone">
+              Up to {MAX_PHOTOS} photos. Nothing is stored. Final price is confirmed on site.
+            </p>
+
+            {photos.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {photos.map((p, i) => (
+                  <span key={p.url} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.url} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setPhotos((cur) => cur.filter((_, j) => j !== i))}
+                      className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-navy text-xs text-cream"
+                      aria-label="Remove photo"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => void addPhotos(e.target.files)}
+              />
+              <Button
+                variant="ghost"
+                onClick={() => fileRef.current?.click()}
+                disabled={photos.length >= MAX_PHOTOS}
+              >
+                {photos.length > 0 ? "Add more" : "Add photos"}
+              </Button>
+              <Button onClick={() => void analysePhotos()} disabled={photos.length === 0 || aiBusy}>
+                {aiBusy ? "Reading photos…" : "Get instant estimate"}
+              </Button>
+            </div>
+
+            {aiError ? <p className="mt-3 text-sm text-gold-deep">{aiError}</p> : null}
+
+            {ai && ai.complexJob ? (
+              <p className="mt-3 rounded-xl bg-cream px-4 py-3 text-sm text-stone">
+                This looks like a bigger job{ai.reason ? ` — ${ai.reason}` : ""}. Pick a size above,
+                or continue and we&apos;ll give you a custom quote.
+              </p>
+            ) : null}
+
+            {hasAi && ai ? (
+              <div className="mt-3 rounded-xl bg-cream px-4 py-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-navy">Estimated range</span>
+                  <span className="text-sm font-semibold text-gold-deep">
+                    {formatRange(ai.lowCents, ai.highCents)}
+                  </span>
+                </div>
+                {ai.items.length > 0 ? (
+                  <p className="mt-1 text-xs text-stone">
+                    {ai.items.map((it) => `${it.qty}× ${it.label}`).join(", ")}
+                  </p>
+                ) : null}
+                <div className="mt-3">
+                  <Button onClick={() => setStep(1)}>Continue →</Button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -258,6 +440,7 @@ export function BookingWizard({
 
           {/* Carried from earlier steps. */}
           <input type="hidden" name="levelId" value={levelId} />
+          <input type="hidden" name="aiCuFt" value={hasAi && ai ? String(ai.cubicFeet) : ""} />
           <input type="hidden" name="serviceSlug" value={serviceSlug} />
           <input type="hidden" name="date" value={dateStr} />
           <input type="hidden" name="window" value={windowId} />

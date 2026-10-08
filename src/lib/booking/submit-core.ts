@@ -101,8 +101,14 @@ export async function submitBookingCore(
     return { ok: false, message: "Choose a service so we can scope the visit." };
   }
 
-  if (!isBookableLevelId(levelId)) {
-    return { ok: false, message: "Choose how much needs to go." };
+  // Either a quick load-size bucket, or a cubic-feet figure the AI photo
+  // estimate produced. The AI value is a display estimate only (the final
+  // price is confirmed on site), so it is trusted here within a sane cap.
+  const aiCuFt = Number(read(formData, "aiCuFt"));
+  const useAi = Number.isFinite(aiCuFt) && aiCuFt > 0 && aiCuFt <= 20000;
+
+  if (!useAi && !isBookableLevelId(levelId)) {
+    return { ok: false, message: "Choose how much needs to go, or add photos for an estimate." };
   }
 
   if (!isBookingWindowId(windowId) || !isValidBookingDate(dateStr)) {
@@ -132,9 +138,12 @@ export async function submitBookingCore(
     return { ok: false, message: "Tell us what needs to be removed." };
   }
 
-  const level = getVolumeLevel(levelId);
   const settings = await loadPricingSettings();
-  const estimate = estimateForCubicFeet(level.cubicFeet, settings);
+  const loadCuFt = useAi ? aiCuFt : getVolumeLevel(levelId).cubicFeet;
+  const loadLabel = useAi
+    ? `Photo estimate (~${Math.round(aiCuFt)} cu ft)`
+    : getVolumeLevel(levelId).label;
+  const estimate = estimateForCubicFeet(loadCuFt, settings);
   const estimateText = formatRange(estimate.lowCents, estimate.highCents);
   const slotText = slotLabel(dateStr, windowId as BookingWindowId);
   const window = getBookingWindow(windowId);
@@ -143,12 +152,12 @@ export async function submitBookingCore(
   const customerArea = area.city ?? "";
   const addressLine = [address, customerArea, postalCode].filter(Boolean).join(", ");
 
-  const leadNote = `Online booking ${reference} — ${service.name}, ${level.label}. Requested ${slotText}. Estimate ${estimateText}.`;
+  const leadNote = `Online booking ${reference} — ${service.name}, ${loadLabel}. Requested ${slotText}. Estimate ${estimateText}.`;
 
   const jobNotes = [
     `ONLINE BOOKING — confirm the slot with the customer.`,
     `Service: ${service.name}`,
-    `Load: ${level.label} (~${level.cubicFeet} cu ft)`,
+    `Load: ${useAi ? loadLabel : `${loadLabel} (~${loadCuFt} cu ft)`}`,
     `Requested: ${slotText}`,
     `Estimate (auto): ${estimateText}`,
     address ? `Address: ${address}` : null,
@@ -172,11 +181,11 @@ export async function submitBookingCore(
     scheduledStart: slot.start,
     scheduledEnd: slot.end,
     queueTitle: `Confirm booking — ${name}, ${window?.label ?? ""} ${dateStr}`.trim(),
-    queueSummary: `${service.name} · ${level.label} · ${slotText}. Call to confirm, then set the job to confirmed.`,
+    queueSummary: `${service.name} · ${loadLabel} · ${slotText}. Call to confirm, then set the job to confirmed.`,
     queuePayload: {
       reference,
       service: service.name,
-      level: level.label,
+      level: loadLabel,
       slot: slotText,
       estimate: estimateText,
       name,
