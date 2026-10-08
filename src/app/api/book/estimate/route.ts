@@ -133,16 +133,26 @@ export async function POST(request: Request) {
     }
 
     const items = result.data.items;
+
+    // When the model recognises an item as one in the owner's catalog, price it
+    // at the catalog's authoritative size, surcharge and flags rather than the
+    // model's own guess. Unmatched items fall back to the model's estimate.
+    const catalogByName = new Map(catalog.map((entry) => [entry.name, entry]));
+    const lines = items.map((it) => {
+      const match = it.matchedCatalogName ? catalogByName.get(it.matchedCatalogName) : undefined;
+      return {
+        catalogId: match?.id ?? null,
+        label: it.label,
+        qty: it.qty,
+        cubicFeetEach: match ? match.cubicFeet : it.estCubicFeetEach,
+        surchargeCents: match ? match.defaultSurchargeCents : null,
+        flags: match && match.flags.length > 0 ? match.flags : it.flags,
+      };
+    });
+
     const computed = computeQuote(
       {
-        items: items.map((it) => ({
-          catalogId: null,
-          label: it.label,
-          qty: it.qty,
-          cubicFeetEach: it.estCubicFeetEach,
-          surchargeCents: null,
-          flags: it.flags,
-        })),
+        items: lines,
         labor: { stairsFlights: 0, carryDistance: "standard", disassembly: 0 },
         heavyMode: false,
         heavy: null,
@@ -150,7 +160,7 @@ export async function POST(request: Request) {
       },
       settings,
     );
-    const cubicFeet = items.reduce((sum, it) => sum + it.estCubicFeetEach * it.qty, 0);
+    const cubicFeet = lines.reduce((sum, line) => sum + line.cubicFeetEach * line.qty, 0);
 
     return NextResponse.json({
       ok: true,
