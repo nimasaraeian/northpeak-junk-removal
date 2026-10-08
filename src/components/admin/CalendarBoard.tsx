@@ -62,6 +62,7 @@ export function CalendarBoard({
   const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [dragging, setDragging] = useState<CalendarJob | null>(null);
+  const [armed, setArmed] = useState<CalendarJob | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const days = useMemo(() => dayKeys.map(keyToDate), [dayKeys]);
@@ -156,11 +157,19 @@ export function CalendarBoard({
             {days.map((day) => (
               <div
                 key={toDateKey(day)}
+                onClick={() => {
+                  if (armed) {
+                    drop(armed, day, CALENDAR_DAY_START_HOUR + 1);
+                    setArmed(null);
+                  }
+                }}
                 className="border-l border-[var(--ops-border)] px-2 py-2 text-center text-xs font-semibold"
                 style={{
-                  color:
-                    toDateKey(day) === todayKey ? "var(--ops-gold-ink)" : "var(--ops-muted)",
+                  color: toDateKey(day) === todayKey ? "var(--ops-gold-ink)" : "var(--ops-muted)",
+                  cursor: armed ? "pointer" : undefined,
+                  background: armed ? "var(--ops-surface-2)" : undefined,
                 }}
+                title={armed ? t("Click to schedule here") : undefined}
               >
                 {dayLabel.format(day)}
               </div>
@@ -188,7 +197,15 @@ export function CalendarBoard({
                   {hours.map((hour) => (
                     <div
                       key={hour}
-                      className="border-t border-[var(--ops-border)] transition-colors hover:bg-[var(--ops-surface-2)]"
+                      className="h-full w-full border-t border-[var(--ops-border)] transition-colors hover:bg-[var(--ops-surface-2)]"
+                      style={{ cursor: armed ? "pointer" : undefined }}
+                      aria-label={`${dayLabel.format(day)} at ${formatHour(hour)}`}
+                      onClick={() => {
+                        if (armed) {
+                          drop(armed, day, hour);
+                          setArmed(null);
+                        }
+                      }}
                       onDragOver={(event) => {
                         if (dragging) event.preventDefault();
                       }}
@@ -197,13 +214,7 @@ export function CalendarBoard({
                         if (dragging) drop(dragging, day, hour);
                         setDragging(null);
                       }}
-                    >
-                      <Link
-                        href={`/admin/calendar?new=${toDateKey(day)}T${String(hour).padStart(2, "0")}`}
-                        className="block h-full w-full"
-                        aria-label={`Book ${dayLabel.format(day)} at ${formatHour(hour)}`}
-                      />
-                    </div>
+                    />
                   ))}
                 </div>
 
@@ -240,7 +251,7 @@ export function CalendarBoard({
       <aside className="ops-card h-fit p-3">
         <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Unscheduled")}</h2>
         <p className="mt-1 text-xs leading-5 text-[var(--ops-muted)]">
-          {t("Drag onto a slot, or use the day picker on a phone.")}
+          {t("Tap a job, then click a day on the calendar. Or drag it onto a slot.")}
         </p>
 
         {unscheduled.length === 0 ? (
@@ -255,7 +266,13 @@ export function CalendarBoard({
                 draggable
                 onDragStart={() => setDragging(job)}
                 onDragEnd={() => setDragging(null)}
-                className="rounded-lg border border-[var(--ops-border)] bg-[var(--ops-surface-2)] p-2.5"
+                onClick={() => setArmed((cur) => (cur?.id === job.id ? null : job))}
+                className="cursor-pointer rounded-lg border p-2.5"
+                style={{
+                  borderColor: armed?.id === job.id ? "var(--ops-gold-ink)" : "var(--ops-border)",
+                  background: "var(--ops-surface-2)",
+                  outline: armed?.id === job.id ? "1px solid var(--ops-gold-ink)" : undefined,
+                }}
               >
                 <span className="block text-sm font-semibold text-[var(--ops-navy)]">
                   {job.clientName ?? `Job #${job.id}`}
@@ -264,8 +281,14 @@ export function CalendarBoard({
                   {job.address || t("No address")}
                 </span>
 
+                {armed?.id === job.id ? (
+                  <p className="mt-1 text-[0.68rem] font-semibold text-[var(--ops-gold-ink)]">
+                    {t("Now click a day on the calendar.")}
+                  </p>
+                ) : null}
+
                 {/* Touch path: pick a day rather than dragging. */}
-                <label className="mt-1.5 block">
+                <label className="mt-1.5 block" onClick={(event) => event.stopPropagation()}>
                   <span className="sr-only">{t("Schedule")}</span>
                   <input
                     type="date"
