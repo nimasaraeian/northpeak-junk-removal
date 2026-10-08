@@ -1,4 +1,4 @@
-import { anthropicApiKey, isSmsConfigured } from "@/lib/admin/config";
+import { anthropicApiKey, isSmsConfigured, isVoiceConfigured } from "@/lib/admin/config";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { GuardrailNote } from "@/components/admin/GuardrailNote";
 import { GUARDRAILS } from "@/lib/admin/control";
@@ -32,6 +32,7 @@ export default async function ConnectionsPage() {
   const aiOn = anthropicApiKey() !== undefined;
   const dbOn = isDatabaseConfigured();
   const smsOn = isSmsConfigured();
+  const voiceOn = isVoiceConfigured();
 
   const connections: Connection[] = [
     {
@@ -57,6 +58,13 @@ export default async function ConnectionsPage() {
       note: smsOn
         ? "Send customer texts from a lead — confirmations, on-my-way, review requests."
         : "Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER to turn on SMS.",
+    },
+    {
+      name: "AI phone receptionist (Retell)",
+      state: voiceOn ? "connected" : "planned",
+      note: voiceOn
+        ? "Answers missed calls, books estimate visits into the calendar, logs a call summary."
+        : "Set VOICE_API_SECRET and point the Retell agent at /api/voice/* to turn it on.",
     },
     { name: "Workiz", state: "planned", note: "Field-service scheduling. Phase 2." },
     {

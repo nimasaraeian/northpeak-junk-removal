@@ -237,6 +237,11 @@ export const FA: Record<string, string> = {
     "ارسال پیامک به مشتری از روی لید — تأیید، «در راهیم»، درخواست نظر.",
   "Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER to turn on SMS.":
     "برای فعال‌کردن پیامک، TWILIO_ACCOUNT_SID و TWILIO_AUTH_TOKEN و TWILIO_FROM_NUMBER را ست کن.",
+  "AI phone receptionist (Retell)": "منشی تلفنی AI (Retell)",
+  "Answers missed calls, books estimate visits into the calendar, logs a call summary.":
+    "به تماس‌های بی‌پاسخ جواب می‌دهد، بازدید برآورد را در تقویم ثبت می‌کند، و خلاصهٔ تماس را ذخیره می‌کند.",
+  "Set VOICE_API_SECRET and point the Retell agent at /api/voice/* to turn it on.":
+    "برای فعال‌کردن، VOICE_API_SECRET را ست کن و agent رتل را به /api/voice/* وصل کن.",
   "This section is being built.": "این بخش در حال ساخت است.",
   "Open the full page": "باز کردن صفحهٔ کامل",
   "The approval queue table isn’t ready yet.": "جدول صف تأیید هنوز آماده نیست.",
