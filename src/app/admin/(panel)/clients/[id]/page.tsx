@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientActions } from "@/components/admin/ClientActions";
+import { ClientJobsEditor } from "@/components/admin/ClientJobsEditor";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { site } from "@/content/site";
@@ -89,26 +90,7 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
             <h2 className="border-b border-[var(--ops-border)] px-4 py-3 text-sm font-semibold text-[var(--ops-navy)]">
               {t("Jobs")}
             </h2>
-            {jobs.length === 0 ? (
-              <p className="px-4 py-8 text-center text-sm text-[var(--ops-muted)]">
-                {t("No jobs yet. “Schedule job” creates one for the calendar.")}
-              </p>
-            ) : (
-              <ul className="divide-y divide-[var(--ops-border)]">
-                {jobs.map((job) => (
-                  <li key={job.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
-                    <span className="font-medium text-[var(--ops-navy)]">{t("Job")} #{job.id}</span>
-                    <span className="text-[var(--ops-muted)]">
-                      {job.scheduledStart ? dateFormat.format(job.scheduledStart) : t("Unscheduled")} ·{" "}
-                      {job.assignedTo}
-                    </span>
-                    <span className="ops-pill" data-status={job.status === "done" ? "won" : job.status === "cancelled" ? "lost" : "sent"}>
-                      {t(({scheduled:"Scheduled",in_progress:"In progress",done:"Done",cancelled:"Cancelled"})[job.status] ?? job.status)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ClientJobsEditor jobs={jobs} />
           </section>
 
           {leads.length > 0 ? (

@@ -1,6 +1,7 @@
 import { after } from "next/server";
+import { eq, or } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
-import { activityLog, leads, type LeadSource } from "@/lib/db/schema";
+import { activityLog, clients, leads, type LeadSource } from "@/lib/db/schema";
 
 /**
  * Files a website lead into the CRM pipeline.
@@ -42,17 +43,67 @@ export interface CrmLeadResult {
  * Returns rather than throws: a CRM write must never be the reason a
  * customer is told their enquiry failed.
  */
-export async function insertWebsiteLead(input: CrmLeadInput): Promise<CrmLeadResult> {
+export interface CrmLeadResultWithClient extends CrmLeadResult {
+  clientId?: number;
+}
+
+export async function insertWebsiteLead(input: CrmLeadInput): Promise<CrmLeadResultWithClient> {
   const db = getDb();
   if (!db) return { ok: false, error: "No database configured." };
 
+  const phone = input.phone.trim();
+  const email = input.email.trim();
+
   try {
+    // A website enquiry is also a customer: reuse an existing client whose
+    // phone or email matches, otherwise create one, so the lead lands already
+    // attached to a client card instead of needing to be linked by hand.
+    let clientId: number | null = null;
+
+    const matchers = [
+      phone ? eq(clients.phone, phone) : null,
+      email ? eq(clients.email, email) : null,
+    ].filter((c): c is NonNullable<typeof c> => c !== null);
+
+    if (matchers.length > 0) {
+      const [existing] = await db
+        .select({ id: clients.id })
+        .from(clients)
+        .where(matchers.length === 1 ? matchers[0] : or(...matchers))
+        .limit(1);
+      if (existing) clientId = existing.id;
+    }
+
+    if (!clientId) {
+      const [created] = await db
+        .insert(clients)
+        .values({
+          name: input.name,
+          phone,
+          email: email || null,
+          area: input.area,
+          source: input.source,
+        })
+        .returning({ id: clients.id });
+      clientId = created?.id ?? null;
+      if (created) {
+        await db.insert(activityLog).values({
+          entityType: "client",
+          entityId: created.id,
+          actor: "website",
+          kind: "system",
+          body: "Client created from a website enquiry.",
+        });
+      }
+    }
+
     const [inserted] = await db
       .insert(leads)
       .values({
+        clientId,
         name: input.name,
-        phone: input.phone,
-        email: input.email,
+        phone,
+        email,
         area: input.area,
         message: input.message,
         source: input.source,
@@ -72,7 +123,17 @@ export async function insertWebsiteLead(input: CrmLeadInput): Promise<CrmLeadRes
       body: input.note ?? "Lead arrived from the website form.",
     });
 
-    return { ok: true, id: inserted.id };
+    if (clientId) {
+      await db.insert(activityLog).values({
+        entityType: "client",
+        entityId: clientId,
+        actor: "website",
+        kind: "system",
+        body: `Website enquiry filed as lead #${inserted.id}.`,
+      });
+    }
+
+    return { ok: true, id: inserted.id, clientId: clientId ?? undefined };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : "Insert failed." };
   }

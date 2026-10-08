@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/provider";
@@ -82,6 +82,15 @@ const TITLE: Record<TabId, string> = {
   settings: "Settings",
 };
 
+const TAB_SET = new Set<string>(Object.keys(TITLE));
+
+/** The active tab, read from the URL (?t=), so reload and Back both restore it. */
+function tabFromUrl(): TabId {
+  if (typeof window === "undefined") return "dashboard";
+  const value = new URLSearchParams(window.location.search).get("t");
+  return value && TAB_SET.has(value) ? (value as TabId) : "dashboard";
+}
+
 type T = (s: string) => string;
 
 export function Cockpit({ operator, data }: { operator: string; data: CockpitData }) {
@@ -96,7 +105,29 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
 
   const openLead = (id: number) => setDrawer({ kind: "lead", id });
   const refresh = () => router.refresh();
+  const nav = (href: string) => router.push(href as never);
   const drawerLead = drawer?.kind === "lead" ? data.leads.find((l) => l.id === drawer.id) ?? null : null;
+
+  // Keep the active tab in the URL so Back and a reload both land where the
+  // person was, instead of dumping them out of the cockpit. Tab switches push
+  // a history entry; Back/forward (popstate) and the first mount read it back.
+  const goTab = (id: TabId) => {
+    setTab(id);
+    setSidebarOpen(false);
+    setQuery("");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("t", id);
+      window.history.pushState({ t: id }, "", url.toString());
+    }
+  };
+
+  useEffect(() => {
+    const sync = () => setTab(tabFromUrl());
+    sync();
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
 
   return (
     <div className="cockpit">
@@ -114,11 +145,7 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
               <button
                 key={item.id}
                 className={tab === item.id ? "on" : ""}
-                onClick={() => {
-                  setTab(item.id);
-                  setSidebarOpen(false);
-                  setQuery("");
-                }}
+                onClick={() => goTab(item.id)}
               >
                 <Svg d={item.icon} />
                 <span>{t(item.label)}</span>
@@ -172,12 +199,12 @@ export function Cockpit({ operator, data }: { operator: string; data: CockpitDat
             </div>
           </div>
 
-          {tab === "dashboard" && <DashboardTab data={data} t={t} go={setTab} />}
+          {tab === "dashboard" && <DashboardTab data={data} t={t} go={goTab} nav={nav} />}
           {tab === "control" && <ControlTab data={data} t={t} />}
-          {tab === "customers" && <CustomersTab data={data} t={t} query={query} openLead={openLead} refresh={refresh} />}
+          {tab === "customers" && <CustomersTab data={data} t={t} query={query} openLead={openLead} refresh={refresh} nav={nav} />}
           {tab === "followups" && <FollowupsTab data={data} t={t} query={query} openLead={openLead} />}
-          {tab === "quotes" && <QuotesTab data={data} t={t} query={query} />}
-          {tab === "jobs" && <JobsTab data={data} t={t} query={query} />}
+          {tab === "quotes" && <QuotesTab data={data} t={t} query={query} nav={nav} />}
+          {tab === "jobs" && <JobsTab data={data} t={t} query={query} nav={nav} />}
           {tab === "reports" && <ReportsTab data={data} t={t} />}
           {tab === "team" && <TeamTab data={data} t={t} />}
           {tab === "settings" && <SettingsTab data={data} t={t} />}
@@ -220,13 +247,19 @@ function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function go(href: string) {
-  window.location.href = href;
-}
-
 // ---------------------------------------------------------------- Dashboard
 
-function DashboardTab({ data, t, go: setTab }: { data: CockpitData; t: T; go: (id: TabId) => void }) {
+function DashboardTab({
+  data,
+  t,
+  go: setTab,
+  nav,
+}: {
+  data: CockpitData;
+  t: T;
+  go: (id: TabId) => void;
+  nav: (href: string) => void;
+}) {
   const { stats, crm } = data;
   const funnel = PIPELINE_ORDER.filter((s) => s !== "won" && s !== "lost");
   const max = Math.max(1, ...funnel.map((s) => crm.leadsByStage[s]));
@@ -294,7 +327,7 @@ function DashboardTab({ data, t, go: setTab }: { data: CockpitData; t: T; go: (i
             </thead>
             <tbody>
               {data.quotes.slice(0, 10).map((q) => (
-                <tr key={q.id} className="click" onClick={() => go(`/admin/quotes/${q.id}`)}>
+                <tr key={q.id} className="click" onClick={() => nav(`/admin/quotes/${q.id}`)}>
                   <td><b>{q.customerName || `#${q.id}`}</b></td>
                   <td style={{ color: "var(--muted)" }}>{q.customerArea || "—"}</td>
                   <td className="num">{formatRange(q.finalLowCents, q.finalHighCents)}</td>
@@ -337,12 +370,14 @@ function CustomersTab({
   query,
   openLead,
   refresh,
+  nav,
 }: {
   data: CockpitData;
   t: T;
   query: string;
   openLead: (id: number) => void;
   refresh: () => void;
+  nav: (href: string) => void;
 }) {
   const [sub, setSub] = useState<"leads" | "clients">("leads");
   const [view, setView] = useState<"table" | "board">("table");
@@ -393,7 +428,7 @@ function CustomersTab({
             <thead><tr><th>{t("Name")}</th><th>{t("Phone")}</th><th>{t("Area")}</th><th>{t("Revenue won")}</th></tr></thead>
             <tbody>
               {clients.slice(0, 80).map((c) => (
-                <tr key={c.id} className="click" onClick={() => go(`/admin/clients/${c.id}`)}>
+                <tr key={c.id} className="click" onClick={() => nav(`/admin/clients/${c.id}`)}>
                   <td><div className="who"><Avatar name={c.name} /><b>{c.name}</b></div></td>
                   <td className="num" style={{ color: "var(--muted)" }}>{c.phone || "—"}</td>
                   <td style={{ color: "var(--muted)" }}>{c.area || "—"}</td>
@@ -455,7 +490,7 @@ function FollowupsTab({ data, t, query, openLead }: { data: CockpitData; t: T; q
 
 // ------------------------------------------------------------------- Quotes
 
-function QuotesTab({ data, t, query }: { data: CockpitData; t: T; query: string }) {
+function QuotesTab({ data, t, query, nav }: { data: CockpitData; t: T; query: string; nav: (href: string) => void }) {
   const rows = data.quotes.filter((q) => matchText(query, q.customerName, q.customerPhone, q.customerArea));
   return (
     <div className="card">
@@ -464,7 +499,7 @@ function QuotesTab({ data, t, query }: { data: CockpitData; t: T; query: string 
           <thead><tr><th>{t("Customer")}</th><th>{t("Area")}</th><th>{t("Range")}</th><th>{t("Status")}</th><th>{t("By")}</th><th>{t("Date")}</th></tr></thead>
           <tbody>
             {rows.map((q) => (
-              <tr key={q.id} className="click" onClick={() => go(`/admin/quotes/${q.id}`)}>
+              <tr key={q.id} className="click" onClick={() => nav(`/admin/quotes/${q.id}`)}>
                 <td><b>{q.customerName || `#${q.id}`}</b></td>
                 <td style={{ color: "var(--muted)" }}>{q.customerArea || "—"}</td>
                 <td className="num">{formatRange(q.finalLowCents, q.finalHighCents)}</td>
@@ -482,7 +517,7 @@ function QuotesTab({ data, t, query }: { data: CockpitData; t: T; query: string 
 
 // --------------------------------------------------------------------- Jobs
 
-function JobsTab({ data, t, query }: { data: CockpitData; t: T; query: string }) {
+function JobsTab({ data, t, query, nav }: { data: CockpitData; t: T; query: string; nav: (href: string) => void }) {
   const clientName = useMemo(() => {
     const m = new Map<number, string>();
     for (const c of data.clients) m.set(c.id, c.name);
@@ -502,7 +537,7 @@ function JobsTab({ data, t, query }: { data: CockpitData; t: T; query: string })
           <thead><tr><th>{t("Customer")}</th><th>{t("When")}</th><th>{t("Status")}</th><th>{t("Crew")}</th><th>{t("Address")}</th></tr></thead>
           <tbody>
             {rows.map((j) => (
-              <tr key={j.id} className="click" onClick={() => go("/admin/calendar")}>
+              <tr key={j.id} className="click" onClick={() => nav("/admin/calendar")}>
                 <td><b>{j.clientId ? clientName.get(j.clientId) ?? "—" : "—"}</b></td>
                 <td className="num" style={{ color: j.scheduledStart ? "inherit" : "var(--muted)" }}>{when(j)}</td>
                 <td><span className="chip">{t(JOB_STATUS_LABEL[j.status] ?? j.status)}</span></td>

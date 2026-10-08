@@ -219,6 +219,12 @@ export const FA: Record<string, string> = {
   "Send": "ارسال",
   "Sending…": "در حال ارسال…",
   "Could not send.": "ارسال نشد.",
+  "Assignee": "مجری",
+  "Both": "هر دو",
+  "Click to schedule here": "برای زمان‌بندی اینجا کلیک کن",
+  "Now click a day on the calendar.": "حالا روی یک روز در تقویم کلیک کن.",
+  "Tap a job, then click a day on the calendar. Or drag it onto a slot.":
+    "یک کار را انتخاب کن، بعد روی یک روز در تقویم کلیک کن. یا آن را روی یک بازه بکش.",
   "Send SMS": "ارسال پیامک",
   "Confirm": "تأیید",
   "On our way": "در راهیم",
