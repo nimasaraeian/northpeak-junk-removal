@@ -16,6 +16,8 @@ import { isBookingEnabled } from "@/lib/booking/feature";
 import { generateRequestId } from "@/lib/estimate/request-id";
 import { checkServiceArea } from "@/lib/postal";
 import { formatRange } from "@/lib/quote-engine";
+import { notifyBooking } from "@/lib/telegram/notify-booking";
+import type { TelegramFetch } from "@/lib/telegram/client";
 
 /**
  * Online booking — the server-side core.
@@ -57,6 +59,7 @@ function todayInVancouver(now: Date): string {
 export interface SubmitBookingOptions {
   now?: () => Date;
   createRequestId?: () => string;
+  fetchImpl?: TelegramFetch;
 }
 
 export async function submitBookingCore(
@@ -203,6 +206,31 @@ export async function submitBookingCore(
       message:
         "We couldn't save your booking just now. Your details are still here — please try again, or call us.",
     };
+  }
+
+  // Best-effort Telegram ping. The booking is already saved in the CRM above,
+  // so a notification failure must never flip the result to an error.
+  try {
+    await notifyBooking({
+      context: {
+        reference,
+        submittedAt: now,
+        name,
+        phone,
+        email,
+        serviceName: service.name,
+        loadLabel,
+        slotLabel: slotText,
+        estimate: estimateText,
+        area: customerArea,
+        address: addressLine,
+        description,
+        accessNotes,
+      },
+      fetchImpl: options.fetchImpl,
+    });
+  } catch {
+    // Swallow — a booking's success does not depend on the notification.
   }
 
   return {
