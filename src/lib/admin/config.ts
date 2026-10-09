@@ -75,6 +75,27 @@ export function isVoiceConfigured(): boolean {
   return voiceApiSecret() !== undefined;
 }
 
+/** Fallback Google Maps search for the business, used when no direct review link is set. */
+const DEFAULT_REVIEW_URL =
+  "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver";
+
+/**
+ * Where the post-job review SMS points the customer. Prefer a direct "write a
+ * review" short link from the Google Business Profile (set GOOGLE_REVIEW_URL);
+ * without it, fall back to a Maps search for the business so the link still works.
+ */
+export function reviewRequestUrl(): string {
+  return process.env.GOOGLE_REVIEW_URL?.trim() || DEFAULT_REVIEW_URL;
+}
+
+/**
+ * The post-job review request sends only when SMS is configured, and can be
+ * switched off without touching Twilio by setting REVIEW_SMS_ENABLED=false.
+ */
+export function isReviewRequestEnabled(): boolean {
+  return isSmsConfigured() && process.env.REVIEW_SMS_ENABLED?.trim().toLowerCase() !== "false";
+}
+
 export function envRequirements(): EnvRequirement[] {
   return [
     {
@@ -116,6 +137,13 @@ export function envRequirements(): EnvRequirement[] {
       required: false,
       description:
         "Shared secret the AI phone receptionist (Retell) sends in X-Voice-Secret to read availability and book estimate visits via /api/voice/*. Unset keeps those endpoints closed.",
+    },
+    {
+      name: "GOOGLE_REVIEW_URL",
+      present: (process.env.GOOGLE_REVIEW_URL?.trim() ?? "") !== "",
+      required: false,
+      description:
+        "Direct 'write a review' link from the Google Business Profile, texted to a customer when a removal job is marked done (needs SMS on). Unset falls back to a Maps search; set REVIEW_SMS_ENABLED=false to turn the review text off.",
     },
   ];
 }

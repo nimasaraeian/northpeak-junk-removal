@@ -13,6 +13,7 @@ import {
   shouldAdvanceLeadToQuoted,
   statusChangeBody,
 } from "@/lib/admin/crm";
+import { maybeSendReviewRequest } from "@/lib/admin/review-request";
 import { getDb } from "@/lib/db/client";
 import {
   ACTIVITY_KINDS,
@@ -570,6 +571,21 @@ export async function updateJobStatusAction(jobId: number, status: string): Prom
     kind: "status_change",
     body: statusChangeBody("job", current.status, parsed.data),
   });
+
+  // When a real removal job is first completed, ask the customer for a Google
+  // review by SMS. Best-effort and self-gating (skips estimate visits, needs
+  // SMS configured) — it must never fail the status change.
+  if (parsed.data === "done" && current.status !== "done") {
+    try {
+      await maybeSendReviewRequest({
+        id: jobId,
+        clientId: current.clientId,
+        notes: current.notes,
+      });
+    } catch {
+      // Ignore — the job is already marked done above.
+    }
+  }
 
   revalidateCrm();
   return { ok: true };
