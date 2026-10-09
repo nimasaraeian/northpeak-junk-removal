@@ -48,7 +48,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "That date is not valid." }, { status: 400 });
   }
 
-  const result = await bookEstimateVisit(parsed.data);
+  // callId drives idempotency (a retried call never double-books). Accept it in
+  // the JSON body, or — for agent platforms that can only inject {{call_id}} as
+  // a header or query param with "args only" payloads — from there as well.
+  const url = new URL(request.url);
+  const callId =
+    parsed.data.callId?.trim() ||
+    url.searchParams.get("callId")?.trim() ||
+    request.headers.get("x-call-id")?.trim() ||
+    undefined;
+
+  const result = await bookEstimateVisit({ ...parsed.data, callId });
   if (!result.ok) {
     return NextResponse.json({ error: result.error ?? "Could not book the visit." }, { status: 502 });
   }
