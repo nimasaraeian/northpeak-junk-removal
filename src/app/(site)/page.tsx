@@ -10,6 +10,14 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema } from "@/lib/schema";
 import { generalFaqs } from "@/content/faqs";
 
+// Every other page self-canonicalizes through `pageMetadata`; the homepage had
+// no canonical at all. Point it at the non-www root (resolved against
+// `metadataBase`) so the site's most-crawled page stops relying on Google to
+// pick its canonical and never splits signals with a www or query-string copy.
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function HomePage() {
   return (
     <>
