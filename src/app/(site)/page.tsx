@@ -3,6 +3,7 @@ import { Gallery } from "@/components/home/Gallery";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Reviews } from "@/components/home/Reviews";
+import { ServiceAreas } from "@/components/home/ServiceAreas";
 import { Services } from "@/components/home/Services";
 import { WhyNorthPeak } from "@/components/home/WhyNorthPeak";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <Services />
       <Gallery />
       <WhyNorthPeak />
+      <ServiceAreas />
       <Reviews />
       <FinalCta />
     </>
