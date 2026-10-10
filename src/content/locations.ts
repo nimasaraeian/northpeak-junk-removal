@@ -126,7 +126,7 @@ export const locations: LocationPage[] = [
       "Chartwell",
     ],
     relatedLocationSlugs: ["north-vancouver", "vancouver", "burnaby"],
-    seoTitle: "Junk Removal West Vancouver",
+    seoTitle: "Junk Removal in West Vancouver, BC — North Shore Crew",
     seoDescription:
       "Junk removal in West Vancouver from a local North Shore crew. Free estimates, discreet service, donation-first sorting — Ambleside to Horseshoe Bay.",
     body: [
