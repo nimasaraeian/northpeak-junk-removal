@@ -90,6 +90,26 @@ export default async function LocationPage({ params }: PageProps<"/locations/[sl
                     </div>
                   </section>
                 ) : null}
+
+                {relatedLocations.length > 0 ? (
+                  <section className="mt-16">
+                    <h2 className="font-serif text-3xl text-navy">Nearby service areas</h2>
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {relatedLocations.map((related) => (
+                        <Link
+                          key={related.slug}
+                          href={`/locations/${related.slug}`}
+                          className="rounded-2xl border border-navy/8 px-4 py-4 hover:bg-cream"
+                        >
+                          <p className="font-semibold text-navy">
+                            Junk removal in {related.name}
+                          </p>
+                          <p className="mt-1 text-sm text-stone">{related.summary}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
               </>
             ) : (
               <>
