@@ -361,7 +361,7 @@ export const blogPosts: BlogPost[] = [
     seoDescription:
       "Every legal way to dispose of a mattress in Vancouver & the North Shore: free city options, recycling depots, and pickup \u2014 with real costs and rules.",
     relatedServiceSlugs: ["furniture-removal"],
-    relatedLocationSlugs: ["north-vancouver"],
+    relatedLocationSlugs: ["north-vancouver", "west-vancouver"],
     body: [
       { type: "callout", label: "Quick answer", text: "In Vancouver and the North Shore you have three legal options: drop the mattress at a Metro Vancouver transfer station or the Vancouver Landfill for a small recycling fee (daily limits apply), take it to a private mattress recycler, or book a pickup service that hauls it for you. Dumping a mattress in an alley, on the curb, or beside a building\u2019s bin is illegal dumping and can draw fines." },
 
@@ -394,7 +394,7 @@ export const blogPosts: BlogPost[] = [
 
       { type: "heading", text: "Option 3: Book a pickup (easiest)" },
       { type: "paragraph", text: "If you don\u2019t have a truck, can\u2019t lift a queen mattress down a staircase, or simply want it gone this week, a removal service picks it up from wherever it sits \u2014 bedroom, garage or curbside \u2014 and delivers it to a recycler." },
-      { type: "paragraph", text: "With NorthPeak, [mattress and furniture removal](/services/furniture-removal) works like this: send us a few photos, get a clear price range usually within hours, and our crew removes it on a day that suits you. The price covers labour, hauling, recycling fees and floor protection on the way out \u2014 no surprise charges at the door. We serve [North Vancouver](/locations/north-vancouver), West Vancouver and Greater Vancouver seven days a week." },
+      { type: "paragraph", text: "With NorthPeak, [mattress and furniture removal](/services/furniture-removal) works like this: send us a few photos, get a clear price range usually within hours, and our crew removes it on a day that suits you. The price covers labour, hauling, recycling fees and floor protection on the way out \u2014 no surprise charges at the door. We serve [North Vancouver](/locations/north-vancouver), [West Vancouver](/locations/west-vancouver) and Greater Vancouver seven days a week." },
       { type: "cta", label: "Get a free price range for your mattress \u2192", href: "/estimate" },
 
       { type: "heading", text: "What about the box spring, frame and headboard?" },
