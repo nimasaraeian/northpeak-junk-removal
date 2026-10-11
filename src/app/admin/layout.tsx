@@ -30,7 +30,18 @@ const vazir = Vazirmatn({
 
 export const metadata: Metadata = {
   title: { default: "NorthPeak Ops", template: "%s · NorthPeak Ops" },
+  applicationName: "NorthPeak Ops",
   robots: { index: false, follow: false, nocache: true },
+  // Installable as a phone app ("Add to Home Screen"): its own manifest and
+  // Apple web-app meta, scoped to /admin so the public site is untouched. No
+  // service worker on purpose — the panel shows live data and must not be
+  // served from a stale cache.
+  manifest: "/admin.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "NorthPeak Ops",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default async function AdminRootLayout({ children }: LayoutProps<"/admin">) {
