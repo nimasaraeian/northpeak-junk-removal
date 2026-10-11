@@ -39,7 +39,12 @@ export function AssistantPanel({
 
   useEffect(() => {
     if (!open) return;
-    inputRef.current?.focus();
+    // Auto-focus only on larger screens. On a phone, focusing the input the
+    // moment the chat opens pops the keyboard (and used to zoom the page on
+    // iOS), which is what made the panel look oversized on first open.
+    if (typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches) {
+      inputRef.current?.focus();
+    }
   }, [open]);
 
   if (!open) return null;
@@ -106,6 +111,7 @@ export function AssistantPanel({
                 role={message.role}
                 content={message.content}
                 actions={message._actions ?? []}
+                onNavigate={onClose}
               />
             ))
           )}
@@ -147,7 +153,7 @@ export function AssistantPanel({
                   onSend();
                 }
               }}
-              className="max-h-28 min-h-11 flex-1 resize-y rounded-2xl border border-[#888887]/25 bg-white px-3.5 py-2.5 text-sm text-[#1A3041] outline-none focus:border-[#D6762B]/55"
+              className="max-h-28 min-h-11 flex-1 resize-y rounded-2xl border border-[#888887]/25 bg-white px-3.5 py-2.5 text-base text-[#1A3041] outline-none focus:border-[#D6762B]/55 sm:text-sm"
             />
             <button
               type="submit"

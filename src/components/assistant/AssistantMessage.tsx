@@ -8,10 +8,13 @@ export function AssistantMessage({
   role,
   content,
   actions = [],
+  onNavigate,
 }: {
   role: AssistantRole;
   content: string;
   actions?: AssistantActionKey[];
+  /** Called when an action link is followed, so the chat can close itself. */
+  onNavigate?: () => void;
 }) {
   const resolvedActions = resolveAssistantActions(actions);
 
@@ -32,6 +35,7 @@ export function AssistantMessage({
               <li key={action.key}>
                 <Link
                   href={action.href as Route}
+                  onClick={onNavigate}
                   className="inline-flex min-h-9 items-center rounded-full border border-[#D6762B]/35 bg-[#D6762B]/10 px-3.5 text-xs font-semibold text-[#1A3041] transition hover:border-[#D6762B]/60 hover:bg-[#D6762B]/16"
                 >
                   {action.label}
