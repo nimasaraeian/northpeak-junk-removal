@@ -104,6 +104,15 @@ export function TodayIcon() {
   );
 }
 
+export function CommandIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <path d="M4 5h11M4 10h16M4 15h8" />
+      <path d="m15 13 3 3 4-5" />
+    </svg>
+  );
+}
+
 export function ControlIcon() {
   return (
     <svg {...base} aria-hidden>
