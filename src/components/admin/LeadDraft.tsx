@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { CopyButton } from "@/components/admin/CopyButton";
-import type { ActionPlan, ActionPlanItem } from "@/lib/office-manager/briefing";
+import type { ActionPlan, ActionPlanItem, ActionPlanResult } from "@/lib/office-manager/briefing";
 
 /**
  * The AI-drafted parts of a lead row, streamed in after the page paints.
@@ -20,6 +20,31 @@ const PRIORITY_TONE: Record<ActionPlanItem["priority"], string> = {
   medium: "draft",
   low: "sent",
 };
+
+/** The office manager's Persian read of the day, streamed in after the lists. */
+export function BriefingSummary({ resultPromise }: { resultPromise: Promise<ActionPlanResult> }) {
+  const result = use(resultPromise);
+  if (result.ok && result.summary) {
+    return (
+      <div className="ops-card mt-4 border-l-4 border-l-[var(--ops-gold)] p-4">
+        <p className="ops-label">خلاصه‌ی مدیریتی امروز</p>
+        <p dir="rtl" className="mt-2 text-sm leading-7 text-[var(--ops-navy)]">
+          {result.summary}
+        </p>
+      </div>
+    );
+  }
+  if (!result.ok) {
+    return (
+      <div className="ops-card mt-4 p-4">
+        <p dir="rtl" className="text-sm text-[var(--ops-muted)]">
+          تحلیل هوش مصنوعی الان در دسترس نبود — لیست‌های زیر دقیق و کامل‌اند.
+        </p>
+      </div>
+    );
+  }
+  return null;
+}
 
 export function LeadPriorityPill({
   leadId,
