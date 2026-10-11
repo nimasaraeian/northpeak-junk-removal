@@ -3,7 +3,7 @@ import type { Route } from "next";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { BriefingRunButton } from "@/components/admin/BriefingRunButton";
-import { LeadDraftCard, LeadPriorityPill } from "@/components/admin/LeadDraft";
+import { BriefingSummary, LeadDraftCard, LeadPriorityPill } from "@/components/admin/LeadDraft";
 import { buildBriefingData, generateActionPlan, type ActionPlan } from "@/lib/office-manager/briefing";
 import type { JobRow, LeadRow } from "@/lib/db/schema";
 
@@ -35,6 +35,37 @@ function DraftSkeleton() {
     <p className="mt-2 text-xs text-[var(--ops-muted)]">
       <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--ops-gold)]" /> Drafting…
     </p>
+  );
+}
+
+function SummarySkeleton() {
+  return (
+    <div className="ops-card mt-4 p-4">
+      <p dir="rtl" className="text-sm text-[var(--ops-muted)]">
+        <span className="mr-1 inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--ops-gold)]" />
+        در حال تحلیل امروز…
+      </p>
+    </div>
+  );
+}
+
+function UnscheduledJobRowItem({ job }: { job: JobRow }) {
+  const firstNote = (job.notes ?? "").split("\n")[0] ?? "";
+  return (
+    <Link
+      href={"/admin/calendar" as Route}
+      className="flex items-start justify-between gap-3 p-3 transition-colors hover:bg-[var(--ops-surface-2)]"
+    >
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-[var(--ops-navy)]">
+          {job.address?.trim() ? job.address : "⚠ No address on file"}
+        </p>
+        {firstNote ? (
+          <p className="mt-0.5 truncate text-xs text-[var(--ops-muted)]">{firstNote}</p>
+        ) : null}
+      </div>
+      <span className="shrink-0 text-xs font-semibold text-[var(--ops-gold-ink)]">needs a date</span>
+    </Link>
   );
 }
 
@@ -129,7 +160,8 @@ export default async function TodayPage() {
   // rows as a promise and streamed in through their Suspense boundaries, so the
   // model call never holds up the page.
   const data = await buildBriefingData();
-  const planPromise = generateActionPlan(data);
+  const resultPromise = generateActionPlan(data);
+  const planPromise = resultPromise.then((r) => r.plan);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -146,6 +178,10 @@ export default async function TodayPage() {
         Nothing here is sent and nothing in the CRM changes — the same briefing goes to Telegram each
         evening.
       </p>
+
+      <Suspense fallback={<SummarySkeleton />}>
+        <BriefingSummary resultPromise={resultPromise} />
+      </Suspense>
 
       {data.pendingQuotes.length > 0 ? (
         <div className="ops-card mt-4 flex flex-wrap items-center justify-between gap-2 p-4">
@@ -189,6 +225,16 @@ export default async function TodayPage() {
         >
           {data.tomorrowJobs.map((j) => (
             <JobRowItem key={j.id} job={j} />
+          ))}
+        </Section>
+
+        <Section
+          title="📌 Booked but not scheduled"
+          count={data.unscheduledJobs.length}
+          empty="No jobs waiting for a date."
+        >
+          {data.unscheduledJobs.map((j) => (
+            <UnscheduledJobRowItem key={j.id} job={j} />
           ))}
         </Section>
 
