@@ -157,7 +157,7 @@ test("every indexed city emits Service and FAQPage JSON-LD with the address", ()
   for (const location of indexedLocations) {
     const service = locationServiceSchema(location);
     assert.equal(service.areaServed.name, location.name);
-    assert.equal(service.provider.address.streetAddress, site.address.streetAddress);
+    assert.equal(service.provider.address.addressLocality, site.address.addressLocality);
 
     const faq = faqSchema(location.faqs!);
     assert.equal(faq["@type"], "FAQPage");

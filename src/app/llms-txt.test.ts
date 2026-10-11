@@ -77,8 +77,8 @@ test("it lists every service and every indexed city, and no de-emphasized one", 
 
 test("it carries the address and hours an assistant is asked for", async () => {
   const text = await body();
-  assert.ok(text.includes(site.address.streetAddress));
-  assert.ok(text.includes(site.address.postalCode));
+  assert.ok(text.includes(site.address.addressLocality));
+  assert.ok(text.includes(site.address.addressRegion));
   assert.ok(text.includes(site.phone));
   assert.ok(text.includes(site.email));
 });

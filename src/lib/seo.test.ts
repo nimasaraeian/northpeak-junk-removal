@@ -139,7 +139,10 @@ test("sameAs is exactly the configured profiles, or absent", () => {
 
 test("the address on the business schema matches the one we publish everywhere", () => {
   const schema = localBusinessSchema();
-  assert.equal(schema.address.streetAddress, "564 West Keith Rd");
+  // Service-area business: the street address and postal code are kept private,
+  // so the schema carries only the city and region.
+  assert.equal(schema.address.streetAddress, undefined);
+  assert.equal(schema.address.postalCode, undefined);
   assert.equal(schema.address.addressLocality, "North Vancouver");
   assert.equal(schema.address.addressRegion, "BC");
 });

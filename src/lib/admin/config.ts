@@ -77,7 +77,7 @@ export function isVoiceConfigured(): boolean {
 
 /** Fallback Google Maps search for the business, used when no direct review link is set. */
 const DEFAULT_REVIEW_URL =
-  "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver";
+  "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+North+Vancouver";
 
 /**
  * Where the post-job review SMS points the customer. Prefer a direct "write a

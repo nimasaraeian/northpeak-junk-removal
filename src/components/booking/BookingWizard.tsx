@@ -409,7 +409,7 @@ export function BookingWizard({
               autoComplete="postal-code"
               value={postalCode}
               onChange={(event) => setPostalCode(event.target.value)}
-              placeholder="V7M 1M4"
+              placeholder="V7M 2A5"
               className="mt-2 h-12 w-full rounded-full border border-navy/10 bg-white px-4 text-sm font-normal uppercase outline-none focus:border-gold"
             />
           </label>

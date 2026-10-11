@@ -29,9 +29,9 @@ export function ServiceAreas() {
             <span className="mt-3 block h-0.5 w-16 bg-gold" aria-hidden />
           </h2>
           <p className="mt-6 text-lg leading-8 text-navy/80">
-            NorthPeak is a local crew based on West Keith Rd. We cover junk removal in North
-            Vancouver and West Vancouver on a same-week schedule, and reach across the bridges to
-            Vancouver and Burnaby on the same pricing.
+            NorthPeak is a local North Shore crew based in North Vancouver. We cover junk removal in
+            North Vancouver and West Vancouver on a same-week schedule, and reach across the bridges
+            to Vancouver and Burnaby on the same pricing.
           </p>
         </div>
 

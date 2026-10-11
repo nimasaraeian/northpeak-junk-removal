@@ -64,7 +64,7 @@ export function GET() {
     "",
     section("Business facts", [
       `- Name: ${site.name}`,
-      `- Address: ${site.address.streetAddress}, ${site.address.addressLocality}, ${site.address.addressRegion} ${site.address.postalCode}, Canada`,
+      `- Location: ${site.address.addressLocality}, ${site.address.addressRegion}, Canada (service-area business; exact address private)`,
       `- Phone: ${site.phone}`,
       `- Email: ${site.email}`,
       `- Hours: ${site.hours} (${site.opensAt}–${site.closesAt} daily)`,
