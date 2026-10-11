@@ -21,6 +21,23 @@ function socialProfiles() {
   );
 }
 
+/**
+ * PostalAddress for the business. Street address and postal code are omitted
+ * when blank — this is a service-area business that keeps the exact address
+ * private, so schema carries only the city/region/country.
+ */
+function postalAddressSchema() {
+  const a = site.address;
+  return {
+    "@type": "PostalAddress",
+    ...(a.streetAddress ? { streetAddress: a.streetAddress } : {}),
+    addressLocality: a.addressLocality,
+    addressRegion: a.addressRegion,
+    ...(a.postalCode ? { postalCode: a.postalCode } : {}),
+    addressCountry: a.addressCountry,
+  };
+}
+
 function organizationId() {
   return `${site.url}/#organization`;
 }
@@ -79,14 +96,7 @@ export function localBusinessSchema() {
       opens: "08:00",
       closes: "18:00",
     },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.address.streetAddress,
-      addressLocality: site.address.addressLocality,
-      addressRegion: site.address.addressRegion,
-      postalCode: site.address.postalCode,
-      addressCountry: site.address.addressCountry,
-    },
+    address: postalAddressSchema(),
     geo: {
       "@type": "GeoCoordinates",
       latitude: site.geo.latitude,
@@ -133,14 +143,7 @@ export function locationServiceSchema(location: LocationPage) {
       name: site.name,
       url: site.url,
       telephone: site.phone,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: site.address.streetAddress,
-        addressLocality: site.address.addressLocality,
-        addressRegion: site.address.addressRegion,
-        postalCode: site.address.postalCode,
-        addressCountry: site.address.addressCountry,
-      },
+      address: postalAddressSchema(),
     },
     areaServed: {
       "@type": "City",

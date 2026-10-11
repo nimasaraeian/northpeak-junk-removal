@@ -10,11 +10,14 @@ export const site = {
   phone: process.env.NEXT_PUBLIC_PHONE ?? "+1 (778) 900-5060",
   email: process.env.NEXT_PUBLIC_EMAIL ?? "info@northpeakjunk.com",
   areaServed: "North Vancouver and Greater Vancouver, British Columbia",
+  // Service-area business: the exact street address and postal code are kept
+  // private (not shown on the site or in schema). Only the city/region are
+  // public; the full address lives on the verified Google Business Profile.
   address: {
-    streetAddress: "564 West Keith Rd",
+    streetAddress: "",
     addressLocality: "North Vancouver",
     addressRegion: "BC",
-    postalCode: "V7M 1M4",
+    postalCode: "",
     addressCountry: "CA",
   },
   geo: {
@@ -85,7 +88,7 @@ export const site = {
      * The public listing — where "Read our Google reviews" goes.
      */
     listingUrl:
-      "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver",
+      "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+North+Vancouver",
     /**
      * The short link from the profile dashboard's "Ask for reviews" panel. It
      * opens the write-a-review dialog directly, which is the whole point —

@@ -71,7 +71,7 @@ test("the Google link opens safely in a new tab", () => {
   // The button reads "Read our Google reviews", so it points at the listing.
   // `g.page/r/…/review` opens the write-a-review dialog instead and would make
   // the label a lie.
-  assert.equal(site.google.listingUrl, "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+564+West+Keith+Rd+North+Vancouver");
+  assert.equal(site.google.listingUrl, "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+North+Vancouver");
   assert.equal(site.google.listingUrl.includes("/review"), false, "this is the write-a-review link");
 
   const source = readFileSync("src/components/home/Reviews.tsx", "utf8");

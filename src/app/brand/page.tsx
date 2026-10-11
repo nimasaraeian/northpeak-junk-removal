@@ -291,8 +291,9 @@ export default function BrandBookPage() {
           <p className="bb-eyebrow">06 — Brand facts</p>
           <h2 className="bb-h">The essentials</h2>
           <p className="bb-sub">
-            Use this name, address, and phone byte-for-byte everywhere — the exact match is what
-            local search rewards.
+            Use this name, city, and phone byte-for-byte everywhere — the exact match is what local
+            search rewards. The exact street address is kept private (service-area business) and
+            lives only on the verified Google Business Profile.
           </p>
           <div className="bb-facts">
             <div className="bb-fact">
@@ -303,10 +304,10 @@ export default function BrandBookPage() {
               </div>
             </div>
             <div className="bb-fact">
-              <div className="k">Address</div>
+              <div className="k">Location</div>
               <div className="v">
-                564 West Keith Rd
-                <small>North Vancouver, BC V7M 1M4, Canada</small>
+                North Vancouver, BC
+                <small>Service-area business · exact address kept private</small>
               </div>
             </div>
             <div className="bb-fact">

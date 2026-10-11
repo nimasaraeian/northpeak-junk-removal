@@ -105,7 +105,7 @@ export const blogPosts: BlogPost[] = [
       { type: "paragraph", text: "When you are ready — and only then — send a few photos of each room and you will have a clear range and a date. Our [estate cleanout service](/services/estate-cleanout) covers North Vancouver, West Vancouver, Burnaby and the rest of Greater Vancouver, seven days a week by appointment." },
       { type: "cta", label: "Get a Free Estimate →", href: "/estimate" },
 
-      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
+      { type: "paragraph", text: "NorthPeak Junk Removal is based in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
     ],
     faqs: [
       {
@@ -205,7 +205,7 @@ export const blogPosts: BlogPost[] = [
       { type: "paragraph", text: "The North Shore Recycling & Waste Centre charges by weight with a per-visit minimum, and per-piece fees apply to mattresses. Add fuel, a vehicle that fits the load, and the trips themselves \u2014 a typical garage takes about three. DIY genuinely wins for small, light, single-trip loads with a truck you already own. Past that, the math usually favours one crew visit, because the tipping fees you\u2019d pay are already inside the quoted price." },
       { type: "cta", label: "Get a free price range for your load \u2192", href: "/estimate" },
 
-      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
+      { type: "paragraph", text: "NorthPeak Junk Removal is based in [North Vancouver](/locations/north-vancouver). Reuse and recycle first, landfill last." },
     ],
     faqs: [
       {
@@ -314,7 +314,7 @@ export const blogPosts: BlogPost[] = [
       { type: "paragraph", text: "Spring and early fall are peak decluttering seasons on the North Shore, and weekend slots fill first. If your cleanout is tied to a move, a listing date or a renovation start, book once your date is firm \u2014 [garage cleanout crews](/services/garage-cleanout) in [North Vancouver](/locations/north-vancouver) can usually schedule within a few days, but same-week weekend slots are the first to go." },
       { type: "cta", label: "Get a free price range for your garage \u2192", href: "/estimate" },
 
-      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd, North Vancouver. Reuse and recycle first, landfill last." },
+      { type: "paragraph", text: "NorthPeak Junk Removal is based in North Vancouver. Reuse and recycle first, landfill last." },
     ],
     faqs: [
       {
@@ -447,7 +447,7 @@ export const blogPosts: BlogPost[] = [
       { type: "heading", text: "Can I donate my old mattress instead?" },
       { type: "paragraph", text: "Usually not. Most Vancouver charities (including major thrift stores) no longer accept used mattresses for hygiene and bed-bug reasons. If yours is nearly new, in excellent condition and from a smoke-free home, try posting it free on local buy-nothing groups \u2014 but expect low demand. Anything stained, sagging or older than ~8 years should be recycled." },
 
-      { type: "paragraph", text: "NorthPeak Junk Removal is based at 564 West Keith Rd, North Vancouver. Reuse and recycle first, landfill last." },
+      { type: "paragraph", text: "NorthPeak Junk Removal is based in North Vancouver. Reuse and recycle first, landfill last." },
     ],
     faqs: [
       {

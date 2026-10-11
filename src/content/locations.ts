@@ -28,12 +28,12 @@ export const locations: LocationPage[] = [
     relatedLocationSlugs: ["west-vancouver", "burnaby", "vancouver"],
     seoTitle: "Junk Removal in North Vancouver, BC — Local Crew",
     seoDescription:
-      "Junk removal in North Vancouver from a local crew on West Keith Rd. Free estimates, same-week pickup, donation-first sorting. Single items from $99.",
+      "Junk removal in North Vancouver from a local North Shore crew. Free estimates, same-week pickup, donation-first sorting. Single items from $99.",
     body: [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across North Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and given upfront from your photos, loads are sorted donation-first, and the crew is local: we are based on West Keith Rd, not dispatched from a call centre in another city.",
+        text: "NorthPeak provides same-week junk removal across North Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and given upfront from your photos, loads are sorted donation-first, and the crew is local: we are based here in North Vancouver, not dispatched from a call centre in another city.",
       },
 
       { type: "heading", text: "What junk removal services do you offer in North Vancouver?" },
@@ -69,7 +69,7 @@ export const locations: LocationPage[] = [
       { type: "paragraph", text: "We do not publish a diversion percentage, because an honest one would have to be measured load by load and no two loads are alike. What we will do is tell you, before the job, what we expect to be able to divert from the pile in front of us — and tell you plainly when the answer is not much. Hazardous material such as paint, solvents, fuel and propane needs a dedicated depot and cannot ride in the truck; send a photo and we will point you at the right one." },
 
       { type: "heading", text: "Why choose a local North Vancouver crew?" },
-      { type: "paragraph", text: "We are based at 564 West Keith Rd, a few minutes from the Lonsdale corridor. That is not a marketing detail — it decides how the day runs. We know which lanes off Lonsdale are too tight for a loaded truck, which Lower Lonsdale buildings insist on a booked elevator and a certificate of insurance before the crew comes up, which back alleys in Grand Boulevard are passable after a wet week, and where you can legally park a truck on a Deep Cove street without blocking someone in." },
+      { type: "paragraph", text: "We are based in North Vancouver, a few minutes from the Lonsdale corridor. That is not a marketing detail — it decides how the day runs. We know which lanes off Lonsdale are too tight for a loaded truck, which Lower Lonsdale buildings insist on a booked elevator and a certificate of insurance before the crew comes up, which back alleys in Grand Boulevard are passable after a wet week, and where you can legally park a truck on a Deep Cove street without blocking someone in." },
       { type: "paragraph", text: "The other part is who answers. There is no franchise call centre between you and the people doing the work: the estimate you get is written by someone who will be on the job, which is why the range holds and why nobody needs to “re-quote” on your driveway. If something on site is different from the photos, we say so on the spot and tell you what it changes before we touch it. Being ten minutes away also means a second visit is a small thing: if a basement turns out to hold more than one truck, we come back rather than leaving half of it against a wall." },
 
       { type: "cta", label: "Get My Free Estimate →", href: "/estimate" },
@@ -133,7 +133,7 @@ export const locations: LocationPage[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across West Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and quoted from photos. We are based ten minutes away on West Keith Rd in North Vancouver, which is why West Van jobs are routinely next-day, and why we already know which driveways a loaded truck can turn around in.",
+        text: "NorthPeak provides same-week junk removal across West Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and quoted from photos. We are based ten minutes away in North Vancouver, which is why West Van jobs are routinely next-day, and why we already know which driveways a loaded truck can turn around in.",
       },
       { type: "heading", text: "What junk removal services do you offer in West Vancouver?" },
       { type: "paragraph", text: "The same lines we run everywhere, weighted differently here. West Vancouver work skews toward whole-property jobs rather than single loads: estates, downsizing, renovation clear-outs and listing preparation." },
@@ -158,7 +158,7 @@ export const locations: LocationPage[] = [
       { type: "heading", text: "How discreet is the service?" },
       { type: "paragraph", text: "As discreet as the job needs. A good part of our West Vancouver work happens while a house is being listed, while a family is managing an estate, or while someone is moving into care — none of which anyone wants announced to the street. That means an unmarked arrival time rather than an all-day presence, no staging of items on the front lawn, protection on floors and door frames before anything moves, and a crew that does not discuss the job outside it. If your strata, your neighbours or your realtor need to be notified, tell us and we will work to their window." },
       { type: "heading", text: "How fast can you pick up junk in West Vancouver?" },
-      { type: "paragraph", text: "Same week reliably, next day often. The yard is on West Keith Rd, so West Vancouver is a short first run rather than a trip across the region, and morning windows are the norm. We confirm the window by text the day before and again when the crew is on the way. Whole-property work is the exception and is scheduled as a block of days against your deadline — a completion date, a listing, or a probate timeline." },
+      { type: "paragraph", text: "Same week reliably, next day often. The yard is in North Vancouver, so West Vancouver is a short first run rather than a trip across the region, and morning windows are the norm. We confirm the window by text the day before and again when the crew is on the way. Whole-property work is the exception and is scheduled as a block of days against your deadline — a completion date, a listing, or a probate timeline." },
       { type: "heading", text: "What happens to the contents?" },
       { type: "paragraph", text: "Reuse and recycle first, landfill last. Usable furniture, housewares, tools, books and clothing go to local North Shore charities and thrift partners when condition allows — and in West Vancouver homes that is a meaningful share of what comes out. Metal, wood, cardboard and electronics are separated into their own streams. What genuinely cannot be reused goes to the North Shore Recycling & Waste Centre, weighed and billed by the tonne, with that fee already inside your quote. Where something looks like it may have real resale value, we say so rather than remove it." },
       { type: "paragraph", text: "Hazardous material — paint, solvents, fuel, propane, pool chemicals — needs a dedicated depot and cannot ride in the truck. Send a photo and we will name the right one." },

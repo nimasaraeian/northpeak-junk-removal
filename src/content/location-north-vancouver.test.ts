@@ -227,12 +227,12 @@ test("FAQ JSON-LD mirrors the five pairs", () => {
   assert.equal(schema.mainEntity[0].name, location().faqs![0].question);
 });
 
-test("Service JSON-LD names North Vancouver and the West Keith Rd address", () => {
+test("Service JSON-LD names North Vancouver and keeps the street address private", () => {
   const schema = locationServiceSchema(location());
 
   assert.equal(schema.areaServed["@type"], "City");
   assert.equal(schema.areaServed.name, "North Vancouver");
-  assert.equal(schema.provider.address.streetAddress, site.address.streetAddress);
+  assert.equal(schema.provider.address.streetAddress, undefined);
   assert.equal(schema.provider.address.addressLocality, "North Vancouver");
   assert.equal(schema.provider.address.addressRegion, site.address.addressRegion);
   assert.equal(schema.provider["@id"], `${site.url}/#localbusiness`);
