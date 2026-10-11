@@ -1,16 +1,19 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { eq } from "drizzle-orm";
 import { anthropicApiKey, visionModel } from "@/lib/admin/config";
 import { listJobsBetween, listLeads } from "@/lib/admin/crm-data";
 import { zonedInstant } from "@/lib/booking/booking-core";
-import type { JobRow, LeadRow } from "@/lib/db/schema";
+import { getDb } from "@/lib/db/client";
+import { quotes, type JobRow, type LeadRow, type QuoteRow } from "@/lib/db/schema";
 
 /**
- * Office Manager — the read-only daily briefing (Phase 1).
+ * Office Manager — the read-only daily briefing.
  *
- * It only reads: new and unanswered leads, quotes awaiting a reply, overdue
- * follow-ups, tomorrow's jobs, and records with missing details. It proposes
- * nothing executable and changes nothing — it just tells the owner what needs
- * attention so they don't have to go looking.
+ * It only reads and reasons. It surfaces new/unanswered leads, overdue
+ * follow-ups, quotes awaiting a reply (and the money at risk there), tomorrow's
+ * jobs, and records with missing details — then, for the items that need a
+ * human, it drafts a ready-to-copy message and says why it matters. It sends
+ * nothing and changes nothing in the CRM; the drafts are for the owner to use.
  */
 
 const TZ = "America/Vancouver";
@@ -50,6 +53,10 @@ function daysOld(created: Date, now: Date): number {
   return Math.max(0, Math.floor((now.getTime() - created.getTime()) / 86400000));
 }
 
+function dollars(cents: number): string {
+  return `$${Math.round(cents / 100).toLocaleString("en-CA")}`;
+}
+
 export interface BriefingData {
   now: Date;
   newLeads: LeadRow[];
@@ -58,6 +65,9 @@ export interface BriefingData {
   incompleteLeads: LeadRow[];
   tomorrowJobs: JobRow[];
   tomorrowLabel: string;
+  pendingQuotes: QuoteRow[];
+  valueAtRiskLowCents: number;
+  valueAtRiskHighCents: number;
 }
 
 export async function buildBriefingData(now = new Date()): Promise<BriefingData> {
@@ -67,10 +77,14 @@ export async function buildBriefingData(now = new Date()): Promise<BriefingData>
   const from = zonedInstant(tomorrow, 0);
   const to = zonedInstant(dayAfter, 0);
 
-  const [leads, jobs] = await Promise.all([listLeads({}, 500), listJobsBetween(from, to)]);
+  const db = getDb();
+  const [leads, jobs, pendingQuotes] = await Promise.all([
+    listLeads({}, 500),
+    listJobsBetween(from, to),
+    db ? db.select().from(quotes).where(eq(quotes.status, "sent")) : Promise.resolve([]),
+  ]);
 
   const open = leads.filter((l) => OPEN_STATUSES.has(l.status));
-
   const newLeads = open.filter((l) => l.status === "new");
   const overdueFollowUps = open.filter(
     (l) => l.nextFollowUpAt !== null && new Date(l.nextFollowUpAt).getTime() < now.getTime(),
@@ -79,10 +93,10 @@ export async function buildBriefingData(now = new Date()): Promise<BriefingData>
   const incompleteLeads = open.filter((l) => !l.phone.trim() && !l.email.trim());
   const tomorrowJobs = jobs
     .filter((j) => j.status !== "cancelled" && j.scheduledStart !== null)
-    .sort(
-      (a, b) =>
-        (a.scheduledStart as Date).getTime() - (b.scheduledStart as Date).getTime(),
-    );
+    .sort((a, b) => (a.scheduledStart as Date).getTime() - (b.scheduledStart as Date).getTime());
+
+  const valueAtRiskLowCents = pendingQuotes.reduce((s, q) => s + (q.finalLowCents ?? 0), 0);
+  const valueAtRiskHighCents = pendingQuotes.reduce((s, q) => s + (q.finalHighCents ?? 0), 0);
 
   const tomorrowLabel = new Intl.DateTimeFormat("en-CA", {
     timeZone: TZ,
@@ -99,14 +113,106 @@ export async function buildBriefingData(now = new Date()): Promise<BriefingData>
     incompleteLeads,
     tomorrowJobs,
     tomorrowLabel,
+    pendingQuotes,
+    valueAtRiskLowCents,
+    valueAtRiskHighCents,
   };
 }
 
-function leadLine(l: LeadRow, now: Date): string {
+// --- Smart action plan (read-only drafts) ----------------------------------
+
+export type ActionPriority = "high" | "medium" | "low";
+
+export interface ActionPlanItem {
+  leadId: number;
+  priority: ActionPriority;
+  why: string;
+  draftSms: string;
+}
+
+export type ActionPlan = Map<number, ActionPlanItem>;
+
+/** The leads that need a human touch, newest-pressure first, capped for one call. */
+function attentionLeads(data: BriefingData): LeadRow[] {
+  const byId = new Map<number, LeadRow>();
+  for (const l of [...data.overdueFollowUps, ...data.newLeads, ...data.awaitingReply]) {
+    if (!byId.has(l.id)) byId.set(l.id, l);
+  }
+  return [...byId.values()].slice(0, 12);
+}
+
+/**
+ * One Anthropic call that, for each attention lead, returns a priority, a short
+ * reason, and a ready-to-copy SMS draft. Best-effort: on any failure it returns
+ * an empty plan and the briefing still shows the exact lists.
+ */
+export async function generateActionPlan(data: BriefingData): Promise<ActionPlan> {
+  const plan: ActionPlan = new Map();
+  const apiKey = anthropicApiKey();
+  const leads = attentionLeads(data);
+  if (!apiKey || leads.length === 0) return plan;
+
+  const items = leads.map((l) => ({
+    leadId: l.id,
+    name: l.name || "there",
+    status: l.status,
+    daysOld: daysOld(new Date(l.createdAt), data.now),
+    area: l.area || "",
+    source: l.source,
+    note: (l.message || "").slice(0, 200),
+    hasPhone: Boolean(l.phone.trim()),
+  }));
+
+  const prompt = `You are the office manager for NorthPeak Junk Removal, a small junk-removal business in North Vancouver, BC (Canadian English).
+For each lead below, return a JSON object with:
+- "leadId": the number,
+- "priority": "high" | "medium" | "low",
+- "why": one short sentence on why it needs attention now,
+- "draftSms": a friendly, concise SMS the owner could send this customer (<=320 chars, first name only, sign off "— NorthPeak"; never promise a price, offer a free on-site estimate or to answer questions).
+Base everything only on the data given; do not invent details. Return ONLY a JSON array, no prose, no markdown.
+
+Leads: ${JSON.stringify(items)}`;
+
+  try {
+    const client = new Anthropic({ apiKey });
+    const response = await client.messages.create({
+      model: visionModel(),
+      max_tokens: 1800,
+      messages: [{ role: "user", content: prompt }],
+    });
+    const text = response.content.find((b): b is Anthropic.TextBlock => b.type === "text")?.text ?? "";
+    const json = text.trim().replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+    const parsed: unknown = JSON.parse(json);
+    if (!Array.isArray(parsed)) return plan;
+    for (const row of parsed) {
+      if (!row || typeof row !== "object") continue;
+      const r = row as Record<string, unknown>;
+      const leadId = typeof r.leadId === "number" ? r.leadId : Number(r.leadId);
+      if (!Number.isInteger(leadId)) continue;
+      const priority: ActionPriority =
+        r.priority === "high" || r.priority === "low" ? r.priority : "medium";
+      plan.set(leadId, {
+        leadId,
+        priority,
+        why: typeof r.why === "string" ? r.why : "",
+        draftSms: typeof r.draftSms === "string" ? r.draftSms : "",
+      });
+    }
+  } catch {
+    return plan;
+  }
+  return plan;
+}
+
+// --- Text rendering (Telegram) ---------------------------------------------
+
+function leadLine(l: LeadRow, now: Date, plan?: ActionPlan): string {
   const area = l.area?.trim() ? `, ${l.area}` : "";
   const contact = l.phone?.trim() || l.email?.trim() || "no contact";
   const age = daysOld(new Date(l.createdAt), now);
-  return `• ${l.name || "Unnamed"}${area} — ${contact} (${age}d old, ${l.source})`;
+  const item = plan?.get(l.id);
+  const why = item?.why ? `\n   ↳ ${item.why}` : "";
+  return `• ${l.name || "Unnamed"}${area} — ${contact} (${age}d, ${l.source})${why}`;
 }
 
 function jobLine(j: JobRow): string {
@@ -115,8 +221,7 @@ function jobLine(j: JobRow): string {
   return `• ${vanTime(j.scheduledStart)} — ${addr}${firstNote ? ` · ${firstNote}` : ""}`;
 }
 
-/** Deterministic briefing text — the source of truth, always correct. */
-export function renderBriefingText(data: BriefingData): string {
+export function renderBriefingText(data: BriefingData, plan?: ActionPlan): string {
   const { now } = data;
   const lines: string[] = [];
   const section = (title: string, items: string[], empty: string) => {
@@ -136,19 +241,25 @@ export function renderBriefingText(data: BriefingData): string {
     }).format(now),
   );
 
+  if (data.pendingQuotes.length > 0) {
+    lines.push(
+      `\n💰 ${dollars(data.valueAtRiskLowCents)}–${dollars(data.valueAtRiskHighCents)} in ${data.pendingQuotes.length} quote(s) awaiting a reply.`,
+    );
+  }
+
   section(
     "🆕 New leads to answer",
-    data.newLeads.map((l) => leadLine(l, now)),
+    data.newLeads.map((l) => leadLine(l, now, plan)),
     "Nothing new — inbox clear.",
   );
   section(
     "⏰ Overdue follow-ups",
-    data.overdueFollowUps.map((l) => leadLine(l, now)),
+    data.overdueFollowUps.map((l) => leadLine(l, now, plan)),
     "None overdue.",
   );
   section(
     "💬 Quotes awaiting a reply",
-    data.awaitingReply.map((l) => leadLine(l, now)),
+    data.awaitingReply.map((l) => leadLine(l, now, plan)),
     "None waiting.",
   );
   section(
@@ -162,40 +273,16 @@ export function renderBriefingText(data: BriefingData): string {
     "All records have contact details.",
   );
 
+  lines.push(
+    `\nDrafts for each lead are ready to copy in the panel → /admin/today. Nothing is sent automatically.`,
+  );
+
   return lines.join("\n");
 }
 
-/**
- * Optional Anthropic narrative — a short, prioritized "what to focus on" written
- * on top of the deterministic lists. Best-effort: on any failure the briefing
- * still goes out with the exact lists below.
- */
-export async function generateBriefingSummary(data: BriefingData): Promise<string | null> {
-  const apiKey = anthropicApiKey();
-  if (!apiKey) return null;
-
-  const counts = `new_leads=${data.newLeads.length}, overdue_followups=${data.overdueFollowUps.length}, awaiting_reply=${data.awaitingReply.length}, tomorrow_jobs=${data.tomorrowJobs.length}, incomplete_records=${data.incompleteLeads.length}`;
-
-  try {
-    const client = new Anthropic({ apiKey });
-    const response = await client.messages.create({
-      model: visionModel(),
-      max_tokens: 300,
-      system:
-        "You are the office manager for NorthPeak Junk Removal, a small junk-removal business in North Vancouver. Given today's counts, write 2–4 short sentences telling the owner what to focus on first and why. Be direct and practical. Do not invent specifics; only use the counts given. No greeting, no sign-off.",
-      messages: [{ role: "user", content: `Today's counts: ${counts}.` }],
-    });
-    const text = response.content.find((b): b is Anthropic.TextBlock => b.type === "text")?.text;
-    return text?.trim() || null;
-  } catch {
-    return null;
-  }
-}
-
-/** Full briefing text (summary on top when available, then the exact lists). */
+/** Full briefing text for Telegram (deterministic lists + reasons). */
 export async function composeBriefing(now = new Date()): Promise<string> {
   const data = await buildBriefingData(now);
-  const body = renderBriefingText(data);
-  const summary = await generateBriefingSummary(data);
-  return summary ? `${body}\n\n— Focus —\n${summary}` : body;
+  const plan = await generateActionPlan(data);
+  return renderBriefingText(data, plan);
 }
