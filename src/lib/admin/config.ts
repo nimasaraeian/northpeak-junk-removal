@@ -75,6 +75,16 @@ export function isVoiceConfigured(): boolean {
   return voiceApiSecret() !== undefined;
 }
 
+/**
+ * Secret that guards the scheduled Office Manager run. Vercel Cron sends it as
+ * a Bearer token (when CRON_SECRET is set in the project), so only the schedule
+ * — not the public internet — can trigger the daily briefing.
+ */
+export function cronSecret(): string | undefined {
+  const value = process.env.CRON_SECRET?.trim();
+  return value ? value : undefined;
+}
+
 /** Fallback Google Maps search for the business, used when no direct review link is set. */
 const DEFAULT_REVIEW_URL =
   "https://www.google.com/maps/search/?api=1&query=NorthPeak+Junk+Removal+North+Vancouver";
