@@ -1,25 +1,16 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { BriefingRunButton } from "@/components/admin/BriefingRunButton";
-import { CopyButton } from "@/components/admin/CopyButton";
-import {
-  buildBriefingData,
-  generateActionPlan,
-  type ActionPlan,
-  type ActionPlanItem,
-} from "@/lib/office-manager/briefing";
+import { LeadDraftCard, LeadPriorityPill } from "@/components/admin/LeadDraft";
+import { buildBriefingData, generateActionPlan, type ActionPlan } from "@/lib/office-manager/briefing";
 import type { JobRow, LeadRow } from "@/lib/db/schema";
 
 export const metadata = { title: "Today" };
 export const dynamic = "force-dynamic";
 
 const TZ = "America/Vancouver";
-const PRIORITY_TONE: Record<ActionPlanItem["priority"], string> = {
-  high: "lost",
-  medium: "draft",
-  low: "sent",
-};
 
 function daysOld(created: Date): number {
   return Math.max(0, Math.floor((Date.now() - new Date(created).getTime()) / 86400000));
@@ -39,9 +30,16 @@ function dollars(cents: number): string {
   return `$${Math.round(cents / 100).toLocaleString("en-CA")}`;
 }
 
-function LeadRowItem({ lead, plan }: { lead: LeadRow; plan?: ActionPlan }) {
+function DraftSkeleton() {
+  return (
+    <p className="mt-2 text-xs text-[var(--ops-muted)]">
+      <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--ops-gold)]" /> Drafting…
+    </p>
+  );
+}
+
+function LeadRowItem({ lead, planPromise }: { lead: LeadRow; planPromise?: Promise<ActionPlan> }) {
   const contact = lead.phone?.trim() || lead.email?.trim() || "no contact on file";
-  const item = plan?.get(lead.id);
   return (
     <div className="p-3">
       <div className="flex items-start justify-between gap-3">
@@ -57,31 +55,19 @@ function LeadRowItem({ lead, plan }: { lead: LeadRow; plan?: ActionPlan }) {
           </p>
         </Link>
         <div className="flex shrink-0 items-center gap-2">
-          {item ? (
-            <span className="ops-pill" data-status={PRIORITY_TONE[item.priority]}>
-              {item.priority}
-            </span>
+          {planPromise ? (
+            <Suspense fallback={null}>
+              <LeadPriorityPill leadId={lead.id} planPromise={planPromise} />
+            </Suspense>
           ) : null}
           <span className="text-xs text-[var(--ops-muted)]">{daysOld(lead.createdAt)}d</span>
         </div>
       </div>
 
-      {item?.why ? (
-        <p className="mt-2 text-xs text-[var(--ops-navy)]">
-          <span className="font-semibold">Why:</span> {item.why}
-        </p>
-      ) : null}
-
-      {item?.draftSms ? (
-        <div className="mt-2 rounded-xl border border-[var(--ops-border)] bg-[var(--ops-surface-2)] p-3">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-[0.7rem] font-semibold tracking-[0.1em] text-[var(--ops-muted)] uppercase">
-              Draft SMS — not sent
-            </p>
-            <CopyButton text={item.draftSms} />
-          </div>
-          <p className="mt-1.5 text-sm leading-6 text-[var(--ops-navy)]">{item.draftSms}</p>
-        </div>
+      {planPromise ? (
+        <Suspense fallback={<DraftSkeleton />}>
+          <LeadDraftCard leadId={lead.id} planPromise={planPromise} />
+        </Suspense>
       ) : null}
     </div>
   );
@@ -138,8 +124,12 @@ function Section({
 }
 
 export default async function TodayPage() {
+  // Only the database read is awaited — the lists render immediately. The
+  // Anthropic action plan is started here but NOT awaited; it is handed to the
+  // rows as a promise and streamed in through their Suspense boundaries, so the
+  // model call never holds up the page.
   const data = await buildBriefingData();
-  const plan = await generateActionPlan(data);
+  const planPromise = generateActionPlan(data);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -172,13 +162,13 @@ export default async function TodayPage() {
       <div className="mt-4 space-y-4">
         <Section title="🆕 New leads to answer" count={data.newLeads.length} empty="Inbox clear — no new leads.">
           {data.newLeads.map((l) => (
-            <LeadRowItem key={l.id} lead={l} plan={plan} />
+            <LeadRowItem key={l.id} lead={l} planPromise={planPromise} />
           ))}
         </Section>
 
         <Section title="⏰ Overdue follow-ups" count={data.overdueFollowUps.length} empty="Nothing overdue.">
           {data.overdueFollowUps.map((l) => (
-            <LeadRowItem key={l.id} lead={l} plan={plan} />
+            <LeadRowItem key={l.id} lead={l} planPromise={planPromise} />
           ))}
         </Section>
 
@@ -188,7 +178,7 @@ export default async function TodayPage() {
           empty="No quotes waiting on a customer."
         >
           {data.awaitingReply.map((l) => (
-            <LeadRowItem key={l.id} lead={l} plan={plan} />
+            <LeadRowItem key={l.id} lead={l} planPromise={planPromise} />
           ))}
         </Section>
 
