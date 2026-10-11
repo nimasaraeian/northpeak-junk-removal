@@ -12,6 +12,7 @@ import {
   NewQuoteIcon,
   QuotesIcon,
   SettingsIcon,
+  TodayIcon,
 } from "@/components/admin/icons";
 import { requireOperator } from "@/lib/admin/auth";
 import { logoutAction } from "@/lib/admin/actions";
@@ -33,6 +34,7 @@ import { LangToggle } from "@/components/admin/LangToggle";
 
 const NAV: OpsNavItem[] = [
   { href: "/admin", label: "Dashboard", short: "Home", icon: <DashboardIcon /> },
+  { href: "/admin/today", label: "Today", short: "Today", icon: <TodayIcon /> },
   { href: "/admin/control", label: "Control", short: "Control", icon: <ControlIcon /> },
   { href: "/admin/leads", label: "Leads", short: "Leads", icon: <LeadsIcon /> },
   { href: "/admin/clients", label: "Clients", short: "Clients", icon: <ClientsIcon /> },

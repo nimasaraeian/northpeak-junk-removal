@@ -95,6 +95,15 @@ export function CalendarIcon() {
   );
 }
 
+export function TodayIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <rect x="5" y="4" width="14" height="17" rx="2" />
+      <path d="M9 4h6v2H9zM8 11l2.3 2.3L15 9" />
+    </svg>
+  );
+}
+
 export function ControlIcon() {
   return (
     <svg {...base} aria-hidden>
