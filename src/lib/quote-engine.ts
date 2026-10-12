@@ -216,45 +216,47 @@ const LABOR_HOURS = {
 
 /**
  * Defaults derived from the published site pricing, which stays the source of
- * truth: a full load is advertised at $649–799, a single item from roughly
- * $99–150.
+ * truth: the owner-approved list (/pricing) prices by the share of the trailer
+ * the load fills — full trailer $449–549, single item / minimum $89–119.
  *
- * - `truckCapacityFt3` is `bedCapacityCuFt` — the 7 × 12 × 3 ft dump box the
- *   site already publishes, 252 ft³. Not a placeholder: the same number the
- *   public load-size pages are drawn from.
- * - `ratePerYd3Cents` 7800 is calibrated to that capacity. A full load is
- *   252 ft³ packed = 9.33 yd³, which divides exactly: 9.33 × $78 = $728.00,
- *   quoting as $670–785 — inside the advertised full-load band.
- * - `minJobCents` 12500 is the midpoint of the $99–150 minimum-load band,
- *   rounded to the $5 the engine rounds to, and quotes as $115–135.
+ * This is a floor-based (tier) model: each tier's published price lives in
+ * `priceFloors`, and the per-yard rate only shapes the in-between. A full
+ * trailer (12.44 yd³ × $36 = $448) lands just under the $449 full floor, so
+ * every tier quotes off its floor:
+ *   minimum $90–110 · quarter $150–180 · half $270–330 · three-quarter
+ *   $370–450 · full $450–550 — bracketing the published two-column list.
  *
- * `quote-engine.test.ts` pins both ranges to exact figures, so a capacity or
- * rate edit that would contradict the site fails the suite rather than
+ * - `truckCapacityFt3` is `bedCapacityCuFt` — the 7 × 12 × 4 ft box, 336 ft³
+ *   ≈ 12.44 yd³ — the same number the public load-size pages are drawn from.
+ * - `minJobCents` 8900 is the $89 minimum / single-item curbside price.
+ *
+ * `quote-engine.test.ts` pins the tier ranges to exact figures, so a rate or
+ * floor edit that would contradict the site fails the suite rather than
  * shipping.
  */
 export const DEFAULT_PRICING_SETTINGS: PricingSettings = {
   truckCapacityFt3: bedCapacityCuFt,
   truckCapacityVerified: false,
-  minJobCents: 12500,
-  ratePerYd3Cents: 7800,
+  minJobCents: 8900,
+  ratePerYd3Cents: 3600,
   packingPct: 20,
-  rangeSpreadPct: 8,
-  // The low end of each rung of the ladder the cost guide publishes. Kept in
-  // step with that table by `quote-engine.test.ts`, which reads the table and
-  // fails if a figure here stops matching it.
+  rangeSpreadPct: 10,
+  // The curbside "from" price of each published tier. Kept in step with the
+  // /pricing list by `quote-engine.test.ts`, which fails if a figure here stops
+  // matching it. The low end of each quote lands on the tier's floor; the high
+  // end is the floor spread up (≈ the easy-inside column).
   priceFloors: [
-    // The ladder's first rung. Its bound is set just above a 3-seat sofa —
-    // 54 ft³ packed, 21% of the box — because the guide's own table calls one
-    // sofa a minimum load. Without it the quarter floor would reach all the
-    // way down and price a single item at $200.
-    { label: "Single item / minimum", maxFraction: 0.22, floorCents: 9_900 },
-    { label: "Quarter truck", maxFraction: 0.25, floorCents: 20_000 },
-    { label: "Half truck", maxFraction: 0.5, floorCents: 30_000 },
-    { label: "Three-quarter truck", maxFraction: 0.75, floorCents: 50_000 },
-    { label: "Full truck", maxFraction: 1, floorCents: 60_000 },
+    // The ladder's first rung — a single item or minimum load. Its bound runs
+    // to 22% of the box so one large piece stays here rather than being pulled
+    // up to the quarter floor.
+    { label: "Single item / minimum", maxFraction: 0.22, floorCents: 8_900 },
+    { label: "Quarter truck", maxFraction: 0.25, floorCents: 14_900 },
+    { label: "Half truck", maxFraction: 0.5, floorCents: 26_900 },
+    { label: "Three-quarter truck", maxFraction: 0.75, floorCents: 36_900 },
+    { label: "Full truck", maxFraction: 1, floorCents: 44_900 },
   ],
   surchargeCents: {
-    mattress: 2000,
+    mattress: 2500,
     freon: 6000,
     tire: 1500,
     tv: 2500,

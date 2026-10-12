@@ -18,14 +18,20 @@ export const northPeakTrailer = {
     lengthFt: 12,
     /** Outside / nominal width. */
     widthFt: 7,
-    /** 36" side walls. */
-    wallHeightFt: 3,
+    /**
+     * Usable side-wall height, in feet. The plate model code carries the 36"
+     * factory sides; the unit runs 12" side extensions, so the real usable
+     * height to the top rail is 48" (4 ft). This is the number the published
+     * pricing (/pricing) and the quote engine both measure from. Re-measure
+     * if the extensions change.
+     */
+    wallHeightFt: 4,
     /** Typical inside width on SRTC 7-wide dumps. */
     insideWidthIn: 82,
   },
 } as const;
 
-/** Usable box volume to top of side walls (7′ × 12′ × 3′). */
+/** Usable box volume to top of side walls (7′ × 12′ × 4′ = 336 ft³ ≈ 12.44 yd³). */
 export const bedCapacityCuFt =
   northPeakTrailer.bed.lengthFt *
   northPeakTrailer.bed.widthFt *
