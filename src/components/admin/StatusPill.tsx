@@ -3,8 +3,6 @@
 import { useT } from "@/lib/i18n/provider";
 import type { QuoteStatus } from "@/lib/db/schema";
 
-export const QUOTE_STATUSES: QuoteStatus[] = ["draft", "sent", "won", "lost"];
-
 const LABELS: Record<QuoteStatus, string> = {
   draft: "Draft",
   sent: "Sent",

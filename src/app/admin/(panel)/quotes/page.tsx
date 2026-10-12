@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { QUOTE_STATUSES, StatusPill } from "@/components/admin/StatusPill";
+import { StatusPill } from "@/components/admin/StatusPill";
+import { QUOTE_STATUSES } from "@/lib/admin/quote-status";
 import { listQuotes } from "@/lib/admin/data";
 import type { QuoteStatus } from "@/lib/db/schema";
 import { formatRange } from "@/lib/quote-engine";
