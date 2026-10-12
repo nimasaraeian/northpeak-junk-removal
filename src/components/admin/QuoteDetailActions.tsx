@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { QUOTE_STATUSES } from "@/components/admin/StatusPill";
+import { QUOTE_STATUSES } from "@/lib/admin/quote-status";
 import { updateQuoteNotesAction, updateQuoteStatusAction } from "@/lib/admin/actions";
 import { createJobFromQuoteAction } from "@/lib/admin/crm-actions";
 import { buildCustomerText } from "@/lib/admin/customer-text";
