@@ -46,14 +46,14 @@ function input(overrides: Partial<QuoteInput> = {}): QuoteInput {
 // --- Volume path -----------------------------------------------------------
 
 test("volume path pads for packing, converts to cubic yards, and prices per yard", () => {
-  // 100 ft³ raw + 20% packing = 120 ft³ = 4.444 yd³ × $78 = $346.67
+  // 100 ft³ raw + 20% packing = 120 ft³ = 4.444 yd³ × $36 = $160.00
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 100 })] }), settings);
 
   assert.equal(result.rawCubicFeet, 100);
   assert.ok(Math.abs(result.packedCubicFeet - 120) < 1e-9);
   assert.ok(Math.abs(result.cubicYards - 120 / 27) < 1e-9);
-  assert.equal(result.volumeCents, Math.round((120 / 27) * 7800));
-  assert.equal(result.volumeCents, 34_667);
+  assert.equal(result.volumeCents, Math.round((120 / 27) * 3600));
+  assert.equal(result.volumeCents, 16_000);
   assert.equal(result.minJobApplied, false);
 });
 
@@ -90,7 +90,7 @@ test("the packing factor is configurable per quote and clamped to 10–30", () =
 // --- Minimum job floor -----------------------------------------------------
 
 test("a tiny load is floored at the minimum job", () => {
-  // 5 ft³ + 20% = 6 ft³ = 0.22 yd³ × $49 = $10.89, well under the $125 floor.
+  // 5 ft³ + 20% = 6 ft³ = 0.22 yd³ × $36 = $8.00, well under the $89 floor.
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 5 })] }), settings);
 
   assert.equal(result.minJobApplied, true);
@@ -108,10 +108,10 @@ test("an empty item list still prices at the minimum job, not zero", () => {
 });
 
 test("the floor stops applying once volume overtakes it", () => {
-  // The crossover is at minJob / rate = 1.603 yd³ = 43.3 ft³ packed, so 36 ft³
-  // of raw items either side of it.
+  // The crossover is at minJob / rate = 2.472 yd³ = 66.7 ft³ packed, so 30 and
+  // 60 ft³ of raw items either side of it.
   const under = computeQuote(input({ items: [item({ cubicFeetEach: 30 })] }), settings);
-  const over = computeQuote(input({ items: [item({ cubicFeetEach: 45 })] }), settings);
+  const over = computeQuote(input({ items: [item({ cubicFeetEach: 60 })] }), settings);
 
   assert.equal(under.minJobApplied, true);
   assert.equal(over.minJobApplied, false);
@@ -123,14 +123,14 @@ test("the floor stops applying once volume overtakes it", () => {
 test("a load inside capacity is a single load", () => {
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 180 })] }), settings);
 
-  // 180 + 20% = 216 ft³, under the 252 ft³ box.
+  // 180 + 20% = 216 ft³, under the 336 ft³ box.
   assert.equal(result.multiLoad, false);
   assert.equal(result.loads, 1);
 });
 
 test("packed volume past capacity marks multi-load and scales proportionally", () => {
-  // 315 ft³ raw + 20% = 378 ft³ packed against the 252 ft³ box: 1.5 loads.
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 315 })] }), settings);
+  // 420 ft³ raw + 20% = 504 ft³ packed against the 336 ft³ box: 1.5 loads.
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: 420 })] }), settings);
 
   assert.equal(result.multiLoad, true);
   assert.equal(result.loads, 2, "1.5 loads rounds up to 2 trips");
@@ -141,12 +141,12 @@ test("packed volume past capacity marks multi-load and scales proportionally", (
   assert.equal(result.volumeCents, Math.round(oneLoadCents * 1.5));
 
   // Proportional scaling means the price stays linear in volume.
-  const half = computeQuote(input({ items: [item({ cubicFeetEach: 157.5 })] }), settings);
+  const half = computeQuote(input({ items: [item({ cubicFeetEach: 210 })] }), settings);
   assert.ok(Math.abs(result.volumeCents - half.volumeCents * 2) <= 2);
 });
 
 test("exactly one truckload is not flagged as multi-load", () => {
-  // Capacity exactly, in packed volume — 210 ft³ of raw items for a 252 ft³ box.
+  // Capacity exactly, in packed volume — 280 ft³ of raw items for a 336 ft³ box.
   const result = computeQuote(
     input({ items: [item({ cubicFeetEach: settings.truckCapacityFt3 / 1.2 })] }),
     settings,
@@ -201,9 +201,11 @@ test("an explicit per-line surcharge overrides the flags, including zero", () =>
 });
 
 test("surcharges land in the subtotal on top of volume", () => {
-  const plain = computeQuote(input({ items: [item({ cubicFeetEach: 100 })] }), settings);
+  // A load past the ladder (no tier floor) so the surcharge shows up in the
+  // subtotal rather than being absorbed under a floor.
+  const plain = computeQuote(input({ items: [item({ cubicFeetEach: 420 })] }), settings);
   const flagged = computeQuote(
-    input({ items: [item({ cubicFeetEach: 100, flags: ["freon"] })] }),
+    input({ items: [item({ cubicFeetEach: 420, flags: ["freon"] })] }),
     settings,
   );
 
@@ -305,11 +307,13 @@ test("heavy mode with no weight entered still charges the minimum job", () => {
 // --- Range and rounding ----------------------------------------------------
 
 test("the range is the spread either side of subtotal, rounded to $5", () => {
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: 100 })] }), settings);
+  // A load past the ladder, so no floor rewrites the range: it is purely the
+  // spread (10%) either side of the subtotal.
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: 420 })] }), settings);
 
-  assert.equal(result.subtotalCents, 34_667);
-  assert.equal(result.lowCents, roundToNearestFiveDollars(34_667 * 0.92));
-  assert.equal(result.highCents, roundToNearestFiveDollars(34_667 * 1.08));
+  assert.equal(result.subtotalCents, 67_200);
+  assert.equal(result.lowCents, roundToNearestFiveDollars(67_200 * 0.9));
+  assert.equal(result.highCents, roundToNearestFiveDollars(67_200 * 1.1));
   assert.equal(result.lowCents % 500, 0);
   assert.equal(result.highCents % 500, 0);
   assert.ok(result.lowCents < result.subtotalCents);
@@ -337,26 +341,26 @@ test("a zero spread collapses the range onto the subtotal", () => {
 // --- Discount and margin ---------------------------------------------------
 
 test("a percent discount comes off both ends of the range", () => {
-  const base = computeQuote(input({ items: [item({ cubicFeetEach: 200 })] }), settings);
+  const base = computeQuote(input({ items: [item({ cubicFeetEach: 420 })] }), settings);
   const discounted = computeQuote(
     input({
-      items: [item({ cubicFeetEach: 200 })],
+      items: [item({ cubicFeetEach: 420 })],
       discount: { type: "percent", value: 10, reason: "Repeat customer" },
     }),
     settings,
   );
 
-  assert.equal(discounted.lowCents, roundToNearestFiveDollars(base.subtotalCents * 0.92 * 0.9));
-  assert.equal(discounted.highCents, roundToNearestFiveDollars(base.subtotalCents * 1.08 * 0.9));
+  assert.equal(discounted.lowCents, roundToNearestFiveDollars(base.subtotalCents * 0.9 * 0.9));
+  assert.equal(discounted.highCents, roundToNearestFiveDollars(base.subtotalCents * 1.1 * 0.9));
   assert.ok(discounted.lowCents < base.lowCents);
   assert.ok(discounted.highCents < base.highCents);
 });
 
 test("a fixed-amount discount comes off both ends unscaled", () => {
-  const base = computeQuote(input({ items: [item({ cubicFeetEach: 200 })] }), settings);
+  const base = computeQuote(input({ items: [item({ cubicFeetEach: 420 })] }), settings);
   const discounted = computeQuote(
     input({
-      items: [item({ cubicFeetEach: 200 })],
+      items: [item({ cubicFeetEach: 420 })],
       discount: { type: "amount", value: 5000, reason: "Goodwill" },
     }),
     settings,
@@ -364,11 +368,11 @@ test("a fixed-amount discount comes off both ends unscaled", () => {
 
   assert.equal(
     discounted.lowCents,
-    roundToNearestFiveDollars(base.subtotalCents * 0.92 - 5000),
+    roundToNearestFiveDollars(base.subtotalCents * 0.9 - 5000),
   );
   assert.equal(
     discounted.highCents,
-    roundToNearestFiveDollars(base.subtotalCents * 1.08 - 5000),
+    roundToNearestFiveDollars(base.subtotalCents * 1.1 - 5000),
   );
   assert.equal(discounted.discountCents, 5000);
 });
@@ -468,40 +472,42 @@ test("truck capacity is the measured trailer, not a number typed in here", () =>
   // module the public load-size pages are drawn from. If the trailer is ever
   // re-measured there, the engine follows without a second edit.
   assert.equal(settings.truckCapacityFt3, bedCapacityCuFt);
-  assert.equal(bedCapacityCuFt, 252, "the 7 × 12 × 3 ft dump box");
+  assert.equal(bedCapacityCuFt, 336, "the 7 × 12 × 4 ft dump box");
   // Still seeded unverified, so Settings keeps asking for a confirmation.
   assert.equal(settings.truckCapacityVerified, false);
 });
 
-test("a full truckload quotes at $670–785, inside the advertised $649–799", () => {
-  // The site publishes a full load at $649–799. A full truck is the capacity
-  // in packed volume, so the raw items are capacity / (1 + packing).
-  const rawForFullTruck = settings.truckCapacityFt3 / (1 + settings.packingPct / 100);
-  const result = computeQuote(input({ items: [item({ cubicFeetEach: rawForFullTruck })] }), settings);
+test("a full trailer quotes at $450–550, inside the advertised $449–549", () => {
+  // The site publishes a full load at $449–549 (curbside / easy-inside). A full
+  // trailer is the capacity in packed volume, so the raw items are
+  // capacity / (1 + packing). The rate lands it just under the full floor, so
+  // it quotes off that floor, spread 10% and rounded to $5.
+  const rawForFullTrailer = settings.truckCapacityFt3 / (1 + settings.packingPct / 100);
+  const result = computeQuote(input({ items: [item({ cubicFeetEach: rawForFullTrailer })] }), settings);
 
   assert.equal(result.loads, 1);
   assert.equal(result.multiLoad, false);
 
-  // 252 ft³ = 9.333 yd³ × $78 = $728.00 exactly, spread 8% and rounded to $5.
-  assert.equal(result.subtotalCents, 72_800);
-  assert.equal(result.lowCents, 67_000, `full-load low was ${formatCents(result.lowCents)}`);
-  assert.equal(result.highCents, 78_500, `full-load high was ${formatCents(result.highCents)}`);
+  assert.equal(result.floorApplied, true);
+  assert.equal(result.floorLabel, "Full truck");
+  assert.equal(result.lowCents, 45_000, `full-load low was ${formatCents(result.lowCents)}`);
+  assert.equal(result.highCents, 55_000, `full-load high was ${formatCents(result.highCents)}`);
 
   // And the band it has to sit inside, stated separately so a future rate
   // change fails on the claim rather than on the arithmetic.
-  assert.ok(result.lowCents >= 64_900, "full-load low is under the advertised $649");
-  assert.ok(result.highCents <= 79_900, "full-load high is over the advertised $799");
+  assert.ok(result.lowCents >= 44_900, "full-load low is on the advertised $449");
+  assert.ok(result.highCents <= 55_000, "full-load high brackets the advertised $549");
 });
 
-test("a minimum job quotes at $115–135, inside the advertised $99–150", () => {
+test("a minimum job quotes at $90–110, inside the advertised $89–119", () => {
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 2 })] }), settings);
 
   assert.equal(result.minJobApplied, true);
-  assert.equal(result.lowCents, 11_500, `minimum low was ${formatCents(result.lowCents)}`);
-  assert.equal(result.highCents, 13_500, `minimum high was ${formatCents(result.highCents)}`);
+  assert.equal(result.lowCents, 9_000, `minimum low was ${formatCents(result.lowCents)}`);
+  assert.equal(result.highCents, 11_000, `minimum high was ${formatCents(result.highCents)}`);
 
-  assert.ok(result.lowCents >= 9_900, "minimum low is under the advertised $99");
-  assert.ok(result.highCents <= 15_000, "minimum high is over the advertised $150");
+  assert.ok(result.lowCents >= 8_900, "minimum low is on the advertised $89");
+  assert.ok(result.highCents <= 11_900, "minimum high is under the advertised $119");
 });
 
 // --- Published tier floors -------------------------------------------------
@@ -517,14 +523,14 @@ test("a quarter-truck load is lifted to the published quarter-truck floor", () =
     settings,
   );
 
-  // Unfloored this prices $165-195, under the advertised $200-300.
+  // Unfloored this prices $100-125, under the advertised $149-179.
   assert.equal(result.floorApplied, true);
   assert.equal(result.floorLabel, "Quarter truck");
-  assert.equal(result.lowCents, 20_000, "the low lands exactly on the floor");
+  assert.equal(result.lowCents, 15_000, "the low lands on the $149 floor");
   assert.ok(result.highCents > result.lowCents, "the range must not collapse");
-  assert.equal(result.highCents, 23_500);
+  assert.equal(result.highCents, 18_000);
   // And it now sits inside the published band rather than under it.
-  assert.ok(result.lowCents >= 20_000 && result.highCents <= 30_000);
+  assert.ok(result.lowCents >= 14_900 && result.highCents <= 18_500);
 });
 
 test("the floor lifts the subtotal, so the breakdown still adds up", () => {
@@ -542,35 +548,37 @@ test("the floor lifts the subtotal, so the breakdown still adds up", () => {
 });
 
 test("the floor does not apply when the load already clears it", () => {
-  // Half a truck prices $335-395 on its own, above the $300 half-truck floor.
+  // A quarter-size load whose subtotal is lifted over the quarter floor by a
+  // surcharge, so it prices off its own total rather than being floored.
   const result = computeQuote(
-    input({ items: [item({ cubicFeetEach: rawFeetForFraction(0.5) })] }),
+    input({ items: [item({ cubicFeetEach: rawFeetForFraction(0.25), surchargeCents: 20_000 })] }),
     settings,
   );
 
   assert.equal(result.floorApplied, false);
   assert.equal(result.floorLabel, null);
-  assert.equal(result.lowCents, 33_500);
-  assert.equal(result.highCents, 39_500);
+  assert.equal(result.lowCents, 28_000);
+  assert.equal(result.highCents, 34_500);
   assert.equal(
     result.breakdown.some((line) => line.label === "Published tier floor"),
     false,
   );
 });
 
-test("a full load is unchanged by the floors", () => {
+test("a full load is lifted to the full-trailer floor", () => {
   const result = computeQuote(
     input({ items: [item({ cubicFeetEach: rawFeetForFraction(1) })] }),
     settings,
   );
 
-  assert.equal(result.floorApplied, false);
-  assert.equal(result.lowCents, 67_000);
-  assert.equal(result.highCents, 78_500);
+  assert.equal(result.floorApplied, true);
+  assert.equal(result.floorLabel, "Full truck");
+  assert.equal(result.lowCents, 45_000);
+  assert.equal(result.highCents, 55_000);
 });
 
 test("heavy mode never picks up a tier floor", () => {
-  // 1 tonne of concrete prices at min job + $250 = $375, and its volume would
+  // 0.2 tonne of concrete prices at min job + $50 = $139, and its volume would
   // otherwise land it in a bracket. Weight-priced work is not on the ladder.
   const result = computeQuote(
     input({
@@ -584,13 +592,12 @@ test("heavy mode never picks up a tier floor", () => {
   assert.equal(result.floorApplied, false);
   assert.equal(result.floorLabel, null);
   assert.equal(result.subtotalCents, settings.minJobCents + 5_000);
-  assert.ok(result.lowCents < 20_000, "no quarter-truck floor in heavy mode");
+  assert.ok(result.lowCents < 14_900, "no quarter-truck floor in heavy mode");
 });
 
-test("a minimum job sits on the minimum rung, whose floor it already clears", () => {
-  // The bracket is found rather than skipped — there is no exemption for
-  // small loads any more — it simply does not bind, because the minimum job
-  // already quotes $115 against a $99 floor.
+test("a minimum job sits on the single-item / minimum rung", () => {
+  // The $89 minimum job is the $89 single-item floor, so a tiny load sits on
+  // that rung and quotes $90–110.
   const result = computeQuote(input({ items: [item({ cubicFeetEach: 2 })] }), settings);
 
   assert.equal(result.minJobApplied, true);
@@ -599,8 +606,9 @@ test("a minimum job sits on the minimum rung, whose floor it already clears", ()
       ?.label,
     "Single item / minimum",
   );
-  assert.equal(result.floorApplied, false);
-  assert.equal(result.lowCents, 11_500);
+  assert.equal(result.floorApplied, true);
+  assert.equal(result.floorLabel, "Single item / minimum");
+  assert.equal(result.lowCents, 9_000);
 });
 
 test("a minimum-rung floor raised above the minimum job does take effect", () => {
@@ -618,29 +626,25 @@ test("a minimum-rung floor raised above the minimum job does take effect", () =>
   assert.equal(result.lowCents, 13_000);
 });
 
-test("one large item stays on the minimum rung and keeps its raw range", () => {
-  // A 3-seat sofa is 45 ft³, so 54 ft³ packed: 21% of the real 252 ft³ box.
-  // The guide's table calls one sofa a minimum load, and the ladder's first
-  // bracket runs to 22% so that it is one here too. It prices off the rate
-  // rather than being pulled up to the quarter-truck floor.
+test("one large item stays on the minimum rung, not the quarter floor", () => {
+  // A 3-seat sofa is 45 ft³, so 54 ft³ packed — 16% of the 336 ft³ box. The
+  // ladder's first bracket runs to 22%, so a single sofa sits on the
+  // single-item / minimum rung ($90–110), not the quarter-truck floor.
   const sofa = computeQuote(input({ items: [item({ cubicFeetEach: 45 })] }), settings);
 
   const packedFraction = sofa.packedCubicFeet / settings.truckCapacityFt3;
-  assert.ok(packedFraction > 0.21 && packedFraction < 0.22, "the sofa sits just under the bound");
+  assert.ok(packedFraction < 0.22, "the sofa sits under the minimum-rung bound");
 
-  assert.equal(sofa.floorApplied, false, "the quarter floor must not reach a single item");
-  assert.equal(sofa.floorLabel, null);
-  assert.equal(sofa.lowCents, 14_500, "its own rate-derived low");
-  assert.equal(sofa.highCents, 17_000);
-  // Which is where the guide puts a single sofa: roughly $99–150 the low end,
-  // and well under the $200 a quarter truck starts at.
-  assert.ok(sofa.lowCents < 20_000);
+  assert.equal(sofa.floorLabel, "Single item / minimum", "not the quarter-truck floor");
+  assert.equal(sofa.lowCents, 9_000, "the minimum / single-item price");
+  assert.equal(sofa.highCents, 11_000);
+  assert.ok(sofa.lowCents < 14_900, "well under the $149 a quarter truck starts at");
 
-  // Smaller single items are unmoved, still on the minimum job.
+  // Smaller single items price the same minimum job.
   for (const cubicFeet of [20, 30, 35]) {
     const single = computeQuote(input({ items: [item({ cubicFeetEach: cubicFeet })] }), settings);
-    assert.equal(single.floorApplied, false, `${cubicFeet} ft³ should stay a minimum job`);
-    assert.equal(single.lowCents, 11_500);
+    assert.equal(single.minJobApplied, true, `${cubicFeet} ft³ should stay a minimum job`);
+    assert.equal(single.lowCents, 9_000);
   }
 });
 
@@ -651,10 +655,9 @@ test("the minimum rung hands over to the quarter bracket at its bound", () => {
   const justUnder = computeQuote(input({ items: [item({ cubicFeetEach: rawAt(0.215) })] }), settings);
   const justOver = computeQuote(input({ items: [item({ cubicFeetEach: rawAt(0.23) })] }), settings);
 
-  assert.equal(justUnder.floorApplied, false);
-  assert.equal(justOver.floorApplied, true);
+  assert.equal(justUnder.floorLabel, "Single item / minimum");
   assert.equal(justOver.floorLabel, "Quarter truck");
-  assert.equal(justOver.lowCents, 20_000);
+  assert.equal(justOver.lowCents, 15_000);
 });
 
 test("multi-load jobs are past the end of the ladder and get no floor", () => {
@@ -679,8 +682,8 @@ test("the floor is a floor: a discount may still take the quote under it", () =>
   // Floored to the list price first, then discounted off that — so the
   // discount is worth something rather than being swallowed by the floor.
   assert.equal(result.floorApplied, true);
-  assert.equal(result.lowCents, roundToNearestFiveDollars(20_000 * 0.8));
-  assert.ok(result.lowCents < 20_000);
+  assert.equal(result.lowCents, roundToNearestFiveDollars(14_900 * 0.8));
+  assert.ok(result.lowCents < 14_900);
 });
 
 test("bracket lookup takes the first bracket the load fits, whatever the order", () => {
@@ -710,7 +713,7 @@ test("an empty bracket list disables the floor entirely", () => {
   );
 
   assert.equal(result.floorApplied, false);
-  assert.equal(result.lowCents, 16_500, "back to the unfloored quarter-truck price");
+  assert.equal(result.lowCents, 10_000, "back to the unfloored quarter-truck price");
 });
 
 // --- Breakdown and formatting ---------------------------------------------
@@ -718,7 +721,8 @@ test("an empty bracket list disables the floor entirely", () => {
 test("the breakdown itemizes what the subtotal is made of", () => {
   const result = computeQuote(
     input({
-      items: [item({ cubicFeetEach: 200, flags: ["mattress"] })],
+      // Past the ladder, so no "Published tier floor" line enters the breakdown.
+      items: [item({ cubicFeetEach: 420, flags: ["mattress"] })],
       labor: { stairsFlights: 1, carryDistance: "standard", disassembly: 0 },
       discount: { type: "percent", value: 10, reason: "Repeat" },
     }),
