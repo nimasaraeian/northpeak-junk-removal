@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { HeroQuickAccess } from "@/components/home/HeroQuickAccess";
+import { HeroPromo } from "@/components/home/HeroPromo";
 import { heroValues } from "@/content/site";
 
 const HERO_HEIGHT = "h-[calc(100svh-5.5rem)] min-h-[28rem] sm:min-h-[32rem] lg:h-[calc(100svh-6rem)] lg:min-h-[36rem]";
@@ -181,6 +182,8 @@ export function Hero() {
           <HeroOverlay>
             <HeroCopy />
           </HeroOverlay>
+
+          <HeroPromo />
         </HeroFrame>
       </div>
 
