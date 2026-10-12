@@ -28,12 +28,12 @@ export const locations: LocationPage[] = [
     relatedLocationSlugs: ["west-vancouver", "burnaby", "vancouver"],
     seoTitle: "Junk Removal in North Vancouver, BC — Local Crew",
     seoDescription:
-      "Junk removal in North Vancouver from a local North Shore crew. Free estimates, same-week pickup, donation-first sorting. Single items from $99.",
+      "Junk removal in North Vancouver from a local North Shore crew. Free estimates, same-week pickup, donation-first sorting. Single items from $89.",
     body: [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across North Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and given upfront from your photos, loads are sorted donation-first, and the crew is local: we are based here in North Vancouver, not dispatched from a call centre in another city.",
+        text: "NorthPeak provides same-week junk removal across North Vancouver — single items from roughly $89, full loads roughly $449–549. Estimates are free and given upfront from your photos, loads are sorted donation-first, and the crew is local: we are based here in North Vancouver, not dispatched from a call centre in another city.",
       },
 
       { type: "heading", text: "What junk removal services do you offer in North Vancouver?" },
@@ -53,7 +53,7 @@ export const locations: LocationPage[] = [
       { type: "paragraph", text: "If your job does not match any of those neatly, it probably still fits: the [services hub](/services) lists every line we run, and a few photos of the pile settle the question faster than a category ever will." },
 
       { type: "heading", text: "How much does junk removal cost in North Vancouver?" },
-      { type: "paragraph", text: "Price follows volume. In the 2026 market, a single item or minimum load runs roughly $99–150. A half truck — about what one packed single garage holds — lands around $300–500. A full truck for a typical household clear-out is roughly $649–799. Heavy material such as concrete, soil, tile and shingles is quoted by weight on top of that, because disposal facilities charge it by the tonne." },
+      { type: "paragraph", text: "Price follows volume. A single item or minimum load runs roughly $89–119. A half truck — about what one packed single garage holds — lands around $269–319. A full truck for a typical household clear-out is roughly $449–549. Heavy material such as concrete, soil, tile and shingles is quoted by weight on top of that, because disposal facilities charge it by the tonne." },
       { type: "paragraph", text: "Those are market ranges, not quotes. The honest number for your load comes from photos: send them through the estimate form and you will have a firm range back, usually within hours. We confirm that range on arrival before anyone lifts anything, and the figure you approve is the figure you pay. For the full picture — every load fraction, what pushes the price up or down, and the legitimate ways to pay less — read our [North Vancouver junk removal cost guide](/blog/junk-removal-cost-north-vancouver). If the job is specifically a garage, the [garage cleanout cost guide](/blog/garage-cleanout-north-vancouver-cost) prices that one on its own." },
 
       { type: "heading", text: "Which North Vancouver neighbourhoods do you serve?" },
@@ -88,7 +88,7 @@ export const locations: LocationPage[] = [
       {
         question: "Do you take single items like one couch or mattress?",
         answer:
-          "Yes. A single sofa, mattress, fridge, or washer is priced as a minimum load, roughly $99 to $150 in the current market, including the lifting, hauling, and disposal fees. Stairs or tight access can move that slightly, so send a photo and we will confirm before you book.",
+          "Yes. A single sofa, mattress, fridge, or washer is priced as a minimum load, roughly $89 to $119 in the current market, including the lifting, hauling, and disposal fees. Stairs or tight access can move that slightly, so send a photo and we will confirm before you book.",
       },
       {
         question: "Are you licensed and insured?",
@@ -133,7 +133,7 @@ export const locations: LocationPage[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across West Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market. Estimates are free and quoted from photos. We are based ten minutes away in North Vancouver, which is why West Van jobs are routinely next-day, and why we already know which driveways a loaded truck can turn around in.",
+        text: "NorthPeak provides same-week junk removal across West Vancouver — single items from roughly $89, full loads roughly $449–549. Estimates are free and quoted from photos. We are based ten minutes away in North Vancouver, which is why West Van jobs are routinely next-day, and why we already know which driveways a loaded truck can turn around in.",
       },
       { type: "heading", text: "What junk removal services do you offer in West Vancouver?" },
       { type: "paragraph", text: "The same lines we run everywhere, weighted differently here. West Vancouver work skews toward whole-property jobs rather than single loads: estates, downsizing, renovation clear-outs and listing preparation." },
@@ -150,7 +150,7 @@ export const locations: LocationPage[] = [
       },
       { type: "paragraph", text: "The full [services hub](/services) lists every line. For most West Van properties the question is not which category applies but how many days the work takes." },
       { type: "heading", text: "How much does junk removal cost in West Vancouver?" },
-      { type: "paragraph", text: "Identical pricing to the rest of the North Shore — there is no postcode premium. Single items and minimum loads run roughly $99–150, a half truck roughly $300–500, a full truck roughly $649–799 for a typical household load. Heavy renovation material is quoted by weight on top. Whole-property estate work is quoted as a project rather than by the truckload, because it runs across several days." },
+      { type: "paragraph", text: "Identical pricing to the rest of the North Shore — there is no postcode premium. Single items and minimum loads run roughly $89–119, a half truck roughly $269–319, a full truck roughly $449–549 for a typical household load. Heavy renovation material is quoted by weight on top. Whole-property estate work is quoted as a project rather than by the truckload, because it runs across several days." },
       { type: "paragraph", text: "The complete breakdown of every load fraction is in our [junk removal cost guide](/blog/junk-removal-cost-north-vancouver), and what clearing an entire house involves is set out in the [estate cleanout guide](/blog/estate-cleanout-north-vancouver)." },
       { type: "heading", text: "Which West Vancouver neighbourhoods do you serve?" },
       { type: "paragraph", text: "All of them, from the Capilano boundary to Horseshoe Bay. Ambleside and Dundarave bring condo move-outs and downsizing loads with tight lane access behind Marine Drive. The British Properties and Chartwell bring large homes on long, steep driveways where the practical question is whether a loaded truck can turn around at the top or has to reverse the whole way down. Caulfeild and Cypress Park sit on wooded lots where the carry from house to road is often longer than the drive across the bridge. Horseshoe Bay adds ferry-corridor traffic, which is a scheduling problem rather than an access one — we plan around the sailings instead of sitting in them." },
@@ -224,7 +224,7 @@ export const locations: LocationPage[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across the City of Vancouver — single items from roughly $99, full loads roughly $649–$799 in the 2026 market, with free photo-based estimates. Vancouver jobs are booked by corridor rather than at random, so the truck is already in your part of the city on the day. Condo elevator bookings, lane access and loading-bay windows are arranged before the date, not negotiated at the door.",
+        text: "NorthPeak provides same-week junk removal across the City of Vancouver — single items from roughly $89, full loads roughly $449–549, with free photo-based estimates. Vancouver jobs are booked by corridor rather than at random, so the truck is already in your part of the city on the day. Condo elevator bookings, lane access and loading-bay windows are arranged before the date, not negotiated at the door.",
       },
       { type: "heading", text: "What junk removal services do you offer in Vancouver?" },
       { type: "paragraph", text: "Vancouver's housing stock is the widest we work in — downtown towers, Kitsilano character houses, East Van laneway homes, Kerrisdale family properties and commercial suites in between — so the job types are correspondingly broad." },
@@ -241,7 +241,7 @@ export const locations: LocationPage[] = [
       },
       { type: "paragraph", text: "Everything we run is on the [services hub](/services)." },
       { type: "heading", text: "How much does junk removal cost in Vancouver?" },
-      { type: "paragraph", text: "By volume, the same as everywhere: roughly $99–150 for a single item or minimum load, roughly $300–500 for a half truck, roughly $649–799 for a full truck of typical household material. Concrete, tile, soil and shingles are quoted by weight on top. The one Vancouver-specific factor is access — a fourth-floor walk-up in Mount Pleasant costs more crew time than a driveway in Dunbar, and photos are what capture that before we quote rather than after." },
+      { type: "paragraph", text: "By volume, the same as everywhere: roughly $89–119 for a single item or minimum load, roughly $269–319 for a half truck, roughly $449–549 for a full truck of typical household material. Concrete, tile, soil and shingles are quoted by weight on top. The one Vancouver-specific factor is access — a fourth-floor walk-up in Mount Pleasant costs more crew time than a driveway in Dunbar, and photos are what capture that before we quote rather than after." },
       { type: "paragraph", text: "The complete price table, including what each truck fraction actually holds, is in our [junk removal cost guide](/blog/junk-removal-cost-north-vancouver). Mattresses carry a per-unit recycling fee anywhere in Metro Vancouver, and the [mattress disposal guide](/blog/how-to-get-rid-of-mattress-vancouver) covers every option including the city's own." },
       { type: "heading", text: "Which Vancouver neighbourhoods do you serve?" },
       { type: "paragraph", text: "The whole city. Downtown, Yaletown and Coal Harbour mean concierge desks, timed loading bays and freight elevators booked days ahead. Kitsilano, Mount Pleasant and Fairview mean walk-up apartments and character conversions where the stairwell decides the job. East Vancouver — Commercial Drive, Hastings-Sunrise, Renfrew — means lane access, detached garages and laneway houses, which are usually the easiest load-outs in the city once we know which lane to enter from. Kerrisdale, Dunbar, Shaughnessy and Point Grey mean larger homes with basements and long carries. UBC and the Endowment Lands add campus housing rules and their own parking regime." },
@@ -269,7 +269,7 @@ export const locations: LocationPage[] = [
       {
         question: "Do you take single items in Vancouver?",
         answer:
-          "Yes. One sofa, one mattress, one fridge is a normal booking and prices as a minimum load, roughly $99 to $150 in the current market including lifting, hauling and disposal fees. Stairs or a walk-up can move it slightly, so a photo of the route settles the number first.",
+          "Yes. One sofa, one mattress, one fridge is a normal booking and prices as a minimum load, roughly $89 to $119 in the current market including lifting, hauling and disposal fees. Stairs or a walk-up can move it slightly, so a photo of the route settles the number first.",
       },
       {
         question: "Are you licensed and insured?",
@@ -314,7 +314,7 @@ export const locations: LocationPage[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "NorthPeak provides same-week junk removal across Burnaby — single items from roughly $99, full loads roughly $649–$799 in the 2026 market, with free photo-based estimates. Most Burnaby work is strata work, so the elevator booking, the loading dock window and the certificate of insurance are arranged before the date. Underground parkade clearance is the one constraint worth checking early, and we check it from your photos rather than at the ramp.",
+        text: "NorthPeak provides same-week junk removal across Burnaby — single items from roughly $89, full loads roughly $449–549, with free photo-based estimates. Most Burnaby work is strata work, so the elevator booking, the loading dock window and the certificate of insurance are arranged before the date. Underground parkade clearance is the one constraint worth checking early, and we check it from your photos rather than at the ramp.",
       },
       { type: "heading", text: "What junk removal services do you offer in Burnaby?" },
       { type: "paragraph", text: "Burnaby splits cleanly into three kinds of job: high-rise strata, townhouse complexes, and commercial bays along the major corridors. The service lines follow." },
@@ -331,7 +331,7 @@ export const locations: LocationPage[] = [
       },
       { type: "paragraph", text: "The [services hub](/services) lists them all." },
       { type: "heading", text: "How much does junk removal cost in Burnaby?" },
-      { type: "paragraph", text: "The same volume pricing as the rest of Metro Vancouver: roughly $99–150 for a single item, roughly $300–500 for a half truck, roughly $649–799 for a full truck of household material, with dense renovation waste quoted by weight on top. In strata buildings the variable that actually moves a Burnaby quote is not distance — it is carry length. A unit at the far end of a floor with a long corridor to the elevator costs more crew time than a townhouse with the garage at the curb, and photos capture that in advance." },
+      { type: "paragraph", text: "The same volume pricing as the rest of Metro Vancouver: roughly $89–119 for a single item, roughly $269–319 for a half truck, roughly $449–549 for a full truck of household material, with dense renovation waste quoted by weight on top. In strata buildings the variable that actually moves a Burnaby quote is not distance — it is carry length. A unit at the far end of a floor with a long corridor to the elevator costs more crew time than a townhouse with the garage at the curb, and photos capture that in advance." },
       { type: "paragraph", text: "Every load fraction and what changes it is in our [junk removal cost guide](/blog/junk-removal-cost-north-vancouver). If the job is a garage, the [garage cleanout cost guide](/blog/garage-cleanout-north-vancouver-cost) prices that one specifically." },
       { type: "heading", text: "Which Burnaby neighbourhoods do you serve?" },
       { type: "paragraph", text: "All of them. Metrotown and Brentwood are dense high-rise strata, where the work is scheduled around elevator bookings and dock windows rather than around traffic. Burnaby Heights is older detached housing with lane access and basements. Deer Lake and Buckingham Heights mean larger lots and longer carries. Highgate and Edmonds are a mix of towers and townhouse complexes. Big Bend and the Still Creek corridor are commercial and industrial, where the constraint is usually the bay rather than the building. Capitol Hill and Montecito bring sloped streets and driveways worth checking before the truck arrives." },

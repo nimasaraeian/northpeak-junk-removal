@@ -167,7 +167,7 @@ test("every indexed city emits Service and FAQPage JSON-LD with the address", ()
 
 test("pricing is stated consistently across every city page", () => {
   const prose = JSON.stringify(indexedLocations.map((location) => location.body));
-  assert.match(prose, /roughly \$99/);
+  assert.match(prose, /roughly \$89/);
   // No city is quoted a premium or a discount for its postcode.
   assert.equal(/postcode premium/.test(prose) && !/no postcode premium/.test(prose), false);
 });

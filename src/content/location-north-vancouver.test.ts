@@ -136,7 +136,7 @@ test("the four Journal guides and the nearby cities are linked in context", () =
 
 test("the cost section summarizes without repeating the price table", () => {
   const prose = JSON.stringify(body());
-  assert.ok(prose.includes("$649–799"), "full-load range must stay in the quick summary");
+  assert.ok(prose.includes("$449–549"), "full-load range must stay in the quick summary");
   assert.equal(
     body().some((block) => block.type === "table"),
     false,
