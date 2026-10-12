@@ -269,7 +269,7 @@ export default function BrandBookPage() {
             <div className="bb-card do">
               <h3>Do</h3>
               <ul>
-                <li>Give real ranges: “a full truck is roughly $649–799.”</li>
+                <li>Give real ranges: “a full trailer is roughly $449–549.”</li>
                 <li>Name neighbourhoods and access quirks (Lonsdale elevators, Deep Cove lanes).</li>
                 <li>Say when DIY is cheaper, or when a load can’t be diverted from landfill.</li>
                 <li>Short, direct sentences. Active voice.</li>

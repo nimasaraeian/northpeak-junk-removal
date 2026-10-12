@@ -32,13 +32,13 @@ export const services: Service[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "Full-service junk removal means our crew does everything: we come to where the items sit, carry them out, load, haul and dispose. In the 2026 Metro Vancouver market a single item runs roughly $99–150 and a full truck roughly $649–1,000, priced by the share of the truck your load fills. Estimates are free and quoted from photos, most North Shore jobs run same-week, and loads are sorted for donation and recycling before anything goes to disposal.",
+        text: "Full-service junk removal means our crew does everything: we come to where the items sit, carry them out, load, haul and dispose. With NorthPeak a single item runs roughly $89–119 and a full truck roughly $449–549, priced by the share of the truck your load fills. Estimates are free and quoted from photos, most North Shore jobs run same-week, and loads are sorted for donation and recycling before anything goes to disposal.",
       },
       { type: "heading", text: "What does full-service junk removal include?" },
       { type: "paragraph", text: "Everything between the pile and the disposal facility. You do not carry anything to the curb, disassemble anything, or rent anything. The crew comes to the room the items are in — the basement, the third-floor walk-up, the back of the garage — takes them apart if they will not fit through the door, carries them out, loads the truck, sweeps the cleared area, and hauls the load away. The quoted price covers the labour, the truck, the fuel, and the dump and recycling fees paid at the other end." },
       { type: "paragraph", text: "That is the difference between this and a bin rental, which is the other way people clear a space in Vancouver. A bin sits on your driveway for a week and you fill it yourself; it wins for a slow renovation where debris accumulates daily. Full-service wins when the lifting is the hard part, when the job should take hours rather than weekends, or when the load contains things a bin will not take. The [cost guide](/blog/junk-removal-cost-north-vancouver) compares the two on real numbers." },
       { type: "heading", text: "How much does junk removal cost in Vancouver?" },
-      { type: "paragraph", text: "Price follows volume — the fraction of the truck your load fills — with weight as a second factor for heavy material. A single item or minimum load is roughly $99–150. A quarter truck, about a packed closet, is roughly $200–300. A half truck, about one full single garage, is roughly $300–500. A full truck is roughly $649–1,000 depending on what is in it. Concrete, soil, tile and shingles are quoted by weight on top, because disposal facilities bill them by the tonne." },
+      { type: "paragraph", text: "Price follows volume — the fraction of the truck your load fills — with weight as a second factor for heavy material. A single item or minimum load is roughly $89–119. A quarter truck, about a packed closet, is roughly $149–179. A half truck, about one full single garage, is roughly $269–319. A full truck is roughly $449–549 depending on what is in it. Concrete, soil, tile and shingles are quoted by weight on top, because disposal facilities bill them by the tonne." },
       { type: "paragraph", text: "Those are market ranges. The number for your load comes from photos: send them through the estimate form and a firm range comes back, usually within hours. We confirm it on arrival before anything is touched, and the figure you approve is the figure you pay. The full breakdown of every load fraction and what moves it lives in our [North Vancouver junk removal cost guide](/blog/junk-removal-cost-north-vancouver)." },
       { type: "heading", text: "What can you take — and what can't you?" },
       { type: "paragraph", text: "Almost everything a household or small business generates: furniture, mattresses, appliances, electronics, garage and basement storage, yard waste, renovation debris, office furniture, retail fixtures, and the mixed piles that come out of a move. If it fits through the door and two people can carry it, it goes." },
@@ -77,7 +77,7 @@ export const services: Service[] = [
       {
         question: "Do you remove a single item, or is there a minimum?",
         answer:
-          "Single items are welcome and price as a minimum load — roughly $99 to $150 in the current market, including the lifting, hauling and disposal fees. One sofa, one fridge, one mattress is a normal booking for us, not an inconvenience.",
+          "Single items are welcome and price as a minimum load — roughly $89 to $119 in the current market, including the lifting, hauling and disposal fees. One sofa, one fridge, one mattress is a normal booking for us, not an inconvenience.",
       },
       {
         question: "What do you do with items that are still usable?",
@@ -117,13 +117,13 @@ export const services: Service[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "We remove single pieces or whole-house suites — sofas, sectionals, beds, mattresses, dressers, dining sets, desks and office furniture — from anywhere in the property, including basements, walk-ups and condos with booked elevators. A single piece prices as a minimum load, roughly $99–150 in the 2026 market; a full room of furniture usually lands between a quarter and a half truck. Pieces in donatable condition are separated and routed to local charities rather than disposal.",
+        text: "We remove single pieces or whole-house suites — sofas, sectionals, beds, mattresses, dressers, dining sets, desks and office furniture — from anywhere in the property, including basements, walk-ups and condos with booked elevators. A single piece prices as a minimum load, roughly $89–119 in the 2026 market; a full room of furniture usually lands between a quarter and a half truck. Pieces in donatable condition are separated and routed to local charities rather than disposal.",
       },
       { type: "heading", text: "What furniture do you remove?" },
       { type: "paragraph", text: "Anything that furnishes a room and has stopped being useful where it is. Sectionals that will not fit the new place, sofa beds that weigh twice what they look like, mattresses and box springs, bed frames, dressers, wardrobes, dining tables and chairs, china cabinets, bookcases, patio sets, exercise equipment, and the office furniture nobody wants to disassemble — desks, filing cabinets, conference tables, task chairs by the dozen." },
       { type: "paragraph", text: "Disassembly is part of the job, not an extra. If a sectional came into the room in pieces it leaves in pieces, and if a bed frame has to come apart to clear a stairwell turn, it comes apart. That is usually what separates a furniture job that takes twenty minutes from one that takes two hours, and it is why the photo matters more than the item name." },
       { type: "heading", text: "How much does furniture removal cost?" },
-      { type: "paragraph", text: "The same volume pricing as any load: a single sofa, mattress or dresser is a minimum load at roughly $99–150. Two or three large pieces usually land in the quarter-truck band, roughly $200–300. A full living room and bedroom together typically reaches a half truck, roughly $300–500. Stairs, long carries and tight access add crew time and can move a piece up a band, which is exactly why we price from photos rather than a phone description. The [full price breakdown](/blog/junk-removal-cost-north-vancouver) shows every fraction." },
+      { type: "paragraph", text: "The same volume pricing as any load: a single sofa, mattress or dresser is a minimum load at roughly $89–119. Two or three large pieces usually land in the quarter-truck band, roughly $149–179. A full living room and bedroom together typically reaches a half truck, roughly $269–319. Stairs, long carries and tight access add crew time and can move a piece up a band, which is exactly why we price from photos rather than a phone description. The [full price breakdown](/blog/junk-removal-cost-north-vancouver) shows every fraction." },
       { type: "heading", text: "Can you get a sofa out of a condo or a basement?" },
       { type: "paragraph", text: "Usually yes, and the answer comes from the photo rather than from optimism. The pieces that cause trouble are sectionals in rooms with a single tight turn, sofa beds with a welded steel frame, and anything that was carried in before a wall went up. Send a picture of the piece and a picture of the route it has to travel — the doorway, the stair turn, the hallway — and we will tell you before booking whether it comes out whole, comes apart, or genuinely will not go." },
       { type: "paragraph", text: "In condo buildings the constraint is rarely the furniture and almost always the building. Freight elevator bookings, loading-bay windows and certificates of insurance are routine work: tell us the building and we handle that side. Floors, walls and common areas are protected before the first piece moves, which is what strata councils actually care about." },
@@ -143,7 +143,7 @@ export const services: Service[] = [
       {
         question: "How much does it cost to remove one couch?",
         answer:
-          "A single sofa prices as a minimum load, roughly $99 to $150 in the current Metro Vancouver market, including lifting, hauling and disposal. Upper floors, long carries or a tight stairwell can move it slightly, so a photo of the piece and the route settles the number before you book.",
+          "A single sofa prices as a minimum load, roughly $89 to $119 in the current Metro Vancouver market, including lifting, hauling and disposal. Upper floors, long carries or a tight stairwell can move it slightly, so a photo of the piece and the route settles the number before you book.",
       },
       {
         question: "Can you remove furniture from a condo with an elevator?",
@@ -193,13 +193,13 @@ export const services: Service[] = [
       {
         type: "callout",
         label: "Quick answer",
-        text: "A garage cleanout clears the whole space in one visit — boxes, old furniture, bikes, tools, paint, yard equipment and whatever accumulated behind them — and leaves a swept floor. A typical single garage fills about half a truck, roughly $300–500 in the 2026 market; a packed double garage runs three-quarters to a full truck. Most take two to four hours, and nothing has to be moved to the driveway first.",
+        text: "A garage cleanout clears the whole space in one visit — boxes, old furniture, bikes, tools, paint, yard equipment and whatever accumulated behind them — and leaves a swept floor. A typical single garage fills about half a truck, roughly $269–319 in the 2026 market; a packed double garage runs three-quarters to a full truck. Most take two to four hours, and nothing has to be moved to the driveway first.",
       },
       { type: "heading", text: "What does a garage cleanout involve?" },
       { type: "paragraph", text: "The crew works from the door inward, pulling items out in the order they come, sorting as they go: donation, recycling, disposal, and a fourth pile for anything you have asked us to leave. You do not need to pre-stage anything on the driveway — moving everything twice is the part that makes people put the job off for another year." },
       { type: "paragraph", text: "What comes out of a North Shore garage is remarkably consistent: patio furniture from two houses ago, a mountain bike nobody has ridden since the kids left, paint cans from a renovation in the previous decade, camping gear, broken yard tools, the boxes that were carried in on moving day and never opened. The [garage cleanout cost guide](/blog/garage-cleanout-north-vancouver-cost) walks through a real one, item by item." },
       { type: "heading", text: "How much does a garage cleanout cost?" },
-      { type: "paragraph", text: "By volume, like every other load. A single garage that is full but walkable is usually a half truck, roughly $300–500. One packed to the door, where nothing has come out in a decade, reaches three-quarters, roughly $500–700. A double garage cleared completely is often a full truck, roughly $649–1,000. Shelving and workbenches that have to be dismantled add crew time; a floor of loose boxes does not." },
+      { type: "paragraph", text: "By volume, like every other load. A single garage that is full but walkable is usually a half truck, roughly $269–319. One packed to the door, where nothing has come out in a decade, reaches three-quarters, roughly $369–439. A double garage cleared completely is often a full truck, roughly $449–549. Shelving and workbenches that have to be dismantled add crew time; a floor of loose boxes does not." },
       { type: "paragraph", text: "Photos are what make that number firm before anyone arrives — a wide shot from the open door plus a close-up of anything heavy. The [cost guide](/blog/garage-cleanout-north-vancouver-cost) prices a typical North Vancouver garage end to end, and the [general price breakdown](/blog/junk-removal-cost-north-vancouver) shows how the fractions compare." },
       { type: "heading", text: "How long does a garage cleanout take?" },
       { type: "paragraph", text: "Two to four hours for most single garages, half a day for a packed double. The variable is almost never the volume — it is the sorting. A garage where you already know what stays takes the low end; a garage where every box has to be opened and asked about takes the high end. If you can spare twenty minutes at the start to point at what is definitely going, the rest moves fast." },
@@ -227,7 +227,7 @@ export const services: Service[] = [
       {
         question: "How much does a double garage cleanout cost?",
         answer:
-          "A fully cleared double garage is usually a full truck, roughly $649 to $1,000 in the current market. A single garage that is full but walkable lands around a half truck, roughly $300 to $500. A wide photo from the open door is enough to place yours firmly before you book.",
+          "A fully cleared double garage is usually a full truck, roughly $449 to $549 in the current market. A single garage that is full but walkable lands around a half truck, roughly $269 to $319. A wide photo from the open door is enough to place yours firmly before you book.",
       },
       {
         question: "Can you take paint, solvents and propane from the garage?",

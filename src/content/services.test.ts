@@ -143,7 +143,7 @@ test("FAQ JSON-LD is emitted for every service", () => {
 test("prices stay approximate and consistent with the cost pillar", () => {
   const prose = JSON.stringify(services.map((service) => service.body));
   // Every figure on these pages is a market range, never a quote.
-  assert.match(prose, /roughly \$99–150/);
+  assert.match(prose, /roughly \$89–119/);
   assert.equal(
     / \$\d+(\.\d{2})? (flat|fixed|guaranteed)/i.test(prose),
     false,
