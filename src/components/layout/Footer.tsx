@@ -12,6 +12,7 @@ import { formatSiteAddress } from "@/lib/maps";
 import { formatPhoneHref } from "@/lib/utils";
 
 const footerNav = [
+  { href: "/pricing", label: "Pricing" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/about", label: "About" },
   { href: "/estimate", label: "Fill the truck" },
