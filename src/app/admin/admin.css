@@ -108,6 +108,14 @@
   background: var(--ops-lost-bg);
   color: var(--ops-lost-ink);
 }
+.np-ops .ops-pill[data-status="paid"] {
+  background: var(--ops-won-bg);
+  color: var(--ops-won-ink);
+}
+.np-ops .ops-pill[data-status="void"] {
+  background: var(--ops-lost-bg);
+  color: var(--ops-lost-ink);
+}
 
 .np-ops .ops-input,
 .np-ops .ops-select,

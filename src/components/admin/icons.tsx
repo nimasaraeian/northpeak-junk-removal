@@ -134,3 +134,21 @@ export function ConnectionsIcon() {
     </svg>
   );
 }
+
+export function BillingIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-2 2-2-2-2 2-2-2-3 2V4a1 1 0 0 1 1-1Z" />
+      <path d="M9 8h6M9 12h6" />
+    </svg>
+  );
+}
+
+export function FinanceIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <path d="M3 3v18h18" />
+      <path d="M7 15l4-4 3 3 5-6" />
+    </svg>
+  );
+}

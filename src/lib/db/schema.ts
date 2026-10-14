@@ -16,6 +16,22 @@ import type {
   PricingSettings,
   QuoteComputation,
 } from "@/lib/quote-engine";
+import type { BillingSettings } from "@/content/billing";
+import {
+  INVOICE_STATUSES,
+  PAYMENT_METHODS,
+  type InvoiceLineRow,
+} from "@/lib/admin/billing-constants";
+import { EXPENSE_CATEGORIES } from "@/lib/admin/finance-constants";
+
+// Re-export the dependency-light enums/labels so server code can keep importing
+// them from the schema. The arrays live in the constants modules (no Drizzle)
+// so client components can use them without pulling Drizzle into their bundle.
+export { INVOICE_STATUSES, PAYMENT_METHODS, EXPENSE_CATEGORIES };
+export type { InvoiceLineRow };
+export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
 
 /**
  * NorthPeak Ops schema.
@@ -33,6 +49,8 @@ import type {
 export const settings = pgTable("settings", {
   id: integer("id").primaryKey(),
   pricing: jsonb("pricing").$type<PricingSettings>().notNull(),
+  /** Billing & tax overrides (v5). Null falls back to DEFAULT_BILLING_SETTINGS. */
+  billing: jsonb("billing").$type<BillingSettings>(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   updatedBy: text("updated_by"),
 });
@@ -291,3 +309,101 @@ export const messages = pgTable("messages", {
 });
 
 export type MessageRow = typeof messages.$inferSelect;
+
+// --- Billing & payments (v5) -----------------------------------------------
+
+/**
+ * Invoicing + payment tracking.
+ *
+ * An invoice is the money side of a quote/job: subtotal → GST/PST → total,
+ * then one or more `payments` chip away at the balance. Nothing here collects
+ * money on its own — `payments` are hand-recorded (cash, e-transfer, card on a
+ * terminal, cheque). Online card capture (Stripe) is a Phase 2 integration that
+ * would write `payments` rows through the approval queue, no schema change.
+ *
+ * `status` is the operator-controlled lifecycle; the paid/partial state is
+ * derived from the sum of `payments` against `total_cents`, never stored.
+ */
+
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  /** Human invoice number, e.g. NP-0042. Derived from id at creation. */
+  number: text("number").notNull().default(""),
+  /** CRM links, all nullable: an invoice can be raised on a walk-up with no CRM row. */
+  clientId: integer("client_id").references(() => clients.id, { onDelete: "set null" }),
+  jobId: integer("job_id").references(() => jobs.id, { onDelete: "set null" }),
+  quoteId: integer("quote_id").references(() => quotes.id, { onDelete: "set null" }),
+  /** Snapshot of the customer, so the invoice reads the same even if the CRM row changes. */
+  customerName: text("customer_name").notNull().default(""),
+  customerEmail: text("customer_email").notNull().default(""),
+  customerPhone: text("customer_phone").notNull().default(""),
+  customerAddress: text("customer_address").notNull().default(""),
+  lineItems: jsonb("line_items").$type<InvoiceLineRow[]>().notNull().default([]),
+  subtotalCents: integer("subtotal_cents").notNull().default(0),
+  gstCents: integer("gst_cents").notNull().default(0),
+  pstCents: integer("pst_cents").notNull().default(0),
+  totalCents: integer("total_cents").notNull().default(0),
+  /** Deposit asked for up front; informational, the balance is total − payments. */
+  depositCents: integer("deposit_cents").notNull().default(0),
+  status: text("status").$type<InvoiceStatus>().notNull().default("draft"),
+  issuedAt: timestamp("issued_at", { withTimezone: true }),
+  dueAt: timestamp("due_at", { withTimezone: true }),
+  notes: text("notes").notNull().default(""),
+  createdBy: text("created_by").notNull(),
+});
+
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  invoiceId: integer("invoice_id")
+    .notNull()
+    .references(() => invoices.id, { onDelete: "cascade" }),
+  amountCents: integer("amount_cents").notNull(),
+  method: text("method").$type<PaymentMethod>().notNull().default("cash"),
+  receivedAt: timestamp("received_at", { withTimezone: true }).defaultNow().notNull(),
+  receivedBy: text("received_by").notNull(),
+  note: text("note").notNull().default(""),
+});
+
+export type InvoiceRow = typeof invoices.$inferSelect;
+export type PaymentRow = typeof payments.$inferSelect;
+
+// --- Payroll & accounting (v6) ---------------------------------------------
+
+/**
+ * Crew time → pay, plus a simple expense ledger. Together with `payments`
+ * these feed the Finance screen's P&L: revenue (payments received) minus
+ * labour (time × rate) minus expenses. Deliberately light — this is a
+ * two-person shop's books, not a general ledger. QuickBooks sync is Phase 2.
+ */
+
+export const timeEntries = pgTable("time_entries", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  /** Free text so contractors beyond Nima/Sina can be paid without a users table. */
+  person: text("person").notNull(),
+  jobId: integer("job_id").references(() => jobs.id, { onDelete: "set null" }),
+  /** Calendar day the work happened (date only). */
+  workDate: timestamp("work_date", { withTimezone: true }).notNull(),
+  hours: real("hours").notNull(),
+  /** Hourly pay rate in cents, captured per entry so a rate change is not retroactive. */
+  rateCents: integer("rate_cents").notNull(),
+  note: text("note").notNull().default(""),
+  createdBy: text("created_by").notNull(),
+});
+
+export const expenses = pgTable("expenses", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  expenseDate: timestamp("expense_date", { withTimezone: true }).notNull(),
+  category: text("category").$type<ExpenseCategory>().notNull().default("other"),
+  amountCents: integer("amount_cents").notNull(),
+  vendor: text("vendor").notNull().default(""),
+  jobId: integer("job_id").references(() => jobs.id, { onDelete: "set null" }),
+  note: text("note").notNull().default(""),
+  createdBy: text("created_by").notNull(),
+});
+
+export type TimeEntryRow = typeof timeEntries.$inferSelect;
+export type ExpenseRow = typeof expenses.$inferSelect;

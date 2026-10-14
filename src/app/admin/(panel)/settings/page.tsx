@@ -1,6 +1,8 @@
 import { SettingsForm } from "@/components/admin/SettingsForm";
+import { BillingSettingsForm } from "@/components/admin/BillingSettingsForm";
 import { bedCapacityCuFt } from "@/content/vehicle";
 import { loadCatalog, loadPricingSettings } from "@/lib/admin/data";
+import { loadBillingSettings } from "@/lib/admin/billing-data";
 import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Settings" };
@@ -8,7 +10,11 @@ export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   const t = await getT();
-  const [settings, catalog] = await Promise.all([loadPricingSettings(), loadCatalog()]);
+  const [settings, catalog, billing] = await Promise.all([
+    loadPricingSettings(),
+    loadCatalog(),
+    loadBillingSettings(),
+  ]);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -20,6 +26,10 @@ export default async function SettingsPage() {
 
       <div className="mt-5">
         <SettingsForm settings={settings} measuredTrailerCubicFeet={bedCapacityCuFt} />
+      </div>
+
+      <div className="mt-6">
+        <BillingSettingsForm settings={billing} />
       </div>
     </div>
   );
