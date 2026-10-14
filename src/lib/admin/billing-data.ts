@@ -1,5 +1,5 @@
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
-import { getDb } from "@/lib/db/client";
+import { getMigratedDb } from "@/lib/db/migrations";
 import { invoices, payments, quotes, settings } from "@/lib/db/schema";
 import type { InvoiceRow, InvoiceStatus, PaymentRow } from "@/lib/db/schema";
 import { DEFAULT_BILLING_SETTINGS, type BillingSettings } from "@/content/billing";
@@ -23,7 +23,7 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 export async function loadBillingSettings(): Promise<BillingSettings> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return DEFAULT_BILLING_SETTINGS;
 
   return safe(async () => {
@@ -42,7 +42,7 @@ export async function listInvoices(
   filters: InvoiceFilters = {},
   limit = 200,
 ): Promise<InvoiceRow[]> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return [];
 
   return safe(async () => {
@@ -70,7 +70,7 @@ export async function listInvoices(
 /** Paid-to-date per invoice, one grouped query rather than N. */
 export async function paidTotalsFor(invoiceIds: number[]): Promise<Map<number, number>> {
   const totals = new Map<number, number>();
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db || invoiceIds.length === 0) return totals;
 
   return safe(async () => {
@@ -88,7 +88,7 @@ export async function paidTotalsFor(invoiceIds: number[]): Promise<Map<number, n
 }
 
 export async function getInvoice(id: number): Promise<InvoiceRow | null> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db || !Number.isInteger(id)) return null;
   return safe(async () => {
     const [row] = await db.select().from(invoices).where(eq(invoices.id, id)).limit(1);
@@ -97,7 +97,7 @@ export async function getInvoice(id: number): Promise<InvoiceRow | null> {
 }
 
 export async function listPaymentsFor(invoiceId: number): Promise<PaymentRow[]> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db || !Number.isInteger(invoiceId)) return [];
   return safe(
     () =>
@@ -131,7 +131,7 @@ export async function loadBillingStats(now = new Date()): Promise<BillingStats> 
     draftCount: 0,
     openCount: 0,
   };
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return empty;
 
   return safe(async () => {
@@ -174,7 +174,7 @@ export async function loadBillingStats(now = new Date()): Promise<BillingStats> 
 export async function listInvoiceableQuotes(limit = 100): Promise<
   { id: number; customerName: string; customerArea: string; finalLowCents: number; finalHighCents: number }[]
 > {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return [];
   return safe(async () => {
     const existing = await db

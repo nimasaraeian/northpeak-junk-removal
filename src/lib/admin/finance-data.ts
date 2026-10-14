@@ -1,5 +1,5 @@
 import { and, desc, gte, lt, sql } from "drizzle-orm";
-import { getDb } from "@/lib/db/client";
+import { getMigratedDb } from "@/lib/db/migrations";
 import { expenses, invoices, payments, timeEntries } from "@/lib/db/schema";
 import type { ExpenseCategory, ExpenseRow, TimeEntryRow } from "@/lib/db/schema";
 import { profitAndLoss, type ProfitAndLoss } from "@/lib/admin/finance";
@@ -26,7 +26,7 @@ export function defaultFinancePeriod(now = new Date()): { from: Date; to: Date }
 }
 
 export async function listTimeEntries(from: Date, to: Date, limit = 500): Promise<TimeEntryRow[]> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return [];
   return safe(
     () =>
@@ -41,7 +41,7 @@ export async function listTimeEntries(from: Date, to: Date, limit = 500): Promis
 }
 
 export async function listExpenses(from: Date, to: Date, limit = 500): Promise<ExpenseRow[]> {
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return [];
   return safe(
     () =>
@@ -76,7 +76,7 @@ export async function loadFinanceSummary(from: Date, to: Date): Promise<FinanceS
     netProfitCents: 0,
     expensesByCategory: [],
   };
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return empty;
 
   return safe(async () => {
