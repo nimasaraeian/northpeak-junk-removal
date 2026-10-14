@@ -415,3 +415,33 @@ export async function saveSettingsAction(
   revalidatePath("/admin/quotes/new");
   return { ok: true };
 }
+
+/**
+ * Applies pending database migrations (Billing v5, Payroll v6) with the app's
+ * own connection, so no one has to run SQL in the Neon console. Idempotent —
+ * every statement is `IF NOT EXISTS`, so re-running it is a no-op.
+ */
+export async function applyPendingMigrationsAction(): Promise<
+  ActionResult & { ran?: string[] }
+> {
+  await requireOperator();
+
+  const db = getDb();
+  if (!db) return { ok: false, error: "The database is not reachable." };
+
+  const { applyMigrations } = await import("@/lib/db/migrations");
+  const result = await applyMigrations(db);
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      error: result.error ?? "The database update did not complete.",
+      ran: result.ran,
+    };
+  }
+
+  for (const path of ["/admin/billing", "/admin/finance", "/admin/settings"]) {
+    revalidatePath(path);
+  }
+  return { ok: true, ran: result.ran };
+}

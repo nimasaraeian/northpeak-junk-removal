@@ -1,5 +1,6 @@
 import { SettingsForm } from "@/components/admin/SettingsForm";
 import { BillingSettingsForm } from "@/components/admin/BillingSettingsForm";
+import { DbSetupCard } from "@/components/admin/DbSetupCard";
 import { bedCapacityCuFt } from "@/content/vehicle";
 import { loadCatalog, loadPricingSettings } from "@/lib/admin/data";
 import { loadBillingSettings } from "@/lib/admin/billing-data";
@@ -30,6 +31,10 @@ export default async function SettingsPage() {
 
       <div className="mt-6">
         <BillingSettingsForm settings={billing} />
+      </div>
+
+      <div className="mt-6">
+        <DbSetupCard />
       </div>
     </div>
   );
