@@ -133,11 +133,30 @@ export async function applyMigrations(db: Db): Promise<MigrationResult> {
  */
 let schemaReady: Promise<void> | null = null;
 
+/** True when the billing/payroll tables already exist — a single cheap query. */
+async function schemaAlreadyApplied(db: Db): Promise<boolean> {
+  try {
+    const result = await db.execute(
+      sql`select to_regclass('public.invoices') as inv, to_regclass('public.payments') as pay, to_regclass('public.time_entries') as te, to_regclass('public.expenses') as ex`,
+    );
+    const rows = (result as { rows?: Record<string, unknown>[] }).rows ?? [];
+    const row = rows[0];
+    return Boolean(row && row.inv && row.pay && row.te && row.ex);
+  } catch {
+    return false;
+  }
+}
+
 export function ensureSchema(db: Db): Promise<void> {
   if (!schemaReady) {
-    schemaReady = applyMigrations(db).then((result) => {
+    schemaReady = (async () => {
+      // Fast path: if everything already exists (the normal case after the
+      // first run ever), skip the DDL entirely — one cheap query per cold
+      // start instead of a dozen CREATE/ALTER round-trips.
+      if (await schemaAlreadyApplied(db)) return;
+      const result = await applyMigrations(db);
       if (!result.ok) schemaReady = null;
-    });
+    })();
   }
   return schemaReady;
 }
