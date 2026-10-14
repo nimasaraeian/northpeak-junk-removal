@@ -17,7 +17,15 @@ export async function loadPricingSettings(): Promise<PricingSettings> {
   const db = getDb();
   if (!db) return DEFAULT_PRICING_SETTINGS;
 
-  const [row] = await db.select().from(settings).where(eq(settings.id, 1)).limit(1);
+  // Select only the columns this function needs. A full-row select would also
+  // request `billing`, which does not exist until the v5 migration runs — and
+  // that would break every pricing read (quotes, estimate, booking) on a
+  // database that is up to date on code but not yet migrated.
+  const [row] = await db
+    .select({ pricing: settings.pricing })
+    .from(settings)
+    .where(eq(settings.id, 1))
+    .limit(1);
   if (!row) return DEFAULT_PRICING_SETTINGS;
 
   // Merge over the defaults so a settings row written before a new field was
