@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireOperator } from "@/lib/admin/auth";
-import { getDb } from "@/lib/db/client";
+import { getMigratedDb } from "@/lib/db/migrations";
 import { EXPENSE_CATEGORIES, expenses, timeEntries } from "@/lib/db/schema";
 
 /**
@@ -54,7 +54,7 @@ export async function addTimeEntryAction(raw: unknown): Promise<ActionResult> {
   const workDate = parseDate(parsed.data.workDate);
   if (!workDate) return { ok: false, error: "That work date is not valid." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   await db.insert(timeEntries).values({
@@ -75,7 +75,7 @@ export async function deleteTimeEntryAction(entryId: number): Promise<ActionResu
   await requireOperator();
   if (!Number.isInteger(entryId)) return { ok: false, error: "Unknown entry." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   await db.delete(timeEntries).where(eq(timeEntries.id, entryId));
@@ -103,7 +103,7 @@ export async function addExpenseAction(raw: unknown): Promise<ActionResult> {
   const expenseDate = parseDate(parsed.data.expenseDate);
   if (!expenseDate) return { ok: false, error: "That expense date is not valid." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   await db.insert(expenses).values({
@@ -124,7 +124,7 @@ export async function deleteExpenseAction(expenseId: number): Promise<ActionResu
   await requireOperator();
   if (!Number.isInteger(expenseId)) return { ok: false, error: "Unknown expense." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   await db.delete(expenses).where(eq(expenses.id, expenseId));

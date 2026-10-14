@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import type { Db } from "@/lib/db/client";
+import { getDb, type Db } from "@/lib/db/client";
 
 /**
  * In-app migration runner.
@@ -119,4 +119,41 @@ export async function applyMigrations(db: Db): Promise<MigrationResult> {
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+/**
+ * Self-healing schema.
+ *
+ * The billing/payroll features depend on tables and a column the migration
+ * creates. Rather than require someone to run SQL first (and crash every path
+ * that touches the new schema until they do), this runs the idempotent
+ * migrations lazily, once per process, the first time any billing/finance code
+ * reaches the database. On success it is cached; on failure it is cleared so a
+ * later request can retry.
+ */
+let schemaReady: Promise<void> | null = null;
+
+export function ensureSchema(db: Db): Promise<void> {
+  if (!schemaReady) {
+    schemaReady = applyMigrations(db).then((result) => {
+      if (!result.ok) schemaReady = null;
+    });
+  }
+  return schemaReady;
+}
+
+/**
+ * `getDb()` plus a guarantee the billing/payroll schema exists. Billing and
+ * finance code uses this instead of `getDb()` so it works on a database that
+ * has the new code but has not run the migration yet.
+ */
+export async function getMigratedDb(): Promise<Db | null> {
+  const db = getDb();
+  if (!db) return null;
+  try {
+    await ensureSchema(db);
+  } catch {
+    schemaReady = null;
+  }
+  return db;
 }

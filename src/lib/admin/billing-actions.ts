@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireOperator } from "@/lib/admin/auth";
-import { getDb } from "@/lib/db/client";
+import { getMigratedDb } from "@/lib/db/migrations";
 import {
   activityLog,
   aiActions,
@@ -88,7 +88,7 @@ export async function createInvoiceAction(raw: unknown): Promise<SaveInvoiceResu
     return { ok: false, error: parsed.error.issues[0]?.message ?? "That invoice did not validate." };
   }
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const billing = await loadBillingSettings();
@@ -144,7 +144,7 @@ export async function createInvoiceFromQuoteAction(quoteId: number): Promise<Sav
   const operator = await requireOperator();
   if (!Number.isInteger(quoteId)) return { ok: false, error: "Unknown quote." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [quote] = await db.select().from(quotes).where(eq(quotes.id, quoteId)).limit(1);
@@ -200,7 +200,7 @@ export async function updateInvoiceAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Those changes did not validate." };
   }
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [current] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
@@ -245,7 +245,7 @@ export async function updateInvoiceStatusAction(
   if (!parsed.success) return { ok: false, error: "Unknown status." };
   if (!Number.isInteger(invoiceId)) return { ok: false, error: "Unknown invoice." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [current] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
@@ -298,7 +298,7 @@ export async function recordPaymentAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "That payment did not validate." };
   }
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [invoice] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
@@ -349,7 +349,7 @@ export async function deletePaymentAction(paymentId: number): Promise<ActionResu
   await requireOperator();
   if (!Number.isInteger(paymentId)) return { ok: false, error: "Unknown payment." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [payment] = await db.select().from(payments).where(eq(payments.id, paymentId)).limit(1);
@@ -384,7 +384,7 @@ export async function queueInvoiceSendAction(invoiceId: number): Promise<ActionR
   const operator = await requireOperator();
   if (!Number.isInteger(invoiceId)) return { ok: false, error: "Unknown invoice." };
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const [invoice] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
@@ -426,7 +426,7 @@ export async function saveBillingSettingsAction(
 ): Promise<ActionResult> {
   const operator = await requireOperator();
 
-  const db = getDb();
+  const db = await getMigratedDb();
   if (!db) return { ok: false, error: DB_UNREACHABLE };
 
   const parsed = billingSettingsSchema.safeParse({
