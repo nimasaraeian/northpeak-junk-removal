@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { QuoteDetailActions } from "@/components/admin/QuoteDetailActions";
+import { QuoteToInvoiceButton } from "@/components/admin/billing/QuoteToInvoiceButton";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { requireOperator } from "@/lib/admin/auth";
 import { getQuote } from "@/lib/admin/data";
@@ -186,6 +187,15 @@ export default async function QuoteDetailPage({ params }: PageProps<"/admin/quot
 
         <aside className="ops-card h-fit p-4 lg:sticky lg:top-20">
           <QuoteDetailActions quote={quote} operator={operator} />
+          {quote.status === "won" ? (
+            <div className="mt-4 border-t border-[var(--ops-border)] pt-4">
+              <p className="ops-label">{t("Billing")}</p>
+              <p className="mb-2 mt-1 text-xs text-[var(--ops-faint)]">
+                {t("Create an invoice prefilled from this quote.")}
+              </p>
+              <QuoteToInvoiceButton quoteId={quote.id} />
+            </div>
+          ) : null}
         </aside>
       </div>
     </div>

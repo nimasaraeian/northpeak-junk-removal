@@ -2,12 +2,14 @@ import Link from "next/link";
 import { OpsSidebarNav, OpsTabBar, type OpsNavItem } from "@/components/admin/OpsNav";
 import { SetupScreen } from "@/components/admin/SetupScreen";
 import {
+  BillingIcon,
   CalendarIcon,
   ClientsIcon,
   CommandIcon,
   ConnectionsIcon,
   ControlIcon,
   DashboardIcon,
+  FinanceIcon,
   LeadsIcon,
   LogoutIcon,
   NewQuoteIcon,
@@ -43,6 +45,8 @@ const NAV: OpsNavItem[] = [
   { href: "/admin/calendar", label: "Calendar", short: "Cal", icon: <CalendarIcon /> },
   { href: "/admin/quotes/new", label: "New Quote", short: "New", icon: <NewQuoteIcon /> },
   { href: "/admin/quotes", label: "Quotes", short: "Quotes", icon: <QuotesIcon /> },
+  { href: "/admin/billing", label: "Billing", short: "Billing", icon: <BillingIcon /> },
+  { href: "/admin/finance", label: "Finance", short: "Finance", icon: <FinanceIcon /> },
   { href: "/admin/connections", label: "Connections", short: "Links", icon: <ConnectionsIcon /> },
   { href: "/admin/settings", label: "Settings", short: "Settings", icon: <SettingsIcon /> },
 ];
