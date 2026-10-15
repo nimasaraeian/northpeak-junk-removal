@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LeadActions } from "@/components/admin/LeadActions";
+import { EditRecordForm } from "@/components/admin/EditRecordForm";
 import { IntakeAssistant } from "@/components/admin/IntakeAssistant";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { ageLabel } from "@/lib/admin/crm";
@@ -70,6 +71,19 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
               <p className="mt-1 text-sm text-[var(--ops-text)]">{lead.lostReason}</p>
             </section>
           ) : null}
+
+          <EditRecordForm
+            kind="lead"
+            id={lead.id}
+            initial={{
+              name: lead.name,
+              phone: lead.phone,
+              email: lead.email,
+              area: lead.area,
+              source: lead.source,
+              message: lead.message,
+            }}
+          />
 
           <section className="ops-card p-4">
             <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Timeline")}</h2>

@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  deleteJobAction,
   updateJobAssigneeAction,
   updateJobChecklistAction,
+  updateJobDetailsAction,
   updateJobStatusAction,
 } from "@/lib/admin/crm-actions";
 import { ASSIGNEE_TONE } from "@/lib/admin/crm";
@@ -31,12 +33,45 @@ export function JobDetailPanel({
   const [pending, startTransition] = useTransition();
   const [checklist, setChecklist] = useState(job.checklist);
   const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [address, setAddress] = useState(job.address);
+  const [notes, setNotes] = useState(job.notes);
 
   function run(work: () => Promise<{ ok: boolean; error?: string }>) {
     setError(null);
     startTransition(async () => {
       const result = await work();
       if (!result.ok) setError(result.error ?? t("That did not save."));
+      router.refresh();
+    });
+  }
+
+  function saveDetails() {
+    setError(null);
+    startTransition(async () => {
+      const result = await updateJobDetailsAction(job.id, {
+        address: address.trim(),
+        notes: notes.trim(),
+      });
+      if (!result.ok) {
+        setError(result.error ?? t("That did not save."));
+        return;
+      }
+      setEditing(false);
+      router.refresh();
+    });
+  }
+
+  function remove() {
+    if (!window.confirm(`${t("Delete this job?")} ${t("This cannot be undone.")}`)) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await deleteJobAction(job.id);
+      if (!result.ok) {
+        setError(result.error ?? t("Could not delete that."));
+        return;
+      }
+      router.push("/admin/calendar");
       router.refresh();
     });
   }
@@ -81,11 +116,63 @@ export function JobDetailPanel({
               {t("Quote")} #{job.quoteId}
             </Link>
           ) : null}
+          <button
+            type="button"
+            className="ops-btn"
+            data-variant="ghost"
+            disabled={pending}
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? t("Cancel") : t("Edit")}
+          </button>
+          <button
+            type="button"
+            className="ops-btn"
+            data-variant="ghost"
+            disabled={pending}
+            onClick={remove}
+            style={{ color: "var(--ops-lost-ink)" }}
+          >
+            {t("Delete")}
+          </button>
           <Link href="/admin/calendar" className="ops-btn" data-variant="ghost">
             {t("Close")}
           </Link>
         </div>
       </div>
+
+      {editing ? (
+        <div className="mt-4 grid gap-3 rounded-lg border border-[var(--ops-border)] p-3">
+          <label className="block">
+            <span className="ops-label">{t("Address")}</span>
+            <input
+              className="ops-input mt-1.5"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </label>
+          <label className="block">
+            <span className="ops-label">{t("Notes")}</span>
+            <textarea
+              className="ops-textarea mt-1.5"
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </label>
+          <div>
+            <button
+              type="button"
+              className="ops-btn"
+              data-variant="primary"
+              disabled={pending}
+              onClick={saveDetails}
+            >
+              {pending ? t("Saving…") : t("Save changes")}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)]">
         <div>

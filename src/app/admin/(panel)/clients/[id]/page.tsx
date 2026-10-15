@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientActions } from "@/components/admin/ClientActions";
+import { EditRecordForm } from "@/components/admin/EditRecordForm";
 import { ClientJobsEditor } from "@/components/admin/ClientJobsEditor";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { StatusPill } from "@/components/admin/StatusPill";
@@ -110,6 +111,20 @@ export default async function ClientDetailPage({ params }: PageProps<"/admin/cli
               </ul>
             </section>
           ) : null}
+
+          <EditRecordForm
+            kind="client"
+            id={client.id}
+            initial={{
+              name: client.name,
+              phone: client.phone,
+              email: client.email ?? "",
+              area: client.area,
+              source: client.source,
+              address: client.address ?? "",
+              message: client.notes,
+            }}
+          />
 
           <section className="ops-card p-4">
             <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Timeline")}</h2>
