@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
+  deleteInvoiceAction,
   queueInvoiceSendAction,
   updateInvoiceStatusAction,
 } from "@/lib/admin/billing-actions";
@@ -129,6 +130,29 @@ export function InvoiceActions({ invoice }: { invoice: InvoiceRow }) {
         <p className="text-xs text-[var(--ops-faint)]">
           {t("Queues it in Control; the owner approves before anything is sent.")}
         </p>
+      </div>
+
+      <div className="border-t border-[var(--ops-border)] pt-3">
+        <button
+          type="button"
+          className="text-sm font-medium text-[var(--ops-lost-ink)] hover:underline"
+          disabled={pending}
+          onClick={() => {
+            if (!window.confirm(`${t("Delete this invoice?")} ${t("This cannot be undone.")}`)) return;
+            setError(null);
+            startTransition(async () => {
+              const result = await deleteInvoiceAction(invoice.id);
+              if (!result.ok) {
+                setError(result.error ?? t("Could not delete that."));
+                return;
+              }
+              router.push("/admin/billing");
+              router.refresh();
+            });
+          }}
+        >
+          {t("Delete invoice")}
+        </button>
       </div>
 
       {error ? (

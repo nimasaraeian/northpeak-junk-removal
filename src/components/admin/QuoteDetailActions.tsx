@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { QUOTE_STATUSES } from "@/lib/admin/quote-status";
 import { updateQuoteNotesAction, updateQuoteStatusAction } from "@/lib/admin/actions";
-import { createJobFromQuoteAction } from "@/lib/admin/crm-actions";
+import { createJobFromQuoteAction, deleteQuoteAction } from "@/lib/admin/crm-actions";
 import { buildCustomerText } from "@/lib/admin/customer-text";
 import type { QuoteRow, QuoteStatus } from "@/lib/db/schema";
 import { useT } from "@/lib/i18n/provider";
@@ -148,6 +148,29 @@ export function QuoteDetailActions({
           ) : null}
         </div>
       ) : null}
+
+      <div className="border-t border-[var(--ops-border)] pt-3">
+        <button
+          type="button"
+          className="text-sm font-medium text-[var(--ops-lost-ink)] hover:underline"
+          disabled={pending}
+          onClick={() => {
+            if (!window.confirm(`${t("Delete this quote?")} ${t("This cannot be undone.")}`)) return;
+            setError(null);
+            startTransition(async () => {
+              const result = await deleteQuoteAction(quote.id);
+              if (!result.ok) {
+                setError(result.error ?? t("Could not delete that."));
+                return;
+              }
+              router.push("/admin/quotes");
+              router.refresh();
+            });
+          }}
+        >
+          {t("Delete quote")}
+        </button>
+      </div>
 
       {error ? (
         <p role="alert" className="text-sm text-[var(--ops-lost-ink)]">

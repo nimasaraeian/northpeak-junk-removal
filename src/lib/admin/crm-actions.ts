@@ -197,6 +197,57 @@ export async function updateLeadStatusAction(
   return { ok: true };
 }
 
+const leadDetailsSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  phone: z.string().trim().max(40).default(""),
+  email: z.string().trim().max(160).default(""),
+  area: z.string().trim().max(120).default(""),
+  source: z.enum(LEAD_SOURCES),
+  message: z.string().trim().max(4000).default(""),
+});
+
+export async function updateLeadDetailsAction(
+  leadId: number,
+  raw: unknown,
+): Promise<ActionResult> {
+  const operator = await requireOperator();
+  if (!Number.isInteger(leadId)) return { ok: false, error: "Unknown lead." };
+
+  const parsed = leadDetailsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Those changes did not validate." };
+  }
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db.update(leads).set(parsed.data).where(eq(leads.id, leadId));
+
+  await logActivity(db, {
+    entityType: "lead",
+    entityId: leadId,
+    actor: operator,
+    kind: "system",
+    body: "Lead details updated.",
+  });
+
+  revalidateCrm([`/admin/leads/${leadId}`]);
+  return { ok: true };
+}
+
+export async function deleteLeadAction(leadId: number): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(leadId)) return { ok: false, error: "Unknown lead." };
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db.delete(leads).where(eq(leads.id, leadId));
+
+  revalidateCrm();
+  return { ok: true };
+}
+
 export async function updateLeadFieldsAction(
   leadId: number,
   fields: unknown,
@@ -421,6 +472,57 @@ const clientInputSchema = z.object({
   notes: z.string().trim().max(4000).default(""),
 });
 
+export async function updateClientAction(
+  clientId: number,
+  raw: unknown,
+): Promise<ActionResult> {
+  const operator = await requireOperator();
+  if (!Number.isInteger(clientId)) return { ok: false, error: "Unknown client." };
+
+  const parsed = clientInputSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Those changes did not validate." };
+  }
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db
+    .update(clients)
+    .set({
+      ...parsed.data,
+      email: parsed.data.email || null,
+      address: parsed.data.address || null,
+    })
+    .where(eq(clients.id, clientId));
+
+  await logActivity(db, {
+    entityType: "client",
+    entityId: clientId,
+    actor: operator,
+    kind: "system",
+    body: "Client details updated.",
+  });
+
+  revalidateCrm([`/admin/clients/${clientId}`]);
+  return { ok: true };
+}
+
+export async function deleteClientAction(clientId: number): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(clientId)) return { ok: false, error: "Unknown client." };
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  // Quotes, jobs, leads and invoices reference the client with ON DELETE SET
+  // NULL, so deleting a client detaches those rows rather than removing them.
+  await db.delete(clients).where(eq(clients.id, clientId));
+
+  revalidateCrm();
+  return { ok: true };
+}
+
 export async function createClientAction(raw: unknown): Promise<ConvertResult> {
   const operator = await requireOperator();
 
@@ -636,5 +738,74 @@ export async function updateJobAssigneeAction(
   });
 
   revalidateCrm();
+  return { ok: true };
+}
+
+const jobDetailsSchema = z.object({
+  address: z.string().trim().max(240).default(""),
+  notes: z.string().trim().max(4000).default(""),
+});
+
+export async function updateJobDetailsAction(
+  jobId: number,
+  raw: unknown,
+): Promise<ActionResult> {
+  const operator = await requireOperator();
+  if (!Number.isInteger(jobId)) return { ok: false, error: "Unknown job." };
+
+  const parsed = jobDetailsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Those changes did not validate." };
+  }
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db.update(jobs).set(parsed.data).where(eq(jobs.id, jobId));
+
+  await logActivity(db, {
+    entityType: "job",
+    entityId: jobId,
+    actor: operator,
+    kind: "system",
+    body: "Job details updated.",
+  });
+
+  revalidateCrm(["/admin/calendar"]);
+  return { ok: true };
+}
+
+export async function deleteJobAction(jobId: number): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(jobId)) return { ok: false, error: "Unknown job." };
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db.delete(jobs).where(eq(jobs.id, jobId));
+
+  revalidateCrm(["/admin/calendar"]);
+  return { ok: true };
+}
+
+export async function deleteQuoteAction(quoteId: number): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(quoteId)) return { ok: false, error: "Unknown quote." };
+
+  const db = getDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  const [quote] = await db
+    .select({ clientId: quotes.clientId })
+    .from(quotes)
+    .where(eq(quotes.id, quoteId))
+    .limit(1);
+
+  await db.delete(quotes).where(eq(quotes.id, quoteId));
+
+  // The client's lifetime value is a stored sum of their quotes, so recompute it.
+  if (quote?.clientId) await recalculateClientValue(db, quote.clientId);
+
+  revalidateCrm(["/admin/quotes"]);
   return { ok: true };
 }

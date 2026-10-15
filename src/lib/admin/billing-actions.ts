@@ -375,6 +375,20 @@ export async function deletePaymentAction(paymentId: number): Promise<ActionResu
   return { ok: true };
 }
 
+export async function deleteInvoiceAction(invoiceId: number): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(invoiceId)) return { ok: false, error: "Unknown invoice." };
+
+  const db = await getMigratedDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  // Payments reference the invoice with ON DELETE CASCADE, so they go too.
+  await db.delete(invoices).where(eq(invoices.id, invoiceId));
+
+  revalidateBilling();
+  return { ok: true };
+}
+
 /**
  * "Send to customer" — drops the invoice into the Control approval queue rather
  * than emailing anyone. Nothing leaves the panel until the owner approves, and
