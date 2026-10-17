@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireOperator } from "@/lib/admin/auth";
 import { FirstOwnerForm } from "@/components/admin/team/FirstOwnerForm";
 import { countUsers, listUsers } from "@/lib/admin/users-data";
@@ -80,7 +81,14 @@ function UserList({
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="font-medium text-[var(--ops-navy)]">{user.name}</td>
+                <td>
+                  <Link
+                    href={`/admin/team/${user.id}`}
+                    className="font-medium text-[var(--ops-navy)] hover:underline"
+                  >
+                    {user.name}
+                  </Link>
+                </td>
                 <td className="text-[var(--ops-muted)]">{user.email}</td>
                 <td>{t(ROLE_LABELS[user.role] ?? user.role)}</td>
                 <td>{t(STATUS_LABELS[user.status] ?? user.status)}</td>

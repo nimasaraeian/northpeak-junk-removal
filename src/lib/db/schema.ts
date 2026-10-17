@@ -17,6 +17,7 @@ import type {
   QuoteComputation,
 } from "@/lib/quote-engine";
 import type { BillingSettings } from "@/content/billing";
+import type { UserProfile } from "@/lib/admin/user-profile";
 import {
   INVOICE_STATUSES,
   PAYMENT_METHODS,
@@ -467,6 +468,8 @@ export const users = pgTable("users", {
   /** Who sent the invite. Plain column (FK in SQL) to avoid a self-reference type. */
   invitedBy: integer("invited_by"),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+  /** Full personnel profile (HR, pay, Canada compliance). Null until filled. */
+  profile: jsonb("profile").$type<UserProfile>(),
 });
 
 export type UserRow = typeof users.$inferSelect;

@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import { requireOperator } from "@/lib/admin/auth";
 import { getMigratedDb } from "@/lib/db/migrations";
-import { users } from "@/lib/db/schema";
+import { USER_ROLES, USER_STATUSES, users } from "@/lib/db/schema";
 import { hashPassword } from "@/lib/admin/password";
 import { countUsers } from "@/lib/admin/users-data";
 
@@ -58,5 +59,107 @@ export async function createFirstOwnerAction(raw: unknown): Promise<ActionResult
 
   revalidatePath("/admin/team");
   revalidatePath("/admin");
+  return { ok: true };
+}
+
+// --- Personnel profile + account edits ------------------------------------
+
+const documentSchema = z.object({
+  label: z.string().trim().max(120).default(""),
+  url: z.string().trim().max(500).default(""),
+});
+
+const profileSchema = z.object({
+  legalName: z.string().trim().max(160).default(""),
+  preferredName: z.string().trim().max(120).default(""),
+  photoUrl: z.string().trim().max(500).default(""),
+  phone: z.string().trim().max(60).default(""),
+  homeAddress: z.string().trim().max(300).default(""),
+  dateOfBirth: z.string().trim().max(32).default(""),
+  emergencyName: z.string().trim().max(160).default(""),
+  emergencyRelationship: z.string().trim().max(80).default(""),
+  emergencyPhone: z.string().trim().max(60).default(""),
+  jobTitle: z.string().trim().max(120).default(""),
+  employmentType: z.enum(["", "employee", "contractor"]).default(""),
+  employmentStatus: z.enum(["", "active", "on_leave", "terminated"]).default(""),
+  hireDate: z.string().trim().max(32).default(""),
+  endDate: z.string().trim().max(32).default(""),
+  payType: z.enum(["", "hourly", "salary"]).default(""),
+  hourlyRate: z.coerce.number().min(0).max(100000).default(0),
+  commissionPct: z.coerce.number().min(0).max(100).default(0),
+  salesTarget: z.coerce.number().min(0).max(100_000_000).default(0),
+  sin: z.string().trim().max(20).default(""),
+  wcbNumber: z.string().trim().max(60).default(""),
+  driversLicence: z.string().trim().max(60).default(""),
+  driversLicenceClass: z.string().trim().max(20).default(""),
+  driversLicenceExpiry: z.string().trim().max(32).default(""),
+  workEligibility: z.string().trim().max(200).default(""),
+  colour: z.string().trim().max(20).default(""),
+  notes: z.string().trim().max(4000).default(""),
+  documents: z.array(documentSchema).max(30).default([]),
+});
+
+export async function updateUserProfileAction(
+  userId: number,
+  raw: unknown,
+): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(userId)) return { ok: false, error: "Unknown user." };
+
+  const parsed = profileSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "That profile did not validate." };
+  }
+
+  const db = await getMigratedDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  await db.update(users).set({ profile: parsed.data }).where(eq(users.id, userId));
+
+  revalidatePath(`/admin/team/${userId}`);
+  revalidatePath("/admin/team");
+  return { ok: true };
+}
+
+const accountSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  role: z.enum(USER_ROLES),
+  status: z.enum(USER_STATUSES),
+});
+
+export async function updateUserAction(userId: number, raw: unknown): Promise<ActionResult> {
+  await requireOperator();
+  if (!Number.isInteger(userId)) return { ok: false, error: "Unknown user." };
+
+  const parsed = accountSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Those changes did not validate." };
+  }
+
+  const db = await getMigratedDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  // Never let the last active owner lose owner/active — that would leave the
+  // panel with no one who can manage the team.
+  if (parsed.data.role !== "owner" || parsed.data.status !== "active") {
+    const [current] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (current?.role === "owner" && current.status === "active") {
+      const [others] = await db
+        .select({ c: sql<number>`count(*)`.mapWith(Number) })
+        .from(users)
+        .where(and(eq(users.role, "owner"), eq(users.status, "active"), ne(users.id, userId)));
+      if ((others?.c ?? 0) === 0) {
+        return { ok: false, error: "This is the only active owner — keep at least one." };
+      }
+    }
+  }
+
+  await db
+    .update(users)
+    .set({ name: parsed.data.name, role: parsed.data.role, status: parsed.data.status })
+    .where(eq(users.id, userId));
+
+  revalidatePath(`/admin/team/${userId}`);
+  revalidatePath("/admin/team");
   return { ok: true };
 }
