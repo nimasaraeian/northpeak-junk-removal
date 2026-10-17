@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireOperator } from "@/lib/admin/auth";
+import { AddMemberForm } from "@/components/admin/team/AddMemberForm";
 import { FirstOwnerForm } from "@/components/admin/team/FirstOwnerForm";
 import { countUsers, listUsers } from "@/lib/admin/users-data";
 import { normalizeProfile } from "@/lib/admin/user-profile";
@@ -122,7 +123,11 @@ export default async function TeamPage() {
         </span>
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4">
+        <AddMemberForm />
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => (
           <MemberCard key={user.id} user={user} t={t} />
         ))}

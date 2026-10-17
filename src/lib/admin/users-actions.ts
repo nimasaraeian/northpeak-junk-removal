@@ -7,7 +7,7 @@ import { requireOperator } from "@/lib/admin/auth";
 import { getMigratedDb } from "@/lib/db/migrations";
 import { USER_ROLES, USER_STATUSES, users } from "@/lib/db/schema";
 import { hashPassword } from "@/lib/admin/password";
-import { countUsers } from "@/lib/admin/users-data";
+import { countUsers, getUserByEmail } from "@/lib/admin/users-data";
 
 /**
  * User & role mutations (Phase 2). Every action re-checks the operator session
@@ -60,6 +60,55 @@ export async function createFirstOwnerAction(raw: unknown): Promise<ActionResult
   revalidatePath("/admin/team");
   revalidatePath("/admin");
   return { ok: true };
+}
+
+// --- Add a member ----------------------------------------------------------
+
+export interface SaveUserResult extends ActionResult {
+  id?: number;
+}
+
+const addMemberSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  email: z.string().trim().email().max(160),
+  role: z.enum(USER_ROLES),
+});
+
+/**
+ * Create a new team member record. No password is set — personal sign-in
+ * arrives with invites in a later step, and everyone still logs in with
+ * ADMIN_PASSWORD until then, so adding a member locks nobody out.
+ */
+export async function addMemberAction(raw: unknown): Promise<SaveUserResult> {
+  await requireOperator();
+
+  const parsed = addMemberSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Those details did not validate." };
+  }
+
+  const db = await getMigratedDb();
+  if (!db) return { ok: false, error: DB_UNREACHABLE };
+
+  const existing = await getUserByEmail(parsed.data.email);
+  if (existing) return { ok: false, error: "That email is already on the team." };
+
+  try {
+    const [inserted] = await db
+      .insert(users)
+      .values({
+        name: parsed.data.name,
+        email: parsed.data.email.toLowerCase(),
+        role: parsed.data.role,
+        status: "active",
+      })
+      .returning({ id: users.id });
+
+    revalidatePath("/admin/team");
+    return { ok: true, id: inserted?.id };
+  } catch {
+    return { ok: false, error: "Could not add that member — the email may already exist." };
+  }
 }
 
 // --- Personnel profile + account edits ------------------------------------
