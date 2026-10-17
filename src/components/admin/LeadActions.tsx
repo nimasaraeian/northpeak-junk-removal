@@ -30,7 +30,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
   const { t } = useT();
   const [pending, startTransition] = useTransition();
   const [note, setNote] = useState("");
-  const [kind, setKind] = useState<"note" | "call" | "sms">("note");
+  const [kind, setKind] = useState<"note" | "sms">("note");
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [lostReason, setLostReason] = useState("");
@@ -189,7 +189,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
               data-variant={kind === option ? "navy" : "ghost"}
               onClick={() => setKind(option)}
             >
-              {option === "note" ? t("Note") : option === "call" ? t("Call") : t("SMS")}
+              {option === "note" ? t("Note") : t("SMS")}
             </button>
           ))}
         </div>
@@ -197,13 +197,7 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
           className="ops-textarea"
           rows={3}
           value={note}
-          placeholder={
-            kind === "call"
-              ? t("What was said on the call…")
-              : kind === "sms"
-                ? t("What you texted them…")
-                : t("Anything worth remembering…")
-          }
+          placeholder={kind === "sms" ? t("What you texted them…") : t("Anything worth remembering…")}
           onChange={(event) => setNote(event.target.value)}
         />
         <button
