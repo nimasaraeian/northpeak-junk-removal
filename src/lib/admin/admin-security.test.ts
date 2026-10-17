@@ -260,6 +260,7 @@ const ACTION_FILES = [
   "src/lib/admin/sms-actions.ts",
   "src/lib/admin/billing-actions.ts",
   "src/lib/admin/finance-actions.ts",
+  "src/lib/admin/sales-actions.ts",
 ];
 
 function exportedActions(file: string): { name: string; source: string }[] {
@@ -308,6 +309,15 @@ test("requireOperator is the first thing every CRM action does", () => {
     if (dbAt > 0) {
       assert.ok(authAt < dbAt, `${name} reaches the database before checking the session`);
     }
+  }
+});
+
+test("requireOperator is the first thing every sales action does", () => {
+  for (const { name, source } of exportedActions("src/lib/admin/sales-actions.ts")) {
+    const authAt = source.indexOf("requireOperator()");
+    const dbAt = source.indexOf("getMigratedDb()");
+    assert.ok(authAt > 0, `${name} does not check the session`);
+    if (dbAt > 0) assert.ok(authAt < dbAt, `${name} reaches the database before checking the session`);
   }
 });
 

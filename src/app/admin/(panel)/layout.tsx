@@ -13,6 +13,7 @@ import {
   LeadsIcon,
   LogoutIcon,
   NewQuoteIcon,
+  PhoneIcon,
   QuotesIcon,
   SettingsIcon,
   TodayIcon,
@@ -38,6 +39,7 @@ import { LangToggle } from "@/components/admin/LangToggle";
 const NAV: OpsNavItem[] = [
   { href: "/admin", label: "Dashboard", short: "Home", icon: <DashboardIcon /> },
   { href: "/admin/today", label: "Today", short: "Today", icon: <TodayIcon /> },
+  { href: "/admin/calls", label: "Calls", short: "Calls", icon: <PhoneIcon /> },
   { href: "/admin/assistant", label: "Assistant", short: "Ask", icon: <CommandIcon /> },
   { href: "/admin/control", label: "Control", short: "Control", icon: <ControlIcon /> },
   { href: "/admin/leads", label: "Leads", short: "Leads", icon: <LeadsIcon /> },

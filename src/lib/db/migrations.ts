@@ -90,9 +90,30 @@ const PAYROLL_V6: string[] = [
   `CREATE INDEX IF NOT EXISTS "expenses_category_idx" ON "expenses" ("category")`,
 ];
 
+const SALES_V7: string[] = [
+  `CREATE TABLE IF NOT EXISTS "calls" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "created_at" timestamptz DEFAULT now() NOT NULL,
+    "lead_id" integer REFERENCES "leads"("id") ON DELETE CASCADE,
+    "client_id" integer REFERENCES "clients"("id") ON DELETE SET NULL,
+    "actor" text NOT NULL,
+    "direction" text DEFAULT 'outbound' NOT NULL,
+    "outcome" text NOT NULL,
+    "notes" text DEFAULT '' NOT NULL,
+    "flags" jsonb DEFAULT '[]'::jsonb NOT NULL,
+    "next_follow_up_at" timestamptz,
+    CONSTRAINT "calls_direction_known" CHECK ("direction" IN ('outbound', 'inbound')),
+    CONSTRAINT "calls_outcome_known" CHECK ("outcome" IN ('booked', 'quote_sent', 'interested', 'thinking', 'call_back', 'no_answer', 'voicemail', 'not_interested', 'wrong_number'))
+  )`,
+  `CREATE INDEX IF NOT EXISTS "calls_lead_id_idx" ON "calls" ("lead_id", "created_at")`,
+  `CREATE INDEX IF NOT EXISTS "calls_client_id_idx" ON "calls" ("client_id", "created_at")`,
+  `CREATE INDEX IF NOT EXISTS "calls_created_at_idx" ON "calls" ("created_at")`,
+];
+
 const MIGRATIONS: { name: string; statements: string[] }[] = [
   { name: "0004_billing", statements: BILLING_V5 },
   { name: "0005_payroll", statements: PAYROLL_V6 },
+  { name: "0006_sales_engine", statements: SALES_V7 },
 ];
 
 export interface MigrationResult {
@@ -133,15 +154,15 @@ export async function applyMigrations(db: Db): Promise<MigrationResult> {
  */
 let schemaReady: Promise<void> | null = null;
 
-/** True when the billing/payroll tables already exist — a single cheap query. */
+/** True when the billing/payroll/sales tables already exist — a single cheap query. */
 async function schemaAlreadyApplied(db: Db): Promise<boolean> {
   try {
     const result = await db.execute(
-      sql`select to_regclass('public.invoices') as inv, to_regclass('public.payments') as pay, to_regclass('public.time_entries') as te, to_regclass('public.expenses') as ex`,
+      sql`select to_regclass('public.invoices') as inv, to_regclass('public.payments') as pay, to_regclass('public.time_entries') as te, to_regclass('public.expenses') as ex, to_regclass('public.calls') as calls`,
     );
     const rows = (result as { rows?: Record<string, unknown>[] }).rows ?? [];
     const row = rows[0];
-    return Boolean(row && row.inv && row.pay && row.te && row.ex);
+    return Boolean(row && row.inv && row.pay && row.te && row.ex && row.calls);
   } catch {
     return false;
   }

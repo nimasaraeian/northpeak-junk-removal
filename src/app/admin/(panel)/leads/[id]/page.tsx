@@ -3,9 +3,13 @@ import { notFound } from "next/navigation";
 import { LeadActions } from "@/components/admin/LeadActions";
 import { EditRecordForm } from "@/components/admin/EditRecordForm";
 import { IntakeAssistant } from "@/components/admin/IntakeAssistant";
+import { LogCallForm } from "@/components/admin/sales/LogCallForm";
+import { SlaChip } from "@/components/admin/sales/SlaChip";
 import { ActivityTimeline, LeadStatusPill, SourceBadge } from "@/components/admin/crm-bits";
 import { ageLabel } from "@/lib/admin/crm";
 import { getLead, listActivity } from "@/lib/admin/crm-data";
+import { CALL_FLAG_LABELS, CALL_OUTCOME_LABELS, type CallFlag, type CallOutcome } from "@/lib/admin/sales";
+import { loadLeadSales } from "@/lib/admin/sales-data";
 import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Lead" };
@@ -19,8 +23,8 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
   if (!lead) notFound();
 
   const t = await getT();
-  const activity = await listActivity("lead", lead.id);
   const now = new Date();
+  const [activity, sales] = await Promise.all([listActivity("lead", lead.id), loadLeadSales(lead, now)]);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -34,6 +38,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
             <h1 className="text-xl font-semibold text-[var(--ops-navy)]">{lead.name}</h1>
             <LeadStatusPill status={lead.status} />
             <SourceBadge source={lead.source} />
+            <SlaChip clock={sales.clock} withStage />
           </div>
           <p className="mt-1 text-sm text-[var(--ops-muted)]">
             {[lead.phone, lead.email, lead.area].filter(Boolean).join(" · ") || t("No contact details")}
@@ -84,6 +89,45 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
               message: lead.message,
             }}
           />
+
+          <section className="ops-card p-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Log a call")}</h2>
+              <p className="text-xs text-[var(--ops-muted)]">
+                {sales.state.callAttempts} {t("calls so far")}
+                {sales.state.unansweredStreak > 0
+                  ? ` · ${sales.state.unansweredStreak} ${t("unanswered in a row")}`
+                  : ""}
+              </p>
+            </div>
+            <div className="mt-3">
+              <LogCallForm leadId={lead.id} />
+            </div>
+            {sales.calls.length > 0 ? (
+              <ul className="mt-4 divide-y divide-[var(--ops-border)] border-t border-[var(--ops-border)]">
+                {sales.calls.map((call) => (
+                  <li key={call.id} className="py-2 text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <strong className="text-[var(--ops-navy)]">
+                        {t(CALL_OUTCOME_LABELS[call.outcome as CallOutcome] ?? call.outcome)}
+                      </strong>
+                      <span className="text-xs text-[var(--ops-faint)]">
+                        {stamp.format(call.createdAt)} · {call.actor}
+                      </span>
+                      {call.flags.map((flag) => (
+                        <span key={flag} className="ops-pill" data-status="draft">
+                          {t(CALL_FLAG_LABELS[flag as CallFlag] ?? flag)}
+                        </span>
+                      ))}
+                    </div>
+                    {call.notes ? (
+                      <p className="mt-0.5 whitespace-pre-wrap text-[var(--ops-text)]">{call.notes}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </section>
 
           <section className="ops-card p-4">
             <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Timeline")}</h2>

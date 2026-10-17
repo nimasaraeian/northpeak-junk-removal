@@ -180,7 +180,8 @@ export function LeadActions({ lead }: { lead: LeadRow }) {
       <div className="grid gap-2">
         <p className="ops-label">{t("Log")}</p>
         <div className="flex gap-2">
-          {(["note", "call", "sms"] as const).map((option) => (
+          {/* Calls are logged with outcomes in the "Log a call" panel. */}
+          {(["note", "sms"] as const).map((option) => (
             <button
               key={option}
               type="button"

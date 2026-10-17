@@ -286,3 +286,70 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Sales engine — speed-to-lead timer chip and call-outcome chips. */
+.np-ops .ops-sla {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  background: var(--ops-won-bg);
+  color: var(--ops-won-ink);
+}
+.np-ops .ops-sla::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+.np-ops .ops-sla[data-state="soon"] {
+  background: var(--ops-draft-bg);
+  color: var(--ops-draft-ink);
+}
+.np-ops .ops-sla[data-state="urgent"],
+.np-ops .ops-sla[data-state="late"] {
+  background: var(--ops-lost-bg);
+  color: var(--ops-lost-ink);
+}
+.np-ops .ops-sla[data-state="late"]::before {
+  animation: ops-sla-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ops-sla-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .np-ops .ops-sla[data-state="late"]::before {
+    animation: none;
+  }
+}
+
+.np-ops .ops-chip {
+  border: 1px solid var(--ops-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ops-text);
+  background: var(--ops-surface);
+  transition: background 0.15s, border-color 0.15s;
+}
+.np-ops .ops-chip:hover {
+  border-color: var(--ops-gold);
+}
+.np-ops .ops-chip[aria-pressed="true"] {
+  background: var(--ops-navy);
+  border-color: var(--ops-navy);
+  color: #fff;
+}
+.np-ops .ops-chip[data-suggested="true"]:not([aria-pressed="true"]) {
+  border-style: dashed;
+  border-color: var(--ops-gold);
+}
