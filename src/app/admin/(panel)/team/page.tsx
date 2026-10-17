@@ -2,6 +2,8 @@ import Link from "next/link";
 import { requireOperator } from "@/lib/admin/auth";
 import { FirstOwnerForm } from "@/components/admin/team/FirstOwnerForm";
 import { countUsers, listUsers } from "@/lib/admin/users-data";
+import { normalizeProfile } from "@/lib/admin/user-profile";
+import type { UserRow } from "@/lib/db/schema";
 import { getT } from "@/lib/i18n/server";
 
 export const metadata = { title: "Team" };
@@ -20,89 +22,115 @@ const STATUS_LABELS: Record<string, string> = {
   disabled: "Disabled",
 };
 
-const dateFormat = new Intl.DateTimeFormat("en-CA", { dateStyle: "medium" });
+/** Pill colour reuse: active→won(green), invited→draft, disabled→lost. */
+const STATUS_PILL: Record<string, string> = {
+  active: "won",
+  invited: "draft",
+  disabled: "lost",
+};
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function MemberCard({ user, t }: { user: UserRow; t: (s: string) => string }) {
+  const p = normalizeProfile(user.profile);
+  const accent = p.colour || "#16324f";
+
+  return (
+    <Link
+      href={`/admin/team/${user.id}`}
+      className="ops-card flex items-center gap-3 p-4 transition hover:border-[var(--ops-navy-soft)]"
+    >
+      {p.photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={p.photoUrl}
+          alt=""
+          className="h-14 w-14 shrink-0 rounded-full object-cover"
+          style={{ boxShadow: `0 0 0 2px ${accent}` }}
+        />
+      ) : (
+        <span
+          aria-hidden
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-base font-semibold text-white"
+          style={{ background: accent }}
+        >
+          {initials(user.name)}
+        </span>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold text-[var(--ops-navy)]">{user.name}</p>
+        <p className="truncate text-xs text-[var(--ops-muted)]">
+          {p.jobTitle || t(ROLE_LABELS[user.role] ?? user.role)}
+        </p>
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <span className="ops-pill" data-status="sent">
+            {t(ROLE_LABELS[user.role] ?? user.role)}
+          </span>
+          <span className="ops-pill" data-status={STATUS_PILL[user.status] ?? "draft"}>
+            {t(STATUS_LABELS[user.status] ?? user.status)}
+          </span>
+        </div>
+        {(p.phone || user.email) && (
+          <p className="ops-num mt-1 truncate text-xs text-[var(--ops-faint)]">
+            {p.phone || user.email}
+          </p>
+        )}
+      </div>
+    </Link>
+  );
+}
 
 export default async function TeamPage() {
   await requireOperator();
   const t = await getT();
   const count = await countUsers();
 
-  return (
-    <div className="mx-auto max-w-4xl">
-      <p className="ops-label">{t("Team")}</p>
-      <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">
-        {t("People & roles")}
-      </h1>
+  if (count === 0) {
+    return (
+      <div className="mx-auto max-w-4xl">
+        <p className="ops-label">{t("Team")}</p>
+        <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">{t("People & roles")}</h1>
+        <p className="mb-4 mt-4 text-sm text-[var(--ops-muted)]">
+          {t(
+            "No personal accounts yet. The panel is still entered with the shared password — create the first owner to begin moving to per-person sign-in.",
+          )}
+        </p>
+        <FirstOwnerForm defaultName="Nima" />
+      </div>
+    );
+  }
 
-      {count === 0 ? (
-        <div className="mt-5">
-          <p className="mb-4 text-sm text-[var(--ops-muted)]">
-            {t(
-              "No personal accounts yet. The panel is still entered with the shared password — create the first owner to begin moving to per-person sign-in.",
-            )}
-          </p>
-          <FirstOwnerForm defaultName="Nima" />
+  const users = await listUsers();
+
+  return (
+    <div className="mx-auto max-w-5xl">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="ops-label">{t("Team")}</p>
+          <h1 className="mt-1 text-xl font-semibold text-[var(--ops-navy)]">{t("People & roles")}</h1>
         </div>
-      ) : (
-        <UserList users={await listUsers()} t={t} dateFormat={dateFormat} />
-      )}
-    </div>
-  );
-}
-
-function UserList({
-  users,
-  t,
-  dateFormat,
-}: {
-  users: Awaited<ReturnType<typeof listUsers>>;
-  t: (s: string) => string;
-  dateFormat: Intl.DateTimeFormat;
-}) {
-  return (
-    <section className="ops-card mt-5 overflow-hidden">
-      <div className="flex items-center justify-between border-b border-[var(--ops-border)] px-4 py-3">
-        <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Members")}</h2>
-        <span className="text-xs text-[var(--ops-faint)]">
+        <span className="text-sm text-[var(--ops-muted)]">
           {users.length} {users.length === 1 ? t("person") : t("people")}
         </span>
       </div>
-      <div className="overflow-x-auto">
-        <table className="ops-table">
-          <thead>
-            <tr>
-              <th>{t("Name")}</th>
-              <th>{t("Email")}</th>
-              <th>{t("Role")}</th>
-              <th>{t("Status")}</th>
-              <th>{t("Added")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>
-                  <Link
-                    href={`/admin/team/${user.id}`}
-                    className="font-medium text-[var(--ops-navy)] hover:underline"
-                  >
-                    {user.name}
-                  </Link>
-                </td>
-                <td className="text-[var(--ops-muted)]">{user.email}</td>
-                <td>{t(ROLE_LABELS[user.role] ?? user.role)}</td>
-                <td>{t(STATUS_LABELS[user.status] ?? user.status)}</td>
-                <td className="ops-num whitespace-nowrap text-[var(--ops-muted)]">
-                  {dateFormat.format(user.createdAt)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {users.map((user) => (
+          <MemberCard key={user.id} user={user} t={t} />
+        ))}
       </div>
-      <p className="border-t border-[var(--ops-border)] px-4 py-3 text-xs text-[var(--ops-faint)]">
-        {t("Invites and personal sign-in are being rolled out next.")}
+
+      <p className="mt-4 text-xs text-[var(--ops-faint)]">
+        {t("Tap a card to open the full profile. Invites and personal sign-in are coming next.")}
       </p>
-    </section>
+    </div>
   );
 }
