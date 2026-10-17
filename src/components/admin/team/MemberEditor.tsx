@@ -1,10 +1,26 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateUserAction, updateUserProfileAction } from "@/lib/admin/users-actions";
 import type { UserProfile } from "@/lib/admin/user-profile";
 import { useT } from "@/lib/i18n/provider";
+
+/** Downscale an image file to a small square-ish JPEG data URL, in the browser. */
+async function fileToAvatarDataUrl(file: File, max = 256, quality = 0.82): Promise<string> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
+  const w = Math.max(1, Math.round(bitmap.width * scale));
+  const h = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("no-canvas");
+  ctx.drawImage(bitmap, 0, 0, w, h);
+  bitmap.close?.();
+  return canvas.toDataURL("image/jpeg", quality);
+}
 
 const ROLES = ["owner", "manager", "sales", "crew"] as const;
 const STATUSES = ["active", "invited", "disabled"] as const;
@@ -72,9 +88,23 @@ export function MemberEditor({
   const [role, setRole] = useState(account.role);
   const [status, setStatus] = useState(account.status);
   const [p, setP] = useState<UserProfile>(initialProfile);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function set<K extends keyof UserProfile>(key: K, value: UserProfile[K]) {
     setP((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function onPickPhoto(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    try {
+      const dataUrl = await fileToAvatarDataUrl(file);
+      set("photoUrl", dataUrl);
+    } catch {
+      setError(t("Could not read that image — try a JPG or PNG."));
+    } finally {
+      if (fileRef.current) fileRef.current.value = "";
+    }
   }
 
   function flash(m: string) {
@@ -155,13 +185,59 @@ export function MemberEditor({
       {/* Identity & contact */}
       <section className="ops-card p-4">
         <h2 className="text-sm font-semibold text-[var(--ops-navy)]">{t("Identity & contact")}</h2>
+
+        {/* Profile photo — upload from the device (downscaled in the browser) */}
+        <div className="mt-3 flex items-center gap-4">
+          {p.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={p.photoUrl}
+              alt=""
+              className="h-16 w-16 shrink-0 rounded-full object-cover"
+              style={{ boxShadow: "0 0 0 2px var(--ops-border-strong)" }}
+            />
+          ) : (
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[var(--ops-surface-2)] text-xs text-[var(--ops-faint)]">
+              {t("No photo")}
+            </span>
+          )}
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void onPickPhoto(e.target.files?.[0])}
+            />
+            <button
+              type="button"
+              className="ops-btn"
+              data-variant="ghost"
+              onClick={() => fileRef.current?.click()}
+            >
+              {p.photoUrl ? t("Change photo") : t("Upload photo")}
+            </button>
+            {p.photoUrl ? (
+              <button
+                type="button"
+                className="text-xs text-[var(--ops-lost-ink)] hover:underline"
+                onClick={() => set("photoUrl", "")}
+              >
+                {t("Remove")}
+              </button>
+            ) : null}
+            <span className="w-full text-xs text-[var(--ops-faint)]">
+              {t("Resized automatically. Remember to Save profile.")}
+            </span>
+          </div>
+        </div>
+
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <Text label={t("Legal name")} value={p.legalName} onChange={(v) => set("legalName", v)} />
           <Text label={t("Preferred name")} value={p.preferredName} onChange={(v) => set("preferredName", v)} />
           <Text label={t("Phone")} value={p.phone} onChange={(v) => set("phone", v)} />
           <Text label={t("Date of birth")} type="date" value={p.dateOfBirth} onChange={(v) => set("dateOfBirth", v)} />
           <Text label={t("Home address")} value={p.homeAddress} onChange={(v) => set("homeAddress", v)} />
-          <Text label={t("Photo URL")} value={p.photoUrl} onChange={(v) => set("photoUrl", v)} />
         </div>
       </section>
 

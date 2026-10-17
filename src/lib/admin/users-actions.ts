@@ -72,7 +72,9 @@ const documentSchema = z.object({
 const profileSchema = z.object({
   legalName: z.string().trim().max(160).default(""),
   preferredName: z.string().trim().max(120).default(""),
-  photoUrl: z.string().trim().max(500).default(""),
+  /* Holds either a hosted URL or a small downscaled data: URL (the direct
+     upload path), so the cap is generous enough for a ~300 KB avatar. */
+  photoUrl: z.string().trim().max(500000).default(""),
   phone: z.string().trim().max(60).default(""),
   homeAddress: z.string().trim().max(300).default(""),
   dateOfBirth: z.string().trim().max(32).default(""),
