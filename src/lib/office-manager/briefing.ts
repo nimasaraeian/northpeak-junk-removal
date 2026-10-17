@@ -2,6 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { eq } from "drizzle-orm";
 import { anthropicApiKey, visionModel } from "@/lib/admin/config";
 import { listJobsBetween, listLeads, listUnscheduledJobs } from "@/lib/admin/crm-data";
+import { SLA } from "@/lib/admin/sales";
+import { loadCallList } from "@/lib/admin/sales-data";
 import { zonedInstant } from "@/lib/booking/booking-core";
 import { getDb } from "@/lib/db/client";
 import { quotes, type JobRow, type LeadRow, type QuoteRow } from "@/lib/db/schema";
@@ -83,6 +85,13 @@ export interface BriefingData {
   pendingQuotes: QuoteRow[];
   valueAtRiskLowCents: number;
   valueAtRiskHighCents: number;
+  /** Speed-to-lead and call-list numbers; absent if the sales engine could not load. */
+  sales?: {
+    toCall: number;
+    late: number;
+    medianMinutes: number | null;
+    withinSla: number | null;
+  };
 }
 
 export async function buildBriefingData(now = new Date()): Promise<BriefingData> {
@@ -114,6 +123,19 @@ export async function buildBriefingData(now = new Date()): Promise<BriefingData>
   const valueAtRiskLowCents = pendingQuotes.reduce((s, q) => s + (q.finalLowCents ?? 0), 0);
   const valueAtRiskHighCents = pendingQuotes.reduce((s, q) => s + (q.finalHighCents ?? 0), 0);
 
+  let sales: BriefingData["sales"];
+  try {
+    const callList = await loadCallList(now);
+    sales = {
+      toCall: callList.items.length,
+      late: callList.lateCount,
+      medianMinutes: callList.speed.medianMinutes,
+      withinSla: callList.speed.withinSla,
+    };
+  } catch {
+    sales = undefined;
+  }
+
   const tomorrowLabel = new Intl.DateTimeFormat("en-CA", {
     timeZone: TZ,
     weekday: "long",
@@ -133,6 +155,7 @@ export async function buildBriefingData(now = new Date()): Promise<BriefingData>
     pendingQuotes,
     valueAtRiskLowCents,
     valueAtRiskHighCents,
+    sales,
   };
 }
 
@@ -309,6 +332,18 @@ export function renderBriefingText(data: BriefingData, result?: ActionPlanResult
   if (data.pendingQuotes.length > 0) {
     lines.push(
       `\n💰 ${dollars(data.valueAtRiskLowCents)}–${dollars(data.valueAtRiskHighCents)} in ${data.pendingQuotes.length} quote(s) awaiting a reply.`,
+    );
+  }
+
+  if (data.sales) {
+    const { toCall, late, medianMinutes, withinSla } = data.sales;
+    const speed =
+      medianMinutes === null
+        ? ""
+        : ` Median first call ${medianMinutes} business min; ${Math.round((withinSla ?? 0) * 100)}% within ${SLA.firstContactMinutes} min (30 days).`;
+    lines.push(
+      `
+📞 ${toCall} on today's call list${late > 0 ? `, ${late} past their response target` : ""}.${speed} → /admin/calls`,
     );
   }
 

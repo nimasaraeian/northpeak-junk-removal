@@ -405,5 +405,35 @@ export const expenses = pgTable("expenses", {
   createdBy: text("created_by").notNull(),
 });
 
+// --- Sales engine (v7) -----------------------------------------------------
+
+/**
+ * One row per phone call, logged from the lead page or the call list.
+ *
+ * The leads table is deliberately left alone: first-contact time, attempts,
+ * the last outcome and the unanswered streak are all derived from these rows
+ * (plus the activity log for status changes made before calls were logged),
+ * so nothing that already reads `leads` can break on a database that has not
+ * run this migration yet.
+ */
+export const CALL_DIRECTIONS = ["outbound", "inbound"] as const;
+export type CallDirection = (typeof CALL_DIRECTIONS)[number];
+
+export const calls = pgTable("calls", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  leadId: integer("lead_id").references(() => leads.id, { onDelete: "cascade" }),
+  clientId: integer("client_id").references(() => clients.id, { onDelete: "set null" }),
+  actor: text("actor").notNull(),
+  direction: text("direction").$type<CallDirection>().notNull().default("outbound"),
+  /** One of `CALL_OUTCOMES` in `lib/admin/sales.ts`. */
+  outcome: text("outcome").notNull(),
+  notes: text("notes").notNull().default(""),
+  flags: jsonb("flags").$type<string[]>().notNull().default([]),
+  nextFollowUpAt: timestamp("next_follow_up_at", { withTimezone: true }),
+});
+
+export type CallRow = typeof calls.$inferSelect;
+
 export type TimeEntryRow = typeof timeEntries.$inferSelect;
 export type ExpenseRow = typeof expenses.$inferSelect;
