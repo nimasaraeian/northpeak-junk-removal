@@ -437,3 +437,36 @@ export type CallRow = typeof calls.$inferSelect;
 
 export type TimeEntryRow = typeof timeEntries.$inferSelect;
 export type ExpenseRow = typeof expenses.$inferSelect;
+
+// --- Users & roles (v8) ----------------------------------------------------
+
+/**
+ * Per-person accounts with roles, replacing the single shared ADMIN_PASSWORD
+ * over Phase 2. Until the first user exists, ADMIN_PASSWORD still works, so
+ * nobody is ever locked out mid-migration. `password_hash` is scrypt; an
+ * invited user has no hash until they accept and set one.
+ */
+export const USER_ROLES = ["owner", "manager", "sales", "crew"] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
+export const USER_STATUSES = ["active", "invited", "disabled"] as const;
+export type UserStatus = (typeof USER_STATUSES)[number];
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  role: text("role").$type<UserRole>().notNull().default("sales"),
+  /** scrypt hash ("scrypt$<salt>$<hash>"); null for an invited user not yet accepted. */
+  passwordHash: text("password_hash"),
+  status: text("status").$type<UserStatus>().notNull().default("active"),
+  /** Single-use invite token (and its expiry); set while status is "invited". */
+  inviteToken: text("invite_token"),
+  inviteExpiresAt: timestamp("invite_expires_at", { withTimezone: true }),
+  /** Who sent the invite. Plain column (FK in SQL) to avoid a self-reference type. */
+  invitedBy: integer("invited_by"),
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+});
+
+export type UserRow = typeof users.$inferSelect;

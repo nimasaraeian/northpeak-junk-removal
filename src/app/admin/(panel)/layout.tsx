@@ -16,6 +16,7 @@ import {
   PhoneIcon,
   QuotesIcon,
   SettingsIcon,
+  TeamIcon,
   TodayIcon,
 } from "@/components/admin/icons";
 import { requireOperator } from "@/lib/admin/auth";
@@ -50,6 +51,7 @@ const NAV: OpsNavItem[] = [
   { href: "/admin/billing", label: "Billing", short: "Billing", icon: <BillingIcon /> },
   { href: "/admin/finance", label: "Finance", short: "Finance", icon: <FinanceIcon /> },
   { href: "/admin/connections", label: "Connections", short: "Links", icon: <ConnectionsIcon /> },
+  { href: "/admin/team", label: "Team", short: "Team", icon: <TeamIcon /> },
   { href: "/admin/settings", label: "Settings", short: "Settings", icon: <SettingsIcon /> },
 ];
 

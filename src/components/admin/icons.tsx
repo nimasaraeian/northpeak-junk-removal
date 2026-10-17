@@ -160,3 +160,14 @@ export function PhoneIcon() {
     </svg>
   );
 }
+
+export function TeamIcon() {
+  return (
+    <svg {...base} aria-hidden>
+      <circle cx="8.5" cy="8" r="3" />
+      <path d="M3 20a5.5 5.5 0 0 1 11 0" />
+      <path d="M16 5.2a3 3 0 0 1 0 5.6" />
+      <path d="M17.5 20a5.5 5.5 0 0 0-3-4.9" />
+    </svg>
+  );
+}
