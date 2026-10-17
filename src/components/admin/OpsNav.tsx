@@ -57,14 +57,14 @@ export function OpsTabBar({ items }: { items: OpsNavItem[] }) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-[var(--ops-navy)] pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-white/10 bg-[var(--ops-navy)] pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="NorthPeak Ops"
     >
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className="ops-tab"
+          className="ops-tab shrink-0"
           data-active={isActive(pathname, item.href)}
           aria-current={isActive(pathname, item.href) ? "page" : undefined}
         >

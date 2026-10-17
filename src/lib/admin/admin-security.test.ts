@@ -261,6 +261,7 @@ const ACTION_FILES = [
   "src/lib/admin/billing-actions.ts",
   "src/lib/admin/finance-actions.ts",
   "src/lib/admin/sales-actions.ts",
+  "src/lib/admin/users-actions.ts",
 ];
 
 function exportedActions(file: string): { name: string; source: string }[] {

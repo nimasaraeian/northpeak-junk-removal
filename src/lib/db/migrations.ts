@@ -110,10 +110,36 @@ const SALES_V7: string[] = [
   `CREATE INDEX IF NOT EXISTS "calls_created_at_idx" ON "calls" ("created_at")`,
 ];
 
+const USERS_V8: string[] = [
+  `CREATE TABLE IF NOT EXISTS "users" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "created_at" timestamptz DEFAULT now() NOT NULL,
+    "email" text NOT NULL,
+    "name" text NOT NULL,
+    "role" text DEFAULT 'sales' NOT NULL,
+    "password_hash" text,
+    "status" text DEFAULT 'active' NOT NULL,
+    "invite_token" text,
+    "invite_expires_at" timestamptz,
+    "invited_by" integer REFERENCES "users"("id") ON DELETE SET NULL,
+    "last_login_at" timestamptz,
+    CONSTRAINT "users_role_known" CHECK ("role" IN ('owner', 'manager', 'sales', 'crew')),
+    CONSTRAINT "users_status_known" CHECK ("status" IN ('active', 'invited', 'disabled'))
+  )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "users_email_unique" ON "users" (lower("email"))`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "users_invite_token_unique" ON "users" ("invite_token") WHERE "invite_token" IS NOT NULL`,
+];
+
+const PROFILE_V9: string[] = [
+  `ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "profile" jsonb`,
+];
+
 const MIGRATIONS: { name: string; statements: string[] }[] = [
   { name: "0004_billing", statements: BILLING_V5 },
   { name: "0005_payroll", statements: PAYROLL_V6 },
   { name: "0006_sales_engine", statements: SALES_V7 },
+  { name: "0007_users", statements: USERS_V8 },
+  { name: "0008_user_profile", statements: PROFILE_V9 },
 ];
 
 export interface MigrationResult {
@@ -158,11 +184,30 @@ let schemaReady: Promise<void> | null = null;
 async function schemaAlreadyApplied(db: Db): Promise<boolean> {
   try {
     const result = await db.execute(
-      sql`select to_regclass('public.invoices') as inv, to_regclass('public.payments') as pay, to_regclass('public.time_entries') as te, to_regclass('public.expenses') as ex, to_regclass('public.calls') as calls`,
+      sql`select
+        to_regclass('public.invoices') as inv,
+        to_regclass('public.payments') as pay,
+        to_regclass('public.time_entries') as te,
+        to_regclass('public.expenses') as ex,
+        to_regclass('public.calls') as calls,
+        to_regclass('public.users') as users,
+        (select count(*) from information_schema.columns
+           where table_name = 'users' and column_name = 'profile') as user_profile`,
     );
     const rows = (result as { rows?: Record<string, unknown>[] }).rows ?? [];
     const row = rows[0];
-    return Boolean(row && row.inv && row.pay && row.te && row.ex && row.calls);
+    // Tables must exist AND the latest additive column must be present — a
+    // column added to an existing table is not caught by to_regclass alone.
+    return Boolean(
+      row &&
+        row.inv &&
+        row.pay &&
+        row.te &&
+        row.ex &&
+        row.calls &&
+        row.users &&
+        Number(row.user_profile) > 0,
+    );
   } catch {
     return false;
   }

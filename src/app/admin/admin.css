@@ -271,7 +271,12 @@
   justify-content: center;
   gap: 0.15rem;
   min-height: 56px;
-  flex: 1;
+  /* Grow to fill when there is room, but never shrink below a readable width —
+     so once the tabs outgrow the screen the bar scrolls horizontally instead
+     of squashing every label to nothing. */
+  flex: 1 0 auto;
+  min-width: 4.25rem;
+  padding: 0 0.35rem;
   font-size: 0.68rem;
   font-weight: 600;
   color: #9fb0c2;
