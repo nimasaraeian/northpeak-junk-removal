@@ -68,14 +68,18 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   return (
     <div className="flex min-h-screen">
       <aside className="fixed inset-y-0 start-0 hidden w-60 flex-col bg-[var(--ops-navy)] px-3 py-5 lg:flex">
-        <Link href="/admin" className="px-2 pb-6">
+        <Link href="/admin" className="shrink-0 px-2 pb-6">
           <span className="block text-base font-semibold tracking-tight text-white">
             NorthPeak <span className="text-[var(--ops-gold)]">Ops</span>
           </span>
           <span className="mt-0.5 block text-[0.7rem] text-[#8fa0b3]">{t("Internal · v1")}</span>
         </Link>
-        <OpsSidebarNav items={NAV} />
-        <p className="mt-auto px-2 text-[0.7rem] leading-5 text-[#6f8296]">
+        {/* The nav grows with every feature, so it scrolls within the sidebar
+            instead of overflowing the viewport and clipping the last items. */}
+        <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
+          <OpsSidebarNav items={NAV} />
+        </div>
+        <p className="mt-3 shrink-0 px-2 text-[0.7rem] leading-5 text-[#6f8296]">
           {t("Internal tool. Customers never see this.")}
         </p>
       </aside>
